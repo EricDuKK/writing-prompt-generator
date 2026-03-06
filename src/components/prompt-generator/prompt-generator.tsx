@@ -59,18 +59,29 @@ import { authClient } from '@/lib/auth-client';
 import type { Paragraph as ParagraphType, TextRun as TextRunType } from 'docx';
 import {
   ArrowLeft,
+  BookOpen,
+  Briefcase,
   Check,
   ChevronDown,
   Copy,
   Edit2,
+  FileText,
   Globe,
+  GraduationCap,
+  Heart,
   ImageIcon,
   Info,
   LayoutTemplate,
   Lightbulb,
   Loader2,
+  Megaphone,
   MessageSquare,
+  Rocket,
+  Share2,
+  Shield,
+  Skull,
   Sparkles,
+  Sword,
   VideoIcon,
   Wand2,
   X,
@@ -4366,13 +4377,33 @@ export function PromptGenerator({
                                 }}
                               >
                                 <div className="flex items-center justify-between gap-3">
-                                  <span className="text-sm font-medium">
-                                    {combo.name}
-                                  </span>
-                                  {appliedCombination === combo.name ? (
+                                  <div className="flex items-center gap-2">
+                                    {(() => {
+                                      const iconMap: Record<string, { icon: React.ElementType; color: string }> = {
+                                        c1: { icon: Sword, color: 'text-purple-500' },
+                                        c2: { icon: Rocket, color: 'text-blue-500' },
+                                        c3: { icon: Shield, color: 'text-amber-500' },
+                                        c4: { icon: Heart, color: 'text-rose-500' },
+                                        c5: { icon: Skull, color: 'text-slate-500' },
+                                        c6: { icon: Briefcase, color: 'text-sky-500' },
+                                        c7: { icon: GraduationCap, color: 'text-indigo-500' },
+                                        c8: { icon: FileText, color: 'text-teal-500' },
+                                        c9: { icon: Megaphone, color: 'text-orange-500' },
+                                        c10: { icon: Share2, color: 'text-pink-500' },
+                                      };
+                                      const entry = iconMap[key];
+                                      if (entry) {
+                                        const Icon = entry.icon;
+                                        return <Icon className={`size-4 shrink-0 ${entry.color}`} />;
+                                      }
+                                      return <Sparkles className="size-4 shrink-0 text-muted-foreground" />;
+                                    })()}
+                                    <span className="text-sm font-medium">
+                                      {combo.name}
+                                    </span>
+                                  </div>
+                                  {appliedCombination === combo.name && (
                                     <Check className="size-4 text-primary shrink-0" />
-                                  ) : (
-                                    <Sparkles className="size-4 text-muted-foreground shrink-0" />
                                   )}
                                 </div>
                               </div>
@@ -4614,10 +4645,13 @@ export function PromptGenerator({
 
                   {/* Custom Enhancement Input */}
                   <div className="space-y-2">
-                    <Label>
+                    <Label className="flex items-center gap-2">
                       {t('enhancedOptions.customLabel', {
                         defaultValue: 'Additional Custom Requirements',
                       })}
+                      <span className="text-xs font-normal text-muted-foreground">
+                        (Optional)
+                      </span>
                     </Label>
                     <Textarea
                       placeholder={t('enhancedOptions.customPlaceholder', {
