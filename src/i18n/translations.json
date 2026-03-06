@@ -1,0 +1,1718 @@
+{
+  "title": "Prompt Generator",
+  "subtitle": "Input simple words or phrases, AI will generate professional prompts for you",
+  "inputSection": {
+    "title": "Input Your Idea",
+    "description": "Input a simple word or phrase, select a prompt category",
+    "inputLabel": "Describe Your Idea",
+    "inputPlaceholder": "For example: a cute kitten",
+    "placeholders": {
+      "general": "For example: basic principles of quantum computing",
+      "image": "For example: a cute kitten walking in a forest",
+      "video": "For example: a spectacular seaside sunset time-lapse",
+      "code": "For example: a simple React counter component",
+      "writing": "For example: a short speech about environmental protection",
+      "marketing": "For example: social media promotional copy for a new smartwatch",
+      "image-edit": "For example: change the background to a sunset beach scene"
+    },
+    "categoryLabel": "Prompt Category",
+    "generateButton": "Generate Prompt",
+    "generating": "Generating...",
+    "analyzing": "Analyzing...",
+    "imageUploadLabel": "Upload Image",
+    "imageUploadPlaceholder": "Click to upload an image",
+    "imageUploadHint": "PNG, JPG, WEBP (auto-compressed)",
+    "imageRequired": "Please upload an image",
+    "invalidImageType": "Please upload an image file",
+    "imageTooLarge": "Image size must be less than 50MB",
+    "imageProcessError": "Failed to process image. Please try another image.",
+    "videoUploadLabel": "Upload Video",
+    "videoUploadPlaceholder": "Click to upload a video",
+    "videoUploadHint": "MP4, WEBM, MOV up to 5MB",
+    "videoRequired": "Please upload a video",
+    "invalidVideoType": "Please upload a video file",
+    "videoTooLarge": "Video size must be less than 5MB",
+    "videoUploadError": "Failed to upload video. Please try again.",
+    "uploadingVideo": "Uploading video...",
+    "videoReady": "Ready",
+    "analyzingImage": "Analyzing image details...",
+    "analyzingVideo": "Analyzing video frames...",
+    "outputLanguage": "Output Language",
+    "outputLanguageOptions": {
+      "english": "English",
+      "japanese": "日本語 (Japanese)",
+      "korean": "한국어 (Korean)",
+      "chineseSimplified": "简体中文 (Chinese Simplified)",
+      "chineseTraditional": "繁體中文 (Chinese Traditional)",
+      "french": "Français (French)",
+      "german": "Deutsch (German)",
+      "italian": "Italiano (Italian)",
+      "spanish": "Español (Spanish)",
+      "portuguese": "Português (Portuguese)",
+      "russian": "Русский (Russian)",
+      "arabic": "العربية (Arabic)"
+    },
+    "imageUrlLabel": "Input Image URL",
+    "imageUrlPlaceholder": "https://example.com/image.jpg",
+    "imageUrlInputPlaceholder": "Paste your image link here",
+    "imageUrlHint": "Paste a direct link to an image (JPG, PNG, WebP)",
+    "loadImage": "Load",
+    "loadImageUrl": "Load Image URL",
+    "invalidImageUrl": "Failed to load image from URL. Please check the URL.",
+    "invalidUrlFormat": "Please enter a valid URL (e.g., https://example.com/image.jpg)",
+    "invalidUrlProtocol": "URL must start with http:// or https://",
+    "selectAIModel": "Select AI Model",
+    "selectVideoPromptModel": "Select Video Prompt Model",
+    "aiModels": {
+      "generalImagePrompt": "General Image Prompt",
+      "generalImagePromptDesc": "Natural language description of the image",
+      "structuredPrompt": "Structured Prompt",
+      "structuredPromptDesc": "Splits into Subject, Environment & Visual Style for remixing",
+      "graphicDesign": "Graphic Design",
+      "graphicDesignDesc": "Replicates professional design aesthetics, including typography, layout, and subject details",
+      "flux": "Flux",
+      "fluxDesc": "Optimized for state-of-the-art Flux AI models, concise natural language",
+      "nanoBanana": "Nano Banana",
+      "nanoBananaDesc": "Optimized for Nano Banana AI image generation model",
+      "midjourney": "Midjourney",
+      "midjourneyDesc": "Optimized for Midjourney AI with parameters like --ar, --v, --style"
+    },
+    "videoModels": {
+      "generalVideoPrompt": "General Video Prompt",
+      "generalVideoPromptDesc": "Natural language description with motion, camera, and temporal details",
+      "structuredVideoPrompt": "Structured Video Prompt",
+      "structuredVideoPromptDesc": "Splits into Subject, Environment, Visual Style & Motion/Camera for detailed analysis",
+      "soraLumaStyle": "Sora / Luma Style",
+      "soraLumaStyleDesc": "Photorealistic rendering with ray-tracing, physics-accurate materials and lighting",
+      "socialViral": "Social Media Viral",
+      "socialViralDesc": "Eye-catching visuals, fast-paced editing, vibrant colors for short-form video",
+      "physicalDynamics": "Physical Dynamics",
+      "physicalDynamicsDesc": "Fluid, destruction, gravity and complex physical interactions with high fidelity",
+      "veo3Cinematic": "Veo3 Cinematic",
+      "veo3CinematicDesc": "Hollywood-quality filmmaking with professional composition and advanced camera movements"
+    },
+    "imageDescriptionOptions": "Image Description Options",
+    "describeImageOptions": {
+      "describeImageInDetail": "Describe Image In Detail",
+      "describeImageInDetailDesc": "Comprehensive description covering all visible elements, colors, composition and context",
+      "describeImageBriefly": "Describe Image Briefly",
+      "describeImageBrieflyDesc": "Concise summary capturing the key subject and main visual elements",
+      "describeThePerson": "Describe The Person",
+      "describeThePersonDesc": "Detailed description of people including appearance, expression and attire",
+      "recognizeObjects": "Recognize Objects",
+      "recognizeObjectsDesc": "Identify and list all distinct objects, items and elements in the image",
+      "analyzeArtStyle": "Analyze Art Style",
+      "analyzeArtStyleDesc": "Analyze artistic techniques, style influences, color palette and composition",
+      "extractTextFromImage": "Extract Text From Image",
+      "extractTextFromImageDesc": "OCR extraction of all readable text, numbers and characters from the image",
+      "generalImagePrompt": "General Image Prompt",
+      "generalImagePromptDesc": "Natural language prompt suitable for most AI image generation models",
+      "fluxPrompt": "Flux Prompt",
+      "fluxPromptDesc": "Optimized prompt format for Flux model with detailed scene descriptions",
+      "midjourneyPrompt": "Midjourney Prompt",
+      "midjourneyPromptDesc": "Midjourney-style prompt with parameters, aspect ratios and stylistic keywords",
+      "stableDiffusionPrompt": "Stable Diffusion Prompt",
+      "stableDiffusionPromptDesc": "Tag-based prompt optimized for Stable Diffusion models",
+      "nanoBananaPrompt": "Nano Banana Prompt",
+      "nanoBananaPromptDesc": "Specialized prompt format for Nano Banana image generation pipeline"
+    },
+    "describeImageCategories": {
+      "descriptionCategory": "Description",
+      "analysisCategory": "Analysis",
+      "promptCategory": "AI Prompt"
+    }
+  },
+  "modeSwitcher": {
+    "imageToPrompt": "Image to Prompt",
+    "textToPrompt": "Text to Prompt"
+  },
+  "categories": {
+    "general": "Deep Research Prompt",
+    "image": "Image Generation Prompt",
+    "video": "Video Generation Prompt",
+    "code": "Code Generation Prompt",
+    "writing": "Writing Prompt",
+    "marketing": "Marketing Copy Prompt",
+    "image-to-prompt": "Image to Prompt",
+    "video-to-prompt": "Video to Prompt",
+    "describe-image": "Describe Image",
+    "image-edit": "Image Edit",
+    "image-to-video": "Image to Video",
+    "json-prompt-video": "JSON Video Prompt",
+    "json-prompt-image": "JSON Image Prompt"
+  },
+  "categoryOptions": {
+    "general": {
+      "创意": "Creativity",
+      "分析": "Analysis",
+      "解释": "Explanation",
+      "总结": "Summary",
+      "复杂度": "Complexity"
+    },
+    "image": {
+      "风格": "Style",
+      "色彩": "Color",
+      "构图": "Composition",
+      "细节": "Details",
+      "氛围": "Atmosphere",
+      "尺寸": "Size"
+    },
+    "video": {
+      "镜头运动": "Camera Movement",
+      "视觉风格": "Visual Style",
+      "画面比例": "Aspect Ratio",
+      "氛围基调": "Mood",
+      "音效": "Audio"
+    },
+    "code": {
+      "语言": "Language",
+      "框架": "Framework",
+      "功能": "Function",
+      "优化": "Optimization",
+      "测试": "Testing"
+    },
+    "writing": {
+      "文体": "Style",
+      "语气": "Tone",
+      "长度": "Length",
+      "受众": "Audience",
+      "目的": "Purpose",
+      "子类型": "Sub-genre",
+      "世界观": "World Setting",
+      "叙事视角": "Narrative POV",
+      "魔法体系": "Magic System",
+      "篇幅": "Length",
+      "科技水平": "Tech Level",
+      "时间设定": "Time Setting",
+      "冲突类型": "Conflict Type",
+      "悬念手法": "Suspense Technique",
+      "节奏": "Pacing",
+      "视角": "POV",
+      "情感基调": "Emotional Tone",
+      "关系类型": "Relationship Type",
+      "场景设定": "Scene Setting",
+      "恐怖元素": "Horror Element",
+      "氛围": "Atmosphere",
+      "威胁来源": "Threat Source",
+      "邮件类型": "Email Type",
+      "正式程度": "Formality",
+      "收件人": "Recipient",
+      "论文类型": "Paper Type",
+      "学科领域": "Discipline",
+      "论证方式": "Argumentation",
+      "引用风格": "Citation Style",
+      "文档类型": "Doc Type",
+      "技术深度": "Technical Depth",
+      "受众水平": "Audience Level",
+      "结构": "Structure",
+      "文案类型": "Copy Type",
+      "说服策略": "Persuasion Strategy",
+      "情感诉求": "Emotional Appeal",
+      "目标行动": "Target Action",
+      "平台": "Platform",
+      "内容形式": "Content Format",
+      "风格": "Style",
+      "互动目标": "Engagement Goal"
+    },
+    "marketing": {
+      "平台": "Platform",
+      "目标": "Target",
+      "CTA": "CTA",
+      "情感": "Emotion",
+      "价值": "Value"
+    }
+  },
+  "optionValues": {
+    "general": {
+      "创意": {
+        "创新": "Innovative",
+        "传统": "Traditional",
+        "现代": "Modern",
+        "未来主义": "Futuristic",
+        "复古": "Retro"
+      },
+      "分析": {
+        "深度分析": "In-depth Analysis",
+        "简要分析": "Brief Analysis",
+        "对比分析": "Comparative Analysis",
+        "趋势分析": "Trend Analysis",
+        "数据驱动分析": "Data-driven Analysis"
+      },
+      "解释": {
+        "简单解释": "Simple Explanation",
+        "详细解释": "Detailed Explanation",
+        "技术解释": "Technical Explanation",
+        "通俗解释": "Layman Explanation",
+        "专业解释": "Professional Explanation"
+      },
+      "总结": {
+        "要点总结": "Key Points Summary",
+        "详细总结": "Detailed Summary",
+        "执行摘要": "Executive Summary",
+        "关键洞察": "Key Insights",
+        "行动建议": "Action Recommendations"
+      },
+      "复杂度": {
+        "简单": "Simple",
+        "中等": "Medium",
+        "详细": "Detailed",
+        "专业": "Professional",
+        "学术": "Academic"
+      }
+    },
+    "image": {
+      "风格": {
+        "写实": "Realistic",
+        "抽象": "Abstract",
+        "卡通": "Cartoon",
+        "水彩": "Watercolor",
+        "油画": "Oil Painting",
+        "数字艺术": "Digital Art",
+        "极简主义": "Minimalist",
+        "吉普力": "Ghibli Style"
+      },
+      "色彩": {
+        "鲜艳": "Vivid",
+        "柔和": "Soft",
+        "黑白": "Black and White",
+        "暖色调": "Warm Tones",
+        "冷色调": "Cool Tones",
+        "单色": "Monochrome",
+        "渐变": "Gradient"
+      },
+      "构图": {
+        "居中": "Centered",
+        "三分法": "Rule of Thirds",
+        "对称": "Symmetrical",
+        "对角线": "Diagonal",
+        "框架式": "Framed",
+        "引导线": "Leading Lines"
+      },
+      "细节": {
+        "高细节": "High Detail",
+        "中等细节": "Medium Detail",
+        "低细节": "Low Detail",
+        "超写实": "Hyperrealistic",
+        "风格化": "Stylized"
+      },
+      "氛围": {
+        "明亮": "Bright",
+        "阴暗": "Dark",
+        "神秘": "Mysterious",
+        "温馨": "Cozy",
+        "冷酷": "Cold",
+        "梦幻": "Dreamy",
+        "科幻": "Sci-fi"
+      },
+      "尺寸": {
+        "1:1": "1:1 (Square)",
+        "16:9": "16:9 (Landscape)",
+        "9:16": "9:16 (Portrait)",
+        "4:3": "4:3 (Traditional)",
+        "3:4": "3:4 (Portrait Traditional)",
+        "21:9": "21:9 (Ultrawide)",
+        "自定义": "Custom Size"
+      }
+    },
+    "video": {
+      "镜头运动": {
+        "静止镜头": "Static Shot",
+        "缓慢平移": "Slow Pan",
+        "跟踪镜头": "Tracking Shot",
+        "环绕镜头": "Orbit Shot",
+        "推拉镜头": "Dolly Shot",
+        "航拍视角": "Aerial View",
+        "手持抖动": "Handheld"
+      },
+      "视觉风格": {
+        "电影级": "Cinematic",
+        "纪录片": "Documentary",
+        "动画风格": "Animation Style",
+        "复古胶片": "Vintage Film",
+        "赛博朋克": "Cyberpunk",
+        "自然写实": "Natural Realistic",
+        "梦幻柔焦": "Dreamy Soft Focus"
+      },
+      "画面比例": {
+        "16:9横屏": "16:9 Landscape",
+        "9:16竖屏": "9:16 Portrait"
+      },
+      "氛围基调": {
+        "欢快活力": "Cheerful & Vibrant",
+        "紧张悬疑": "Tense & Suspenseful",
+        "神秘奇幻": "Mysterious & Fantastical",
+        "温馨治愈": "Warm & Comforting",
+        "史诗壮阔": "Epic & Grand",
+        "忧郁沉静": "Melancholic & Serene",
+        "激昂热血": "Passionate & Intense"
+      },
+      "音效": {
+        "环境音效": "Ambient Sound",
+        "背景音乐": "Background Music",
+        "角色对话": "Character Dialogue",
+        "无声画面": "Silent Video"
+      }
+    },
+    "code": {
+      "语言": {
+        "JavaScript": "JavaScript",
+        "TypeScript": "TypeScript",
+        "Python": "Python",
+        "Java": "Java",
+        "C++": "C++",
+        "Go": "Go",
+        "Rust": "Rust"
+      },
+      "框架": {
+        "React": "React",
+        "Vue": "Vue",
+        "Angular": "Angular",
+        "NextJS": "Next.js",
+        "Express": "Express",
+        "Django": "Django",
+        "Flask": "Flask"
+      },
+      "功能": {
+        "CRUD操作": "CRUD Operations",
+        "API集成": "API Integration",
+        "用户认证": "User Authentication",
+        "数据处理": "Data Processing",
+        "文件操作": "File Operations"
+      },
+      "优化": {
+        "性能优化": "Performance Optimization",
+        "代码重构": "Code Refactoring",
+        "内存优化": "Memory Optimization",
+        "速度优化": "Speed Optimization",
+        "可维护性": "Maintainability"
+      },
+      "测试": {
+        "单元测试": "Unit Testing",
+        "集成测试": "Integration Testing",
+        "端到端测试": "E2E Testing",
+        "性能测试": "Performance Testing",
+        "无测试": "No Testing"
+      }
+    },
+    "writing": {
+      "文体": {
+        "正式": "Formal",
+        "非正式": "Informal",
+        "学术": "Academic",
+        "商业": "Business",
+        "创意": "Creative",
+        "技术": "Technical",
+        "新闻": "News"
+      },
+      "语气": {
+        "专业": "Professional",
+        "友好": "Friendly",
+        "严肃": "Serious",
+        "幽默": "Humorous",
+        "鼓励": "Encouraging",
+        "客观": "Objective",
+        "主观": "Subjective",
+        "礼貌尊重": "Polite & Respectful",
+        "自信果断": "Confident & Assertive",
+        "委婉温和": "Diplomatic & Gentle",
+        "紧迫急切": "Urgent",
+        "感恩致谢": "Grateful"
+      },
+      "长度": {
+        "简短": "Short",
+        "中等": "Medium",
+        "详细": "Detailed",
+        "超详细": "Very Detailed",
+        "根据内容": "Based on Content",
+        "一句话": "One-liner",
+        "要点列表": "Bullet Points"
+      },
+      "受众": {
+        "普通读者": "General Readers",
+        "专业人士": "Professionals",
+        "学生": "Students",
+        "企业": "Enterprises",
+        "技术人员": "Technical Personnel",
+        "消费者": "Consumers"
+      },
+      "目的": {
+        "告知": "Inform",
+        "说服": "Persuade",
+        "娱乐": "Entertain",
+        "教育": "Educate",
+        "销售": "Sell",
+        "建立关系": "Build Relationships"
+      },
+      "子类型": {
+        "史诗奇幻": "Epic Fantasy",
+        "都市奇幻": "Urban Fantasy",
+        "剑与魔法": "Sword & Sorcery",
+        "神话重述": "Myth Retelling",
+        "黑暗奇幻": "Dark Fantasy",
+        "硬科幻": "Hard Sci-Fi",
+        "太空歌剧": "Space Opera",
+        "赛博朋克": "Cyberpunk",
+        "反乌托邦": "Dystopia",
+        "时间旅行": "Time Travel",
+        "心理惊悚": "Psychological Thriller",
+        "犯罪推理": "Crime Mystery",
+        "间谍悬疑": "Spy Thriller",
+        "法庭推理": "Legal Thriller",
+        "密室悬疑": "Locked Room Mystery",
+        "甜宠": "Sweet Romance",
+        "虐恋": "Angst Romance",
+        "破镜重圆": "Second Chance",
+        "暗恋成真": "Secret Crush",
+        "跨时空恋": "Time-crossed Love",
+        "哥特恐怖": "Gothic Horror",
+        "宇宙恐怖": "Cosmic Horror",
+        "民俗怪谈": "Folk Horror",
+        "心理恐怖": "Psychological Horror",
+        "生存恐怖": "Survival Horror"
+      },
+      "世界观": {
+        "中世纪": "Medieval",
+        "东方仙侠": "Eastern Xianxia",
+        "蒸汽朋克": "Steampunk",
+        "远古神话": "Ancient Mythology",
+        "异世界": "Isekai"
+      },
+      "叙事视角": {
+        "第一人称": "First Person",
+        "第三人称全知": "Third Person Omniscient",
+        "第三人称限制": "Third Person Limited",
+        "多视角": "Multiple POV",
+        "书信体": "Epistolary"
+      },
+      "魔法体系": {
+        "硬魔法": "Hard Magic",
+        "软魔法": "Soft Magic",
+        "元素系": "Elemental",
+        "符文系": "Runic",
+        "血脉系": "Bloodline"
+      },
+      "篇幅": {
+        "短篇": "Short Story",
+        "中篇": "Novella",
+        "长篇": "Novel",
+        "系列": "Series",
+        "章节": "Chapter"
+      },
+      "科技水平": {
+        "近未来": "Near Future",
+        "星际文明": "Interstellar Civilization",
+        "后奇点": "Post-Singularity",
+        "末日残存": "Post-Apocalyptic",
+        "平行宇宙": "Parallel Universe"
+      },
+      "时间设定": {
+        "近未来": "Near Future",
+        "远未来": "Far Future",
+        "平行现在": "Parallel Present",
+        "时间循环": "Time Loop",
+        "跨时代": "Cross-era"
+      },
+      "冲突类型": {
+        "人类vs AI": "Human vs AI",
+        "星际战争": "Interstellar War",
+        "生存危机": "Survival Crisis",
+        "身份认同": "Identity Crisis",
+        "文明碰撞": "Clash of Civilizations"
+      },
+      "悬念手法": {
+        "不可靠叙述": "Unreliable Narrator",
+        "倒叙揭秘": "Reverse Reveal",
+        "红鲱鱼": "Red Herring",
+        "倒计时": "Countdown",
+        "多线交织": "Multi-thread"
+      },
+      "节奏": {
+        "快节奏": "Fast-paced",
+        "慢燃型": "Slow Burn",
+        "层层递进": "Escalating",
+        "高开低走": "Front-loaded",
+        "反转密集": "Twist-heavy"
+      },
+      "视角": {
+        "侦探视角": "Detective POV",
+        "凶手视角": "Killer POV",
+        "受害者视角": "Victim POV",
+        "旁观者视角": "Bystander POV",
+        "多重视角": "Multiple POV"
+      },
+      "情感基调": {
+        "温馨治愈": "Warm & Healing",
+        "虐心催泪": "Heart-wrenching",
+        "欢快甜蜜": "Cheerful & Sweet",
+        "含蓄深沉": "Subtle & Deep",
+        "热烈奔放": "Passionate"
+      },
+      "关系类型": {
+        "青梅竹马": "Childhood Friends",
+        "欢喜冤家": "Love-hate",
+        "禁忌之恋": "Forbidden Love",
+        "异地恋": "Long-distance",
+        "职场恋情": "Office Romance"
+      },
+      "场景设定": {
+        "校园": "Campus",
+        "都市": "Urban",
+        "古代": "Ancient",
+        "异国": "Foreign",
+        "小镇": "Small Town"
+      },
+      "恐怖元素": {
+        "超自然": "Supernatural",
+        "人性之恶": "Human Evil",
+        "未知恐惧": "Fear of the Unknown",
+        "身体变异": "Body Horror",
+        "精神崩溃": "Mental Breakdown"
+      },
+      "氛围": {
+        "阴森压抑": "Dark & Oppressive",
+        "诡异荒诞": "Eerie & Absurd",
+        "末日寂静": "Post-apocalyptic Silence",
+        "幽闭恐惧": "Claustrophobic",
+        "暗流涌动": "Undercurrent of Dread"
+      },
+      "威胁来源": {
+        "鬼魅": "Ghosts",
+        "邪教": "Cult",
+        "怪物": "Monsters",
+        "自身心魔": "Inner Demons",
+        "诅咒": "Curse"
+      },
+      "邮件类型": {
+        "工作汇报": "Work Report",
+        "会议邀请": "Meeting Invitation",
+        "项目跟进": "Project Follow-up",
+        "商务洽谈": "Business Discussion",
+        "致歉声明": "Apology Statement"
+      },
+      "正式程度": {
+        "极正式": "Very Formal",
+        "正式": "Formal",
+        "半正式": "Semi-formal",
+        "友好职业": "Friendly Professional",
+        "简洁直接": "Concise & Direct"
+      },
+      "收件人": {
+        "上级领导": "Superior",
+        "客户": "Client",
+        "同事": "Colleague",
+        "合作伙伴": "Partner",
+        "下属": "Subordinate"
+      },
+      "论文类型": {
+        "研究论文": "Research Paper",
+        "文献综述": "Literature Review",
+        "实验报告": "Lab Report",
+        "案例分析": "Case Study",
+        "学位论文": "Thesis"
+      },
+      "学科领域": {
+        "自然科学": "Natural Sciences",
+        "社会科学": "Social Sciences",
+        "工程技术": "Engineering",
+        "人文艺术": "Humanities & Arts",
+        "交叉学科": "Interdisciplinary"
+      },
+      "论证方式": {
+        "演绎推理": "Deductive",
+        "归纳推理": "Inductive",
+        "对比分析": "Comparative",
+        "实证研究": "Empirical",
+        "定性分析": "Qualitative"
+      },
+      "引用风格": {
+        "APA": "APA",
+        "MLA": "MLA",
+        "Chicago": "Chicago",
+        "IEEE": "IEEE",
+        "Harvard": "Harvard"
+      },
+      "文档类型": {
+        "用户手册": "User Manual",
+        "快速入门": "Quick Start",
+        "API文档": "API Docs",
+        "发版说明": "Release Notes",
+        "故障排除": "Troubleshooting"
+      },
+      "技术深度": {
+        "入门级": "Beginner",
+        "中级": "Intermediate",
+        "高级": "Advanced",
+        "专家级": "Expert",
+        "概览": "Overview"
+      },
+      "受众水平": {
+        "新手用户": "Novice User",
+        "普通用户": "Regular User",
+        "开发者": "Developer",
+        "系统管理员": "Sysadmin",
+        "产品经理": "Product Manager"
+      },
+      "结构": {
+        "步骤式": "Step-by-step",
+        "问答式": "Q&A",
+        "参考手册": "Reference Manual",
+        "教程式": "Tutorial",
+        "概念解释": "Conceptual"
+      },
+      "文案类型": {
+        "产品详情页": "Product Page",
+        "广告标题": "Ad Headline",
+        "促销邮件": "Promo Email",
+        "落地页": "Landing Page",
+        "品牌故事": "Brand Story"
+      },
+      "说服策略": {
+        "稀缺紧迫": "Scarcity & Urgency",
+        "社会证明": "Social Proof",
+        "权威背书": "Authority",
+        "利益驱动": "Benefit-driven",
+        "痛点挖掘": "Pain Point"
+      },
+      "情感诉求": {
+        "焦虑解决": "Anxiety Relief",
+        "梦想激发": "Dream Inspiration",
+        "归属认同": "Belonging",
+        "恐惧规避": "Fear Avoidance",
+        "愉悦享受": "Pleasure"
+      },
+      "目标行动": {
+        "立即购买": "Buy Now",
+        "免费试用": "Free Trial",
+        "预约咨询": "Book Consultation",
+        "加入等待": "Join Waitlist",
+        "分享转发": "Share & Forward"
+      },
+      "平台": {
+        "Twitter/X": "Twitter/X",
+        "Instagram": "Instagram",
+        "LinkedIn": "LinkedIn",
+        "TikTok": "TikTok",
+        "Reddit": "Reddit"
+      },
+      "内容形式": {
+        "图文帖": "Image Post",
+        "短视频脚本": "Short Video Script",
+        "话题讨论": "Topic Discussion",
+        "投票互动": "Poll",
+        "故事连载": "Story Series"
+      },
+      "风格": {
+        "幽默搞笑": "Humorous",
+        "专业干货": "Professional Tips",
+        "情感共鸣": "Emotional Resonance",
+        "热点追踪": "Trending Topics",
+        "个人故事": "Personal Story"
+      },
+      "互动目标": {
+        "涨粉": "Grow Followers",
+        "点赞收藏": "Likes & Saves",
+        "评论讨论": "Comments & Discussion",
+        "转发传播": "Shares & Virality",
+        "引流转化": "Traffic & Conversion"
+      }
+    },
+    "marketing": {
+      "平台": {
+        "社交媒体": "Social Media",
+        "网站": "Website",
+        "邮件": "Email",
+        "博客": "Blog",
+        "视频平台": "Video Platform",
+        "搜索引擎": "Search Engine"
+      },
+      "目标": {
+        "品牌认知": "Brand Awareness",
+        "销售转化": "Sales Conversion",
+        "用户获取": "User Acquisition",
+        "用户留存": "User Retention",
+        "参与度": "Engagement"
+      },
+      "CTA": {
+        "立即购买": "Buy Now",
+        "免费试用": "Free Trial",
+        "了解更多": "Learn More",
+        "立即注册": "Sign Up Now",
+        "联系我们": "Contact Us"
+      },
+      "情感": {
+        "兴奋": "Excitement",
+        "信任": "Trust",
+        "紧迫感": "Urgency",
+        "归属感": "Belonging",
+        "成就感": "Achievement",
+        "安全感": "Security"
+      },
+      "价值": {
+        "节省时间": "Time Saving",
+        "节省成本": "Cost Saving",
+        "提高效率": "Efficiency",
+        "创新": "Innovation",
+        "质量": "Quality",
+        "便利": "Convenience"
+      }
+    }
+  },
+  "directResult": {
+    "title": "Generated Prompt",
+    "description": "The prompt generated directly by the AI model based on your input, ready to copy and use"
+  },
+  "enhancedOptions": {
+    "title": "Prompt Settings",
+    "optional": "Optional",
+    "description": "Configure your prompt style and describe your idea, AI will generate a professional prompt for you",
+    "guideTitle": "How to use enhancement options?",
+    "guideDescription": "Follow these steps to optimize your prompt using enhancement options:",
+    "guideStep1": "Select values from the dropdown menus to refine your prompt requirements",
+    "guideStep2": "If an option is not needed, select \"None\" to skip that option",
+    "guideStep3": "Enter any additional requirements or details in the \"Additional Custom Requirements\" text box",
+    "guideStep4": "Click the \"Generate Enhanced Prompt\" button to generate a more precise prompt based on your selections",
+    "placeholder": "Select {option}...",
+    "none": "None",
+    "customLabel": "Additional Custom Requirements",
+    "customPlaceholder": "Enter any additional requirements or details you want to include in the enhanced prompt...",
+    "presetLabel": "Quick Apply",
+    "generateButton": "Generate Enhanced Prompt",
+    "generating": "Generating...",
+    "analyzing": "Analyzing...",
+    "guideTabs": {
+      "explanations": "Option Details",
+      "combinations": "Recommended Combos",
+      "apply": "Apply",
+      "applied": "Applied"
+    },
+    "presetsButton": "Presets",
+    "generateIdeas": "AI Inspire",
+    "generatingIdeas": "Generating ideas...",
+    "recommendedPresets": "Recommended Presets",
+    "recommendedCombinations": "Recommended Presets",
+    "combinationsDescription": "Select a preset to quickly apply recommended option combinations",
+    "creativeWritingPresets": "Creative Writing",
+    "businessWritingPresets": "Business Writing",
+    "explanations": {
+      "general": {
+        "创意": "Sets the level of creativity and divergence, from traditional to innovative.",
+        "分析": "Determines the depth, breadth, and perspective of the analysis.",
+        "解释": "Adjusts the complexity of the content to suit different audiences.",
+        "总结": "Sets the granularity of information extraction, from key points to detailed summaries.",
+        "复杂度": "Controls the depth and sophistication level of the output, from simple to academic."
+      },
+      "image": {
+        "风格": "Determines the overall artistic style and visual tone.",
+        "色彩": "Sets the color palette, saturation, and color scheme.",
+        "构图": "Arranges the spatial position, perspective, and visual focus of elements.",
+        "细节": "Controls the richness of textures, lighting, and small elements.",
+        "氛围": "Creates the emotional tone and environmental feeling of the image."
+      },
+      "video": {
+        "镜头运动": "Sets the camera movement style, such as panning, orbiting, or tracking, to create different visual experiences.",
+        "视觉风格": "Defines the overall visual aesthetic, such as cinematic, animation style, or vintage film.",
+        "画面比例": "Selects the video aspect ratio to fit different playback platforms and devices.",
+        "氛围基调": "Sets the overall emotional atmosphere of the video, such as cheerful, mysterious, or epic.",
+        "音效": "Describes the audio content of the video, such as ambient sounds, background music, or character dialogue."
+      },
+      "code": {
+        "语言": "Specifies the programming language for the code.",
+        "框架": "Selects the development framework or library.",
+        "功能": "Defines the core business logic or operations to implement.",
+        "优化": "Sets code quality focus, such as performance, readability, or memory usage.",
+        "测试": "Specifies the verification method, such as unit testing or integration testing."
+      },
+      "writing": {
+        "文体": "Sets the genre format, such as formal reports, essays, or press releases.",
+        "语气": "Adjusts the emotional color and attitude, such as serious, humorous, or friendly.",
+        "长度": "Controls the word count range and level of detail.",
+        "受众": "Sets the target audience characteristics to adjust wording and expression.",
+        "目的": "Clarifies the core intent of writing, such as informing or persuading."
+      },
+      "marketing": {
+        "平台": "Specifies the distribution channel to adapt format and user habits.",
+        "目标": "Clarifies the specific KPIs or effects expected from the marketing campaign.",
+        "CTA": "Sets the call-to-action to guide users to perform specific operations.",
+        "情感": "Injects specific emotional colors to resonate with the audience.",
+        "价值": "Emphasizes the core benefits of the product or service."
+      }
+    },
+    "valueExplanations": {
+      "general": {
+        "创意": {
+          "创新": "Break through conventional thinking, propose novel and unique ideas.",
+          "传统": "Follow classic methods and established patterns, stable and reliable.",
+          "现代": "Combine contemporary trends and latest concepts, keeping up with the times.",
+          "未来主义": "Forward-thinking, exploring future possibilities and trends.",
+          "复古": "Draw from historical classics, recreating beautiful elements of the past."
+        },
+        "分析": {
+          "深度分析": "Dig deep into the essence of problems, providing comprehensive analysis.",
+          "简要分析": "Quickly summarize key points, suitable for quick understanding.",
+          "对比分析": "Compare different solutions or viewpoints, highlighting differences.",
+          "趋势分析": "Focus on development directions and future trends, predicting changes.",
+          "数据驱动分析": "Based on data and facts, draw objective conclusions."
+        },
+        "解释": {
+          "简单解释": "Use the most basic language that anyone can understand.",
+          "详细解释": "Provide comprehensive explanations with background and details.",
+          "技术解释": "Use professional terminology, suitable for technical personnel.",
+          "通俗解释": "Use everyday language, understandable for non-professionals.",
+          "专业解释": "Use industry-standard terminology, maintaining professionalism."
+        },
+        "总结": {
+          "要点总结": "Extract core information, highlight key points.",
+          "详细总结": "Comprehensive summary including main content and details.",
+          "执行摘要": "For decision-makers, highlighting action recommendations and conclusions.",
+          "关键洞察": "Extract deep insights, revealing essential patterns.",
+          "行动建议": "Provide specific and actionable next steps."
+        },
+        "复杂度": {
+          "简单": "Basic and easy to understand, suitable for beginners.",
+          "中等": "Balanced depth and accessibility for general audiences.",
+          "详细": "Comprehensive coverage with thorough explanations.",
+          "专业": "Industry-level depth with technical terminology.",
+          "学术": "Research-grade rigor with citations and methodology."
+        }
+      },
+      "image": {
+        "风格": {
+          "写实": "Realistic, like a photograph.",
+          "抽象": "Non-representational, focusing on shapes and colors.",
+          "卡通": "Exaggerated and cute animation style.",
+          "水彩": "Transparent, fluid paint texture.",
+          "油画": "Thick brushstrokes and rich texture.",
+          "数字艺术": "Modern CG style, clear and sharp.",
+          "极简主义": "Less is more, removing excess elements.",
+          "吉普力": "Studio Ghibli style, fresh and natural."
+        },
+        "色彩": {
+          "鲜艳": "High saturation, full of energy.",
+          "柔和": "Low saturation, gentle and comfortable.",
+          "黑白": "Classic monochrome, emphasizing light and shadow.",
+          "暖色调": "Mainly red, yellow, orange; warm and enthusiastic.",
+          "冷色调": "Mainly blue, green, purple; cool and deep.",
+          "单色": "Variations of a single color.",
+          "渐变": "Smooth transition between colors."
+        },
+        "构图": {
+          "居中": "Subject in the center, highlighting the core.",
+          "三分法": "Subject at 1/3, visually balanced and natural.",
+          "对称": "Left-right or top-bottom symmetry, stable and solemn.",
+          "对角线": "Elements arranged diagonally, dynamic.",
+          "框架式": "Using foreground to create a frame, guiding the eye.",
+          "引导线": "Using lines to guide vision to the subject."
+        },
+        "细节": {
+          "高细节": "Clear textures, rich details.",
+          "中等细节": "Balanced overall and local, not too grabbing.",
+          "低细节": "High generalization, focusing on overall form.",
+          "超写实": "Extreme details, even beyond the naked eye.",
+          "风格化": "Artistic processing, not sticking to realistic details."
+        },
+        "氛围": {
+          "明亮": "Sufficient light, positive and upward.",
+          "阴暗": "Dim light, depressive or mysterious.",
+          "神秘": "Full of the unknown, sparking curiosity.",
+          "温馨": "Soft and warm, giving a sense of security.",
+          "冷酷": "Cold and alienated, lacking emotional color.",
+          "梦幻": "Illisory and hazy, beautiful like a dream.",
+          "科幻": "Strong futuristic feel, full of tech elements."
+        },
+        "尺寸": {
+          "1:1": "Square aspect ratio, suitable for social media avatars and Instagram.",
+          "16:9": "Widescreen landscape ratio, suitable for desktop and YouTube.",
+          "9:16": "Portrait ratio, suitable for mobile screens and TikTok.",
+          "4:3": "Traditional landscape ratio, suitable for old displays and photos.",
+          "3:4": "Portrait traditional ratio, suitable for mobile wallpapers and posters.",
+          "21:9": "Ultrawide ratio, suitable for movies and gaming scenes.",
+          "自定义": "Custom aspect ratio based on specific needs."
+        }
+      },
+      "video": {
+        "镜头运动": {
+          "静止镜头": "Camera remains fixed, suitable for static scenes or dialogue.",
+          "缓慢平移": "Camera slowly moves horizontally or vertically, creating a calm atmosphere.",
+          "跟踪镜头": "Camera follows the subject, enhancing immersion.",
+          "环绕镜头": "Camera rotates around the subject, showcasing multiple angles.",
+          "推拉镜头": "Camera moves toward or away from the subject, emphasizing key elements.",
+          "航拍视角": "Overhead view from above, revealing grand scenes and wide vistas.",
+          "手持抖动": "Simulates handheld shooting, creating an authentic feel."
+        },
+        "视觉风格": {
+          "电影级": "High-quality cinematic visuals with professional color grading and lighting.",
+          "纪录片": "Natural and authentic visual style, focusing on reality.",
+          "动画风格": "Cartoon or CG animation effects, full of creativity and imagination.",
+          "复古胶片": "Simulates vintage film texture with grain and retro color tones.",
+          "赛博朋克": "Neon lights and tech-heavy futuristic style.",
+          "自然写实": "Realistic natural imagery with rich, vibrant colors.",
+          "梦幻柔焦": "Soft, hazy visual effect creating a dreamlike atmosphere."
+        },
+        "画面比例": {
+          "16:9横屏": "Standard widescreen ratio, suitable for computer and TV playback.",
+          "9:16竖屏": "Portrait ratio, suitable for mobile and short video platforms."
+        },
+        "氛围基调": {
+          "欢快活力": "Bright and upbeat, full of positive energy and vitality.",
+          "紧张悬疑": "Creates tension, enhancing suspense and anticipation.",
+          "神秘奇幻": "Full of mystery, creating a fantastical world.",
+          "温馨治愈": "Warm and gentle, providing comfort and relaxation.",
+          "史诗壮阔": "Grand and majestic, with awe-inspiring presence.",
+          "忧郁沉静": "Calm and introspective, with a touch of melancholy.",
+          "激昂热血": "Full of passion and fighting spirit, blood-pumping intensity."
+        },
+        "音效": {
+          "环境音效": "Natural environmental sounds like wind, rain, bird songs, etc.",
+          "背景音乐": "Background music that complements the visuals and sets the mood.",
+          "角色对话": "Includes character dialogue or narration.",
+          "无声画面": "Pure visual content without any audio."
+        }
+      },
+      "code": {
+        "语言": {
+          "JavaScript": "Universal for frontend and backend, rich ecosystem.",
+          "TypeScript": "Type-safe, suitable for large projects.",
+          "Python": "Simple syntax, ideal for data science and AI.",
+          "Java": "Enterprise-grade development, cross-platform.",
+          "C++": "Excellent performance, suitable for system-level development.",
+          "Go": "Strong concurrency, suitable for microservices.",
+          "Rust": "Memory-safe, performance close to C++."
+        },
+        "框架": {
+          "React": "Component-based development, mature ecosystem.",
+          "Vue": "Progressive framework, gentle learning curve.",
+          "Angular": "Enterprise framework, comprehensive features.",
+          "NextJS": "Full-stack React framework, SEO-friendly.",
+          "Express": "Lightweight Node.js framework, flexible and fast.",
+          "Django": "Full-stack Python framework, powerful.",
+          "Flask": "Lightweight Python framework, flexible and concise."
+        },
+        "功能": {
+          "CRUD操作": "Create, Read, Update, Delete data.",
+          "API集成": "Integrate with third-party service APIs.",
+          "用户认证": "Login, registration, permission management.",
+          "数据处理": "Data cleaning, transformation, analysis.",
+          "文件操作": "File upload, download, management."
+        },
+        "优化": {
+          "性能优化": "Improve runtime speed and response time.",
+          "代码重构": "Improve code structure, enhance readability.",
+          "内存优化": "Reduce memory usage, improve efficiency.",
+          "速度优化": "Speed up execution, enhance performance.",
+          "可维护性": "Code easy to understand and modify."
+        },
+        "测试": {
+          "单元测试": "Test individual functions or modules.",
+          "集成测试": "Test collaboration between multiple modules.",
+          "端到端测试": "Test complete user workflows.",
+          "性能测试": "Test system performance and load capacity.",
+          "无测试": "No test code, rapid development."
+        }
+      },
+      "writing": {
+        "文体": {
+          "正式": "Formal and rigorous, suitable for formal occasions.",
+          "非正式": "Casual and relaxed, suitable for daily communication.",
+          "学术": "Rigorous and standardized, meeting academic standards.",
+          "商业": "Professional and efficient, suitable for business scenarios.",
+          "创意": "Imaginative, unique expression.",
+          "技术": "Professional and accurate, suitable for technical documentation.",
+          "新闻": "Objective and factual, timely and accurate."
+        },
+        "语气": {
+          "专业": "Rigorous and professional, authoritative and credible.",
+          "友好": "Friendly and approachable, closing the distance.",
+          "严肃": "Serious and earnest, showing importance.",
+          "幽默": "Light and humorous, adding interest.",
+          "鼓励": "Positive and uplifting, inspiring motivation.",
+          "客观": "Neutral and objective, without bias.",
+          "主观": "Express personal views and feelings."
+        },
+        "长度": {
+          "简短": "Concise and to the point, highlighting key points.",
+          "中等": "Moderate content, balanced detail.",
+          "详细": "Comprehensive content, detailed and in-depth.",
+          "超详细": "Extremely detailed, including all details.",
+          "根据内容": "Flexibly adjust length according to actual needs."
+        },
+        "受众": {
+          "普通读者": "For general public, easy to understand.",
+          "专业人士": "Use professional terminology, suitable for industry professionals.",
+          "学生": "Suitable for students, educational.",
+          "企业": "For business decision-makers, business-oriented.",
+          "技术人员": "Rich technical details, suitable for developers.",
+          "消费者": "For general consumers, easy to understand."
+        },
+        "目的": {
+          "告知": "Convey information, let readers understand the situation.",
+          "说服": "Persuade readers to accept views or take action.",
+          "娱乐": "Provide entertainment, make readers feel interesting.",
+          "教育": "Teach knowledge, help readers learn.",
+          "销售": "Promote sales, stimulate purchase desire.",
+          "建立关系": "Build emotional connection, enhance relationships."
+        }
+      },
+      "marketing": {
+        "平台": {
+          "社交媒体": "Suitable for WeChat, Weibo, TikTok and other platforms.",
+          "网站": "Suitable for official websites, landing pages and other web scenarios.",
+          "邮件": "Suitable for email marketing, personalized push.",
+          "博客": "Suitable for long-form content, in-depth communication.",
+          "视频平台": "Suitable for Bilibili, YouTube and other video platforms.",
+          "搜索引擎": "Suitable for SEO optimization, improve search rankings."
+        },
+        "目标": {
+          "品牌认知": "Enhance brand awareness and recognition.",
+          "销售转化": "Promote sales, improve conversion rate.",
+          "用户获取": "Attract new users, expand user base.",
+          "用户留存": "Retain existing users, improve retention rate.",
+          "参与度": "Increase user interaction and engagement."
+        },
+        "CTA": {
+          "立即购买": "Direct purchase guidance, promote sales.",
+          "免费试用": "Lower the threshold, attract users to try.",
+          "了解更多": "Guide in-depth understanding, cultivate interest.",
+          "立即注册": "Guide registration, obtain user information.",
+          "联系我们": "Establish contact, promote communication."
+        },
+        "情感": {
+          "兴奋": "Stimulate excitement, full of energy.",
+          "信任": "Build trust, enhance credibility.",
+          "紧迫感": "Create urgency, promote quick action.",
+          "归属感": "Make users feel belonging, enhance stickiness.",
+          "成就感": "Make users feel achievement, improve satisfaction.",
+          "安全感": "Provide security, eliminate concerns."
+        },
+        "价值": {
+          "节省时间": "Emphasize efficiency, save user time.",
+          "节省成本": "Emphasize economy, reduce user costs.",
+          "提高效率": "Improve work efficiency and productivity.",
+          "创新": "Highlight innovation, lead the trend.",
+          "质量": "Emphasize high quality, trustworthy.",
+          "便利": "Emphasize convenience, easy to use."
+        }
+      }
+    },
+    "combinations": {
+      "general": {
+        "c1": {
+          "name": "Deep Research Report",
+          "desc": "Suitable for academic or business analysis, focusing on depth and professionalism.",
+          "options": {
+            "分析": "深度分析",
+            "解释": "专业解释",
+            "总结": "详细总结"
+          }
+        },
+        "c2": {
+          "name": "Creative Brainstorming",
+          "desc": "Inspires new ideas and unique perspectives.",
+          "options": {
+            "创意": "未来主义",
+            "解释": "通俗解释",
+            "分析": "趋势分析"
+          }
+        },
+        "c3": {
+          "name": "Quick Overview",
+          "desc": "Quickly understand key points, suitable for time-sensitive scenarios.",
+          "options": {
+            "分析": "简要分析",
+            "解释": "简单解释",
+            "总结": "要点总结"
+          }
+        },
+        "c4": {
+          "name": "Comprehensive Analysis",
+          "desc": "Suitable for in-depth research with detailed professional output.",
+          "options": {
+            "复杂度": "专业",
+            "分析": "深度分析",
+            "总结": "详细总结"
+          }
+        },
+        "c5": {
+          "name": "Comparative Research",
+          "desc": "Compare different solutions to find the optimal approach.",
+          "options": {
+            "分析": "对比分析",
+            "解释": "专业解释",
+            "总结": "关键洞察"
+          }
+        }
+      },
+      "image": {
+        "c1": {
+          "name": "Cinematic Look",
+          "desc": "Creates a movie-like visual effect with emphasis on lighting and composition.",
+          "options": {
+            "风格": "写实",
+            "构图": "三分法",
+            "细节": "超写实",
+            "氛围": "科幻"
+          }
+        },
+        "c2": {
+          "name": "Aesthetic Illustration",
+          "desc": "Suitable for publications or art, with soft colors and mood.",
+          "options": {
+            "风格": "水彩",
+            "色彩": "柔和",
+            "氛围": "梦幻"
+          }
+        },
+        "c3": {
+          "name": "Minimalist Business",
+          "desc": "Clean and sharp, highlighting the subject, perfect for product display.",
+          "options": {
+            "风格": "极简主义",
+            "色彩": "冷色调",
+            "构图": "居中",
+            "氛围": "明亮"
+          }
+        },
+        "c4": {
+          "name": "Vintage Film",
+          "desc": "Nostalgic warm tones, full of life and storytelling.",
+          "options": {
+            "风格": "写实",
+            "色彩": "暖色调",
+            "细节": "中等细节",
+            "氛围": "温馨"
+          }
+        },
+        "c5": {
+          "name": "Cyberpunk Style",
+          "desc": "High saturation neon colors, full of futuristic tech visual impact.",
+          "options": {
+            "风格": "数字艺术",
+            "色彩": "鲜艳",
+            "构图": "对角线",
+            "氛围": "科幻",
+            "细节": "高细节"
+          }
+        },
+        "c6": {
+          "name": "Ghibli Animation",
+          "desc": "Studio Ghibli-inspired style with lush nature, warm tones, and whimsical atmosphere.",
+          "options": {
+            "风格": "吉普力",
+            "色彩": "柔和",
+            "细节": "中等细节",
+            "氛围": "温馨"
+          }
+        }
+      },
+      "video": {
+        "c1": {
+          "name": "Cinematic Short",
+          "desc": "Professional cinematic quality, suitable for brand stories and creative expression.",
+          "options": {
+            "镜头运动": "跟踪镜头",
+            "视觉风格": "电影级",
+            "氛围基调": "史诗壮阔",
+            "音效": "背景音乐"
+          }
+        },
+        "c2": {
+          "name": "Vertical Short Video",
+          "desc": "Suitable for TikTok, Reels and other short video platforms.",
+          "options": {
+            "镜头运动": "缓慢平移",
+            "视觉风格": "自然写实",
+            "画面比例": "9:16竖屏",
+            "氛围基调": "欢快活力",
+            "音效": "背景音乐"
+          }
+        },
+        "c3": {
+          "name": "Cyberpunk Sci-Fi",
+          "desc": "Neon futuristic vibe, suitable for tech products or creative content.",
+          "options": {
+            "镜头运动": "环绕镜头",
+            "视觉风格": "赛博朋克",
+            "氛围基调": "紧张悬疑",
+            "音效": "环境音效"
+          }
+        },
+        "c4": {
+          "name": "Nature Documentary",
+          "desc": "Authentic natural visual style, suitable for landscape and lifestyle content.",
+          "options": {
+            "镜头运动": "航拍视角",
+            "视觉风格": "纪录片",
+            "氛围基调": "温馨治愈",
+            "音效": "环境音效"
+          }
+        },
+        "c5": {
+          "name": "Vintage Film Look",
+          "desc": "Nostalgic retro texture, creating memories and era vibes.",
+          "options": {
+            "镜头运动": "手持抖动",
+            "视觉风格": "复古胶片",
+            "氛围基调": "忧郁沉静",
+            "音效": "背景音乐"
+          }
+        }
+      },
+      "code": {
+        "c1": {
+          "name": "Enterprise Development",
+          "desc": "Focuses on robustness, maintainability, and test coverage.",
+          "options": {
+            "优化": "可维护性",
+            "测试": "单元测试",
+            "功能": "用户认证"
+          }
+        },
+        "c2": {
+          "name": "Extreme Performance",
+          "desc": "Targeting high concurrency or resource-constrained scenarios.",
+          "options": {
+            "优化": "性能优化",
+            "测试": "性能测试",
+            "语言": "Rust"
+          }
+        },
+        "c3": {
+          "name": "Full-Stack Web App",
+          "desc": "Full-stack development, perfect for building modern web applications quickly.",
+          "options": {
+            "语言": "TypeScript",
+            "框架": "NextJS",
+            "功能": "用户认证",
+            "测试": "端到端测试"
+          }
+        },
+        "c4": {
+          "name": "API Service Development",
+          "desc": "Building RESTful APIs, focusing on interface design and data processing.",
+          "options": {
+            "语言": "Python",
+            "框架": "Express",
+            "功能": "API集成",
+            "优化": "性能优化"
+          }
+        },
+        "c5": {
+          "name": "Rapid Prototyping",
+          "desc": "Fast iteration and idea validation, suitable for early-stage startup projects.",
+          "options": {
+            "语言": "JavaScript",
+            "框架": "React",
+            "功能": "CRUD操作",
+            "测试": "无测试"
+          }
+        }
+      },
+      "writing": {
+        "c1": {
+          "name": "Epic Fantasy Quest",
+          "desc": "Create immersive fantasy worlds with magic, quests, and mythical creatures.",
+          "options": {
+            "文体": "创意",
+            "语气": "主观",
+            "受众": "普通读者",
+            "长度": "详细",
+            "目的": "娱乐"
+          }
+        },
+        "c2": {
+          "name": "Sci-Fi Adventure",
+          "desc": "Explore distant galaxies, futuristic tech, and interstellar journeys.",
+          "options": {
+            "文体": "创意",
+            "语气": "客观",
+            "受众": "普通读者",
+            "长度": "详细",
+            "目的": "娱乐"
+          }
+        },
+        "c3": {
+          "name": "Thriller & Mystery",
+          "desc": "Craft suspenseful plots with unexpected twists and gripping tension.",
+          "options": {
+            "文体": "创意",
+            "语气": "严肃",
+            "受众": "普通读者",
+            "长度": "中等",
+            "目的": "娱乐"
+          }
+        },
+        "c4": {
+          "name": "Romance & Drama",
+          "desc": "Weave emotional narratives with deep character connections and heartfelt moments.",
+          "options": {
+            "文体": "创意",
+            "语气": "友好",
+            "受众": "普通读者",
+            "长度": "详细",
+            "目的": "娱乐"
+          }
+        },
+        "c5": {
+          "name": "Horror & Dark Fiction",
+          "desc": "Build atmospheric dread with supernatural elements and psychological tension.",
+          "options": {
+            "文体": "创意",
+            "语气": "严肃",
+            "受众": "普通读者",
+            "长度": "中等",
+            "目的": "娱乐"
+          }
+        },
+        "c6": {
+          "name": "Business Email",
+          "desc": "Professional, polite, and purpose-driven, suitable for workplace communication.",
+          "options": {
+            "文体": "商业",
+            "语气": "专业",
+            "受众": "专业人士",
+            "长度": "简短"
+          }
+        },
+        "c7": {
+          "name": "Academic Paper",
+          "desc": "Rigorous and standardized, suitable for academic research and paper writing.",
+          "options": {
+            "文体": "学术",
+            "语气": "客观",
+            "受众": "专业人士",
+            "长度": "详细",
+            "目的": "教育"
+          }
+        },
+        "c8": {
+          "name": "Product Documentation",
+          "desc": "Clear and easy to understand, helping users quickly learn product features.",
+          "options": {
+            "文体": "技术",
+            "语气": "友好",
+            "受众": "技术人员",
+            "长度": "中等",
+            "目的": "告知"
+          }
+        },
+        "c9": {
+          "name": "Sales Copy",
+          "desc": "Persuasive and inspiring, suitable for marketing and promotion.",
+          "options": {
+            "文体": "商业",
+            "语气": "鼓励",
+            "受众": "消费者",
+            "长度": "中等",
+            "目的": "销售"
+          }
+        },
+        "c10": {
+          "name": "Social Media Post",
+          "desc": "Lighthearted, humorous, and easy to spread, suitable for social media.",
+          "options": {
+            "文体": "非正式",
+            "语气": "幽默",
+            "受众": "普通读者",
+            "目的": "娱乐"
+          }
+        }
+      },
+      "marketing": {
+        "c1": {
+          "name": "High Conversion Landing Page",
+          "desc": "Emphasizes value and urgency to maximize user conversion.",
+          "options": {
+            "平台": "网站",
+            "目标": "销售转化",
+            "CTA": "立即购买",
+            "情感": "紧迫感"
+          }
+        },
+        "c2": {
+          "name": "Brand Storytelling",
+          "desc": "Builds emotional connection and enhances brand awareness.",
+          "options": {
+            "平台": "博客",
+            "目标": "品牌认知",
+            "价值": "创新",
+            "情感": "信任"
+          }
+        },
+        "c3": {
+          "name": "Viral Social Media Post",
+          "desc": "Eye-catching and shareable, perfect for social media platforms.",
+          "options": {
+            "平台": "社交媒体",
+            "目标": "参与度",
+            "CTA": "了解更多",
+            "情感": "兴奋",
+            "价值": "创新"
+          }
+        },
+        "c4": {
+          "name": "Email Marketing Campaign",
+          "desc": "Personalized recommendations to improve user retention and repeat purchases.",
+          "options": {
+            "平台": "邮件",
+            "目标": "用户留存",
+            "CTA": "免费试用",
+            "情感": "归属感",
+            "价值": "节省成本"
+          }
+        },
+        "c5": {
+          "name": "SEO Optimization",
+          "desc": "Keyword optimization to improve search rankings and organic traffic.",
+          "options": {
+            "平台": "搜索引擎",
+            "目标": "用户获取",
+            "CTA": "立即注册",
+            "情感": "成就感",
+            "价值": "提高效率"
+          }
+        }
+      }
+    }
+  },
+  "enhancedResult": {
+    "title": "Enhanced Prompt",
+    "description": "A more specific and targeted prompt generated based on your selected enhancement options",
+    "translate": "Translate",
+    "translating": "Translating...",
+    "remainingCredits": "{credits} credits remaining",
+    "englishTip": "Tip: English prompts produce best results"
+  },
+  "aiEdit": {
+    "button": "AI Edit",
+    "title": "AI Edit Prompt",
+    "description": "Describe how you want to modify the prompt",
+    "instructionLabel": "Modification Instruction",
+    "placeholder": "e.g., Make it more detailed, add more creative elements, simplify the language...",
+    "currentPrompt": "Current Prompt:",
+    "cancel": "Cancel",
+    "apply": "Apply AI Edit",
+    "editing": "AI Editing...",
+    "error": "Failed to edit prompt. Please try again.",
+    "revert": "Revert to previous result",
+    "quickEditLabel": "Quick Edit",
+    "quickOptions": {
+      "addDetail": "Add more visual details and descriptions",
+      "addDetailLabel": "Add Detail",
+      "simplify": "Simplify and make the prompt more concise",
+      "simplifyLabel": "Simplify",
+      "moreArtistic": "Make it more artistic and creative with unique visual style",
+      "moreArtisticLabel": "More Artistic",
+      "moreRealistic": "Make it more realistic and photographic",
+      "moreRealisticLabel": "More Realistic",
+      "changeLighting": "Enhance the lighting description with dramatic or cinematic lighting",
+      "changeLightingLabel": "Better Lighting",
+      "focusSubject": "Focus more on the main subject and reduce background details",
+      "focusSubjectLabel": "Focus Subject",
+      "changeComposition": "Improve the composition with better framing and perspective",
+      "changeCompositionLabel": "Better Composition",
+      "addMood": "Add emotional mood and atmosphere to the scene",
+      "addMoodLabel": "Add Mood"
+    },
+    "videoQuickOptions": {
+      "categoryCamera": "📹 Camera & Movement",
+      "categoryVisual": "🎨 Visual Style",
+      "categoryTiming": "⏱️ Timing & Content",
+      "addMotion": "Add more motion and movement details, describe camera movements and subject actions",
+      "addMotionLabel": "Add Motion",
+      "cinematic": "Make it more cinematic with professional camera work, dramatic lighting, and film-like quality",
+      "cinematicLabel": "More Cinematic",
+      "addTransition": "Add smooth transitions and pacing descriptions between scenes",
+      "addTransitionLabel": "Add Transitions",
+      "enhanceAtmosphere": "Enhance the atmosphere and mood with emotional tone and ambient details",
+      "enhanceAtmosphereLabel": "Enhance Atmosphere",
+      "improveCamera": "Improve camera descriptions: add angles, movements (pan, tilt, dolly, zoom), and shot types",
+      "improveCameraLabel": "Better Camera Work",
+      "addTiming": "Add timing and pacing elements, describe duration, speed changes, and rhythm",
+      "addTimingLabel": "Add Timing",
+      "simplify": "Simplify and make the video prompt more concise while keeping key elements",
+      "simplifyLabel": "Simplify",
+      "addDetail": "Add more visual details: colors, textures, lighting, environment, and subject descriptions",
+      "addDetailLabel": "Add Detail"
+    },
+    "videoPromptQuickOptions": {
+      "improveCamera": "Keep the original scene description. Change camera movement to: camera slowly follows the subject in a 180-degree arc shot, starting from the front and circling around to the back. Preserve all original character, scene, and action descriptions.",
+      "improveCameraLabel": "180° Arc Shot",
+      "cinematic": "Keep original scene and action descriptions. Add these cinematic elements: soft golden hour backlighting, shallow depth of field with blurred background, 35mm film lens texture, subtle lens flare. Do not remove the core content.",
+      "cinematicLabel": "Film Look",
+      "addAudio": "Keep original description. Add audio at the end: natural ambient sounds (wind, footsteps), soft piano background music synchronized with the visual rhythm.",
+      "addAudioLabel": "Add Audio",
+      "enhanceMood": "Keep original scene description. Enhance atmosphere: add warm color tones, floating dust particles in the air, soft shadow transitions, creating a warm and healing emotional mood. Keep original characters and actions unchanged.",
+      "enhanceMoodLabel": "Warm Mood",
+      "addMotion": "Keep original description. Add specific motions to the subject: subtle head turns, nuanced eye movements, gentle finger touches, clothes and hair gently swaying in the breeze. Ensure these blend naturally with the original scene.",
+      "addMotionLabel": "Add Subtle Motion",
+      "changeStyle": "Keep original scene and actions. Change visual style to cyberpunk: neon pink-purple lighting, rainy reflective ground, holographic projections, slight film grain. Original core content must be preserved.",
+      "changeStyleLabel": "Cyberpunk",
+      "simplify": "Condense the prompt while keeping these core elements: 1. Main subject description 2. Key actions 3. Scene background 4. One primary camera movement. Remove redundant modifiers and output a concise version.",
+      "simplifyLabel": "Simplify",
+      "moreDetail": "Keep original description. Add these visual details: skin texture and sheen, eye color and sparkle, clothing fabric textures, decorative elements in the background, light reflections on surfaces. Do not change original action and camera descriptions.",
+      "moreDetailLabel": "Visual Details"
+    },
+    "generalQuickOptions": {
+      "expandDetail": "Expand and add more details, examples, and explanations to make the content more comprehensive",
+      "expandDetailLabel": "Expand Detail",
+      "simplify": "Simplify the content, use clearer and more concise language",
+      "simplifyLabel": "Simplify",
+      "moreProfessional": "Make the tone more professional and formal, suitable for business or academic contexts",
+      "moreProfessionalLabel": "More Professional",
+      "moreCasual": "Make the tone more casual and friendly, easier to understand",
+      "moreCasualLabel": "More Casual",
+      "addExamples": "Add practical examples and use cases to illustrate the points",
+      "addExamplesLabel": "Add Examples",
+      "improveStructure": "Improve the structure and organization, add clear headings and sections",
+      "improveStructureLabel": "Improve Structure",
+      "addSummary": "Add a summary or key takeaways at the beginning or end",
+      "addSummaryLabel": "Add Summary",
+      "moreCreative": "Make it more creative and engaging, add unique perspectives or ideas",
+      "moreCreativeLabel": "More Creative"
+    },
+    "writingQuickOptions": {
+      "moreCreative": "Make the writing prompt more creative and imaginative, add unique storytelling elements",
+      "moreCreativeLabel": "More Creative",
+      "addDetail": "Add more details about characters, settings, and plot points",
+      "addDetailLabel": "Add Details",
+      "enhanceTone": "Enhance the writing tone to be more engaging and compelling",
+      "enhanceToneLabel": "Enhance Tone",
+      "addConflict": "Add conflict, tension, or challenges to make the story more dramatic",
+      "addConflictLabel": "Add Conflict",
+      "addDialogue": "Add dialogue or character interactions to bring the scene to life",
+      "addDialogueLabel": "Add Dialogue",
+      "improveStructure": "Improve the narrative structure with better pacing and story arc",
+      "improveStructureLabel": "Better Structure",
+      "addEmotion": "Add more emotional depth and character feelings to the narrative",
+      "addEmotionLabel": "Add Emotion",
+      "simplify": "Simplify the prompt to be clearer and more focused",
+      "simplifyLabel": "Simplify"
+    },
+    "marketingQuickOptions": {
+      "morePersuasive": "Make the copy more persuasive with stronger calls-to-action and compelling benefits",
+      "morePersuasiveLabel": "More Persuasive",
+      "addEmotional": "Add emotional appeal and storytelling elements to connect with the audience",
+      "addEmotionalLabel": "Add Emotion",
+      "addUrgency": "Add urgency and scarcity elements to drive immediate action",
+      "addUrgencyLabel": "Add Urgency",
+      "focusBenefits": "Focus more on benefits rather than features, emphasize value proposition",
+      "focusBenefitsLabel": "Focus Benefits",
+      "addSocial": "Add social proof elements like testimonials, statistics, or case studies",
+      "addSocialLabel": "Add Social Proof",
+      "makeConcise": "Make it more concise and punchy for better engagement",
+      "makeConciseLabel": "Make Concise",
+      "addCTA": "Strengthen the call-to-action with clear and compelling next steps",
+      "addCTALabel": "Stronger CTA",
+      "optimizeSEO": "Optimize for SEO with relevant keywords while maintaining natural flow",
+      "optimizeSEOLabel": "Optimize SEO"
+    }
+  },
+  "generateText": {
+    "button": "Generate",
+    "buttonContent": "Generate Content",
+    "buttonImage": "Generate Image",
+    "title": "Generated Content",
+    "description": "Content generated based on the prompt above",
+    "generating": "Generating...",
+    "generatingImage": "Generating image...",
+    "pleaseWait": "Please wait a moment, the high-quality image is being created...",
+    "canContinueBrowsing": "You can continue reviewing your prompt while the image is being generated.",
+    "download": "Download",
+    "historyTitle": "Previous Result",
+    "copy": "Copy",
+    "latest": "Latest",
+    "translate": "Translate",
+    "translating": "Translating..."
+  },
+  "continueConversation": {
+    "button": "Continue",
+    "title": "Continue Conversation",
+    "description": "Enter your follow-up request to continue the conversation",
+    "inputLabel": "Your Request",
+    "placeholder": "e.g., Rewrite this as an academic paper format",
+    "quickOptions": "Quick Options",
+    "storyOptions": "Story Options",
+    "writingTools": "Writing Tools",
+    "options": {
+      "continueStory": "Continue the story from where it left off, maintaining the same tone and style",
+      "continueStoryLabel": "Continue Story",
+      "addPlotTwist": "Add an unexpected plot twist that changes the direction of the story",
+      "addPlotTwistLabel": "Plot Twist",
+      "developCharacter": "Develop the main character with more backstory, personality traits, and motivations",
+      "developCharacterLabel": "Develop Character",
+      "addDialogue": "Add engaging dialogue between characters to bring the scene to life",
+      "addDialogueLabel": "Add Dialogue",
+      "buildTension": "Build suspense and tension to create a more gripping narrative",
+      "buildTensionLabel": "Build Tension",
+      "writeEnding": "Write a satisfying conclusion that wraps up the story",
+      "writeEndingLabel": "Write Ending",
+      "academicPaper": "Rewrite this as an academic paper format",
+      "academicPaperLabel": "Academic Paper",
+      "expandDetails": "Expand and add more details",
+      "expandDetailsLabel": "Add Details",
+      "simplify": "Simplify the content for beginners",
+      "simplifyLabel": "Simplify",
+      "addExamples": "Add practical examples",
+      "addExamplesLabel": "Add Examples",
+      "createOutline": "Create a structured outline",
+      "createOutlineLabel": "Create Outline",
+      "makeProfessional": "Rewrite in a more professional and formal tone",
+      "makeProfessionalLabel": "Professional Tone",
+      "addActionItems": "Add actionable items and next steps",
+      "addActionItemsLabel": "Action Items",
+      "humanizeText": "Rewrite this text to sound more natural and human-like. Vary sentence structure and length, use more conversational language, add personal touches, avoid repetitive patterns, and make it less formulaic. The goal is to make the text undetectable by AI detection tools while preserving the original meaning and key points.",
+      "humanizeTextLabel": "Humanize Text"
+    },
+    "cancel": "Cancel",
+    "submit": "Continue",
+    "processing": "Processing...",
+    "error": "Failed to continue conversation. Please try again."
+  },
+  "generateImage": {
+    "title": "Generated Image",
+    "description": "Image generated based on the prompt above",
+    "edit": "Edit",
+    "editing": "Editing...",
+    "view": "View",
+    "download": "Download",
+    "deleteWarning": "⚠️ Please download your image soon. Generated images will be automatically deleted after 7 days."
+  },
+  "editImage": {
+    "title": "Edit Image",
+    "description": "Describe how you want to edit the image",
+    "promptLabel": "Edit Instruction",
+    "placeholder": "e.g., Add a sunset background, change the color to blue, add more details...",
+    "cancel": "Cancel",
+    "apply": "Apply Edit",
+    "editing": "Editing...",
+    "noImageUrl": "Image URL is required for editing. Please regenerate the image."
+  },
+  "imageSettings": {
+    "model": "Model",
+    "aspectRatio": "Aspect Ratio",
+    "format": "Format",
+    "edit": "Edit",
+    "editing": "Editing",
+    "copy": "Copy",
+    "copied": "Copied"
+  },
+  "videoSettings": {
+    "model": "Model",
+    "aspectRatio": "Aspect Ratio"
+  },
+  "generateVideo": {
+    "title": "Generated Video",
+    "description": "Video generated based on the prompt above",
+    "button": "Generate Video",
+    "generating": "Generating...",
+    "generatingVideo": "Generating video...",
+    "pleaseWait": "Please wait, video generation may take 2-3 minutes...",
+    "download": "Download",
+    "stillProcessing": "Video generation is still in progress. Please try again later.",
+    "expirationWarning": "Video Storage Notice",
+    "expirationMessage": "Video will be stored for {days} more day(s). Please download and save it promptly.",
+    "expired": "This video may have expired. Please download it if still available."
+  },
+  "errors": {
+    "insufficientCredits": "Insufficient credits. Required: {required} credits, Current balance: {current} credits. Please purchase more credits to continue."
+  }
+}
