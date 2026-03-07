@@ -1418,12 +1418,12 @@ export function PromptGenerator({
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl">
-      <div className="space-y-8">
+      <div className="space-y-6">
         {/* Header */}
         {!hideHeader && (
-          <div className="text-center space-y-4">
-            <h2 className="text-4xl font-bold tracking-tight">{t('title')}</h2>
-            <p className="text-muted-foreground text-lg">{t('subtitle')}</p>
+          <div className="text-center space-y-3">
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{t('title')}</h2>
+            <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto">{t('subtitle')}</p>
           </div>
         )}
 
@@ -1446,29 +1446,27 @@ export function PromptGenerator({
 
                 {/* Inline Presets */}
                 <div className="space-y-3">
-                  <Label className="inline-flex items-center gap-1 shrink-0 text-muted-foreground">
-                    <span className="bg-yellow-200 dark:bg-yellow-500/30 px-1.5 py-0.5 rounded text-yellow-800 dark:text-yellow-300 text-xs font-medium">
-                      ★
-                    </span>
+                  <Label className="inline-flex items-center gap-1.5 shrink-0 text-muted-foreground">
+                    <Sparkles className="size-3.5 text-amber-500" />
                     {t('enhancedOptions.recommendedCombinations', {
                       defaultValue: 'Recommended Presets',
                     })}
                   </Label>
                   <Tabs defaultValue="creative" className="w-full">
-                    <TabsList className="w-full">
-                      <TabsTrigger value="creative" className="flex-1">
+                    <TabsList className="w-full h-10">
+                      <TabsTrigger value="creative" className="flex-1 text-sm">
                         {t('enhancedOptions.creativeWritingPresets', {
                           defaultValue: 'Creative Writing',
                         })}
                       </TabsTrigger>
-                      <TabsTrigger value="business" className="flex-1">
+                      <TabsTrigger value="business" className="flex-1 text-sm">
                         {t('enhancedOptions.businessWritingPresets', {
                           defaultValue: 'Business Writing',
                         })}
                       </TabsTrigger>
                     </TabsList>
                     {(['creative', 'business'] as const).map((tab) => (
-                      <TabsContent key={tab} value={tab} className="grid grid-cols-2 gap-2 mt-2">
+                      <TabsContent key={tab} value={tab} className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 mt-3">
                         {Object.entries(
                           (messages as any)?.HomePage?.promptGenerator
                             ?.enhancedOptions?.combinations?.[category] || {}
@@ -1478,59 +1476,66 @@ export function PromptGenerator({
                               ? ['c1', 'c2', 'c3', 'c4', 'c5'].includes(key)
                               : ['c6', 'c7', 'c8', 'c9', 'c10'].includes(key)
                           )
-                          .map(([key, combo]: [string, any]) => (
-                            <div
-                              key={key}
-                              className={`relative rounded-lg border p-3 transition-all hover:border-primary/50 cursor-pointer ${appliedCombination === combo.name ? 'bg-primary/5 border-primary/30' : 'bg-muted/20'}`}
-                              onClick={() => {
-                                if (appliedCombination === combo.name) {
-                                  setAppliedCombination(null);
-                                  setAppliedCombinationKey(null);
-                                  setEnhancedOptions({});
-                                } else {
-                                  applyCombination(key, combo.name, combo.options);
-                                }
-                              }}
-                            >
-                              <div className="flex items-center justify-between gap-3">
-                                <div className="flex items-center gap-2">
-                                  {(() => {
-                                    const iconMap: Record<string, { icon: React.ElementType; color: string }> = {
-                                      c1: { icon: Sword, color: 'text-purple-500' },
-                                      c2: { icon: Rocket, color: 'text-blue-500' },
-                                      c3: { icon: Shield, color: 'text-amber-500' },
-                                      c4: { icon: Heart, color: 'text-rose-500' },
-                                      c5: { icon: Skull, color: 'text-slate-500' },
-                                      c6: { icon: Briefcase, color: 'text-sky-500' },
-                                      c7: { icon: GraduationCap, color: 'text-indigo-500' },
-                                      c8: { icon: FileText, color: 'text-teal-500' },
-                                      c9: { icon: Megaphone, color: 'text-orange-500' },
-                                      c10: { icon: Share2, color: 'text-pink-500' },
-                                    };
-                                    const entry = iconMap[key];
-                                    if (entry) {
-                                      const Icon = entry.icon;
-                                      return <Icon className={`size-4 shrink-0 ${entry.color}`} />;
-                                    }
-                                    return <Sparkles className="size-4 shrink-0 text-muted-foreground" />;
-                                  })()}
-                                  <span className="text-sm font-medium">
+                          .map(([key, combo]: [string, any]) => {
+                            const isSelected = appliedCombination === combo.name;
+                            const iconMap: Record<string, { icon: React.ElementType; color: string; bg: string }> = {
+                              c1: { icon: Sword, color: 'text-purple-500', bg: 'bg-purple-50 dark:bg-purple-500/10' },
+                              c2: { icon: Rocket, color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-500/10' },
+                              c3: { icon: Shield, color: 'text-amber-500', bg: 'bg-amber-50 dark:bg-amber-500/10' },
+                              c4: { icon: Heart, color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-500/10' },
+                              c5: { icon: Skull, color: 'text-slate-500', bg: 'bg-slate-50 dark:bg-slate-500/10' },
+                              c6: { icon: Briefcase, color: 'text-sky-500', bg: 'bg-sky-50 dark:bg-sky-500/10' },
+                              c7: { icon: GraduationCap, color: 'text-indigo-500', bg: 'bg-indigo-50 dark:bg-indigo-500/10' },
+                              c8: { icon: FileText, color: 'text-teal-500', bg: 'bg-teal-50 dark:bg-teal-500/10' },
+                              c9: { icon: Megaphone, color: 'text-orange-500', bg: 'bg-orange-50 dark:bg-orange-500/10' },
+                              c10: { icon: Share2, color: 'text-pink-500', bg: 'bg-pink-50 dark:bg-pink-500/10' },
+                            };
+                            const entry = iconMap[key];
+                            const Icon = entry?.icon || Sparkles;
+                            const iconColor = entry?.color || 'text-muted-foreground';
+                            const iconBg = entry?.bg || 'bg-muted/30';
+
+                            return (
+                              <div
+                                key={key}
+                                className={`relative rounded-xl border p-3 transition-all duration-200 cursor-pointer group ${
+                                  isSelected
+                                    ? 'bg-primary/5 border-primary/40 shadow-sm'
+                                    : 'bg-card hover:bg-accent/50 hover:border-border hover:shadow-sm'
+                                }`}
+                                onClick={() => {
+                                  if (isSelected) {
+                                    setAppliedCombination(null);
+                                    setAppliedCombinationKey(null);
+                                    setEnhancedOptions({});
+                                  } else {
+                                    applyCombination(key, combo.name, combo.options);
+                                  }
+                                }}
+                              >
+                                <div className="flex flex-col items-center gap-2 text-center">
+                                  <div className={`size-9 rounded-lg ${iconBg} flex items-center justify-center transition-transform duration-200 group-hover:scale-105`}>
+                                    <Icon className={`size-4.5 ${iconColor}`} />
+                                  </div>
+                                  <span className="text-xs font-medium leading-tight line-clamp-2">
                                     {combo.name}
                                   </span>
+                                  {isSelected && (
+                                    <div className="absolute top-1.5 right-1.5">
+                                      <Check className="size-3.5 text-primary" />
+                                    </div>
+                                  )}
                                 </div>
-                                {appliedCombination === combo.name && (
-                                  <Check className="size-4 text-primary shrink-0" />
-                                )}
                               </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                       </TabsContent>
                     ))}
                   </Tabs>
                 </div>
 
                 {/* Options Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="flex flex-wrap gap-x-4 gap-y-2.5">
                   {(() => {
                     const override = appliedCombinationKey
                       ? presetOptionOverrides[category]?.[appliedCombinationKey]
@@ -1552,8 +1557,8 @@ export function PromptGenerator({
                       : categoryOptionValues[category]?.[option] || [];
 
                     return (
-                      <div key={option} className="space-y-1.5">
-                        <Label className="text-sm">{optionLabel}</Label>
+                      <div key={option} className="flex items-center gap-2">
+                        <Label className="text-xs font-medium text-muted-foreground whitespace-nowrap">{optionLabel}</Label>
                         <Select
                           value={enhancedOptions[option] || undefined}
                           onValueChange={(value) => {
@@ -1564,7 +1569,7 @@ export function PromptGenerator({
                             }
                           }}
                         >
-                          <SelectTrigger>
+                          <SelectTrigger className="h-8 text-sm w-auto min-w-[120px]">
                             <SelectValue
                               placeholder={t('enhancedOptions.selectPlaceholder', {
                                 defaultValue: 'Select...',
@@ -1590,19 +1595,19 @@ export function PromptGenerator({
                 </div>
 
                 {/* Divider */}
-                <div className="border-t pt-4 space-y-3">
+                <div className="border-t pt-4 space-y-4">
                   {/* Input */}
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-3">
-                      <Label htmlFor="prompt-input">
+                  <div className="space-y-2.5">
+                    <div className="flex items-center gap-2">
+                      <Label htmlFor="prompt-input" className="text-sm font-medium">
                         {t('inputSection.inputLabel')}
                       </Label>
                       <Button
-                        variant="outline"
+                        variant="ghost"
                         size="sm"
                         onClick={handleGenerateIdeas}
                         disabled={isGeneratingIdeas}
-                        className="h-6 px-2.5 text-xs rounded-full bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100 hover:text-amber-800 dark:bg-amber-500/10 dark:border-amber-500/30 dark:text-amber-400 dark:hover:bg-amber-500/20"
+                        className="h-6 px-2 text-xs rounded-full text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-500/10 transition-colors duration-200"
                       >
                         {isGeneratingIdeas ? (
                           <Loader2 className="mr-1 size-3 animate-spin" />
@@ -1614,24 +1619,27 @@ export function PromptGenerator({
                         })}
                       </Button>
                     </div>
-                    <Input
-                      id="prompt-input"
-                      placeholder={
-                        t(`inputSection.placeholders.${category}` as any) ||
-                        t('inputSection.inputPlaceholder')
-                      }
-                      value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
-                          e.preventDefault();
-                          handleGenerate();
+                    <div className="relative">
+                      <Input
+                        id="prompt-input"
+                        placeholder={
+                          t(`inputSection.placeholders.${category}` as any) ||
+                          t('inputSection.inputPlaceholder')
                         }
-                      }}
-                    />
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            handleGenerate();
+                          }
+                        }}
+                        className="h-11 text-sm pr-4"
+                      />
+                    </div>
                     {/* AI Generated Ideas */}
                     {generatedIdeas.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 pt-1">
+                      <div className="flex flex-wrap gap-1.5 pt-0.5 animate-in fade-in-0 duration-300">
                         {generatedIdeas.map((idea, index) => (
                           <button
                             key={index}
@@ -1639,7 +1647,8 @@ export function PromptGenerator({
                               setInput(idea);
                               setGeneratedIdeas([]);
                             }}
-                            className="text-xs px-2 py-1 rounded-full bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200 transition-colors dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/30 dark:hover:bg-amber-500/20"
+                            className="text-xs px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200/80 transition-all duration-200 hover:shadow-sm cursor-pointer dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/30 dark:hover:bg-amber-500/20 animate-in slide-in-from-bottom-1 fade-in-0 duration-300"
+                            style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'both' }}
                           >
                             {idea}
                           </button>
@@ -1649,8 +1658,8 @@ export function PromptGenerator({
                   </div>
 
                   {/* Custom Enhancement Input */}
-                  <div className="space-y-2">
-                    <Label className="flex items-center gap-2">
+                  <div className="space-y-1.5">
+                    <Label className="flex items-center gap-2 text-sm font-medium">
                       {t('enhancedOptions.customLabel', {
                         defaultValue: 'Additional Custom Requirements',
                       })}
@@ -1665,7 +1674,7 @@ export function PromptGenerator({
                       })}
                       value={customEnhancement}
                       onChange={(e) => setCustomEnhancement(e.target.value)}
-                      className="min-h-[80px]"
+                      className="min-h-[72px] text-sm resize-none"
                     />
                   </div>
                 </div>
@@ -1677,7 +1686,7 @@ export function PromptGenerator({
                     disabled={
                       !input.trim() || isGenerating || isAiEditing
                     }
-                    className="flex-1 sm:flex-none"
+                    className="flex-1 sm:flex-none h-10 px-6 text-sm font-medium transition-all duration-200"
                   >
                     {isGenerating ? (
                       <>
@@ -1701,88 +1710,72 @@ export function PromptGenerator({
 
         {/* Result Section */}
         {(enhancedResult || isGenerating) && (
-          <Card>
-            <CardHeader>
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <Card className="animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>{t('enhancedResult.title')}</CardTitle>
-                  <CardDescription>
+                  <CardTitle className="text-lg">{t('enhancedResult.title')}</CardTitle>
+                  <CardDescription className="text-xs mt-0.5">
                     {t('enhancedResult.description')}
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-3">
               <div className="relative">
                 <Textarea
                   ref={resultTextareaRef}
                   readOnly={!isEditing}
                   value={enhancedResult}
                   onChange={(e) => setEnhancedResult(e.target.value)}
-                  className={`min-h-[120px] ${isEditing ? 'ring-2 ring-primary bg-primary/5' : ''} ${isGenerating ? 'ring-2 ring-primary/50' : ''}`}
+                  className={`min-h-[140px] text-sm leading-relaxed transition-all duration-200 ${isEditing ? 'ring-2 ring-primary bg-primary/5' : ''} ${isGenerating && enhancedResult ? 'ring-1 ring-primary/30' : ''}`}
                 />
                 {isGenerating && !enhancedResult && (
-                  <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center bg-background/80 rounded-md p-4">
-                    <span className="text-primary font-semibold text-lg animate-pulse">
-                      {isAiEditing
-                        ? t('aiEdit.editing', {
-                            defaultValue: 'AI Editing...',
-                          })
-                        : generationStage === 'analyzing'
-                          ? t('inputSection.analyzing', {
-                              defaultValue: 'Analyzing...',
-                            })
-                          : t('inputSection.generating', {
-                              defaultValue: 'Generating...',
-                            })}
-                    </span>
+                  <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center bg-background/80 backdrop-blur-[1px] rounded-md p-4">
+                    <div className="flex flex-col items-center gap-2">
+                      <Loader2 className="size-6 text-primary animate-spin" />
+                      <span className="text-sm font-medium text-muted-foreground">
+                        {isAiEditing
+                          ? t('aiEdit.editing', { defaultValue: 'AI Editing...' })
+                          : generationStage === 'analyzing'
+                            ? t('inputSection.analyzing', { defaultValue: 'Analyzing...' })
+                            : t('inputSection.generating', { defaultValue: 'Generating...' })}
+                      </span>
+                    </div>
                   </div>
                 )}
               </div>
-              <div className="grid grid-cols-1 sm:flex sm:items-center sm:justify-end gap-2">
-                {/* Translate 下拉菜单 */}
+              <div className="flex flex-wrap items-center justify-end gap-1.5">
+                {/* Translate */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
-                      disabled={
-                        !enhancedResult.trim() || isGenerating || isTranslating
-                      }
-                      className={`h-9 px-2 sm:px-3 w-full sm:w-auto ${
-                        isTranslating
-                          ? 'text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100'
-                          : ''
-                      } disabled:opacity-50`}
+                      disabled={!enhancedResult.trim() || isGenerating || isTranslating}
+                      className={`h-8 px-2.5 text-xs ${
+                        isTranslating ? 'text-blue-600 bg-blue-50 dark:bg-blue-500/10' : ''
+                      }`}
                     >
                       {isTranslating ? (
-                        <>
-                          <Loader2 className="size-4 text-blue-600 animate-spin" />
-                          <span className="text-sm text-blue-600 hidden sm:inline ml-2">
-                            {t('enhancedResult.translating', {
-                              defaultValue: 'Translating...',
-                            })}
-                          </span>
-                        </>
+                        <Loader2 className="size-3.5 animate-spin" />
                       ) : (
                         <>
-                          <Globe className="size-4 shrink-0" />
-                          <span className="text-sm truncate ml-1 sm:ml-2">
-                            {t('enhancedResult.translate', {
-                              defaultValue: 'Translate',
-                            })}
+                          <Globe className="size-3.5" />
+                          <span className="ml-1.5 hidden sm:inline">
+                            {t('enhancedResult.translate', { defaultValue: 'Translate' })}
                           </span>
-                          <ChevronDown className="size-3 ml-0.5 sm:ml-1 shrink-0" />
+                          <ChevronDown className="size-3 ml-0.5" />
                         </>
                       )}
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-40">
+                  <DropdownMenuContent align="end" className="w-36">
                     {translateLanguages.map((lang) => (
                       <DropdownMenuItem
                         key={lang.value}
                         onClick={() => handleTranslate(lang.value)}
-                        className="cursor-pointer"
+                        className="cursor-pointer text-sm"
                       >
                         {lang.label}
                       </DropdownMenuItem>
@@ -1790,109 +1783,87 @@ export function PromptGenerator({
                   </DropdownMenuContent>
                 </DropdownMenu>
 
-                {/* AI Editing 按钮 */}
+                {/* AI Edit */}
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
                   onClick={() => setIsAiEditingOpen(true)}
-                  disabled={
-                    !enhancedResult.trim() || isGenerating || isAiEditing
-                  }
-                  className={`h-9 px-2 sm:px-3 w-full sm:w-auto ${
-                    isAiEditing
-                      ? 'text-green-600 hover:text-green-700 bg-green-50 hover:bg-green-100'
-                      : ''
-                  } disabled:opacity-50`}
+                  disabled={!enhancedResult.trim() || isGenerating || isAiEditing}
+                  className={`h-8 px-2.5 text-xs ${
+                    isAiEditing ? 'text-violet-600 bg-violet-50 dark:bg-violet-500/10' : ''
+                  }`}
                 >
                   {isAiEditing ? (
-                    <>
-                      <Loader2 className="size-4 text-green-600 animate-spin" />
-                      <span className="text-sm text-green-600 hidden sm:inline ml-2">
-                        {t('aiEdit.editing', { defaultValue: 'AI Editing...' })}
-                      </span>
-                    </>
+                    <Loader2 className="size-3.5 animate-spin" />
                   ) : (
                     <>
-                      <Sparkles className="size-4 shrink-0" />
-                      <span className="text-sm truncate ml-1 sm:ml-2">
+                      <Sparkles className="size-3.5" />
+                      <span className="ml-1.5 hidden sm:inline">
                         {t('aiEdit.button', { defaultValue: 'AI Edit' })}
                       </span>
                     </>
                   )}
                 </Button>
 
-                {/* Edit 按钮 */}
+                {/* Edit */}
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
                   onClick={() => setIsEditing(!isEditing)}
-                  className={`h-9 px-2 sm:px-3 w-full sm:w-auto ${isEditing ? 'text-primary hover:text-primary/90' : ''}`}
+                  className={`h-8 px-2.5 text-xs ${isEditing ? 'text-primary bg-primary/5' : ''}`}
                 >
-                  <Edit2
-                    className={`size-4 shrink-0 ${isEditing ? 'text-primary' : ''}`}
-                  />
-                  <span className="text-sm truncate ml-1 sm:ml-2">
+                  <Edit2 className="size-3.5" />
+                  <span className="ml-1.5 hidden sm:inline">
                     {isEditing
                       ? t('imageSettings.editing', { defaultValue: 'Editing' })
                       : t('imageSettings.edit', { defaultValue: 'Edit' })}
                   </span>
                 </Button>
 
-                {/* Copy 按钮 */}
+                {/* Copy */}
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
-                  className="h-9 px-2 sm:px-3 w-full sm:w-auto"
+                  className="h-8 px-2.5 text-xs"
                   onClick={() => handleCopy(enhancedResult)}
                 >
                   {isCopied ? (
-                    <span className="text-sm font-medium text-green-600">
-                      {t('imageSettings.copied', { defaultValue: 'Copied' })}
-                    </span>
+                    <>
+                      <Check className="size-3.5 text-green-600" />
+                      <span className="ml-1.5 text-green-600 hidden sm:inline">
+                        {t('imageSettings.copied', { defaultValue: 'Copied' })}
+                      </span>
+                    </>
                   ) : (
                     <>
-                      <Copy className="size-4 shrink-0" />
-                      <span className="text-sm truncate ml-1 sm:ml-2">
+                      <Copy className="size-3.5" />
+                      <span className="ml-1.5 hidden sm:inline">
                         {t('imageSettings.copy', { defaultValue: 'Copy' })}
                       </span>
                     </>
                   )}
                 </Button>
 
-                {/* Generate Content 按钮 */}
+                <div className="w-px h-5 bg-border mx-0.5 hidden sm:block" />
+
+                {/* Generate Content */}
                 <Button
-                  variant="outline"
                   size="sm"
                   onClick={handleGenerateText}
                   disabled={
-                    !enhancedResult.trim() ||
-                    isGenerating ||
-                    isAiEditing ||
-                    isGeneratingText
+                    !enhancedResult.trim() || isGenerating || isAiEditing || isGeneratingText
                   }
-                  className={`h-9 px-2 sm:px-3 w-full sm:w-auto ${
-                    isGeneratingText
-                      ? 'text-green-600 hover:text-green-700 bg-green-50 hover:bg-green-100'
-                      : ''
-                  } disabled:opacity-50`}
+                  className="h-8 px-3 text-xs font-medium transition-all duration-200"
                 >
                   {isGeneratingText ? (
                     <>
-                      <Loader2 className="size-4 mr-2 text-green-600 animate-spin" />
-                      <span className="text-sm text-green-600">
-                        {t('generateText.generating', {
-                          defaultValue: 'Generating...',
-                        })}
-                      </span>
+                      <Loader2 className="size-3.5 mr-1.5 animate-spin" />
+                      {t('generateText.generating', { defaultValue: 'Generating...' })}
                     </>
                   ) : (
                     <>
-                      <Wand2 className="size-4 mr-2" />
-                      <span className="text-sm">
-                        {t('generateText.buttonContent', {
-                          defaultValue: 'Generate Content',
-                        })}
-                      </span>
+                      <Wand2 className="size-3.5 mr-1.5" />
+                      {t('generateText.buttonContent', { defaultValue: 'Generate Content' })}
                     </>
                   )}
                 </Button>
@@ -1901,13 +1872,13 @@ export function PromptGenerator({
           </Card>
         )}
 
-        {/* Generated Text History Section - 显示之前生成的文本历史记录 */}
+        {/* Generated Text History Section */}
         {generatedTextHistory.length > 0 &&
           generatedTextHistory.map((historyText, index) => (
-            <Card key={`history-${index}`} className="opacity-75 border-dashed">
-              <CardHeader className="pb-2">
+            <Card key={`history-${index}`} className="opacity-60 border-dashed hover:opacity-80 transition-opacity duration-200">
+              <CardHeader className="pb-2 py-3">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-base text-muted-foreground">
+                  <CardTitle className="text-sm text-muted-foreground">
                     {t('generateText.historyTitle', {
                       defaultValue: 'Previous Result',
                     })}{' '}
@@ -1916,18 +1887,16 @@ export function PromptGenerator({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-7 px-2 text-muted-foreground hover:text-foreground"
+                    className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground"
                     onClick={() => handleCopyGeneratedText(historyText)}
                   >
-                    <Copy className="size-3.5 mr-1" />
-                    <span className="text-xs">
-                      {t('generateText.copy', { defaultValue: 'Copy' })}
-                    </span>
+                    <Copy className="size-3 mr-1" />
+                    {t('generateText.copy', { defaultValue: 'Copy' })}
                   </Button>
                 </div>
               </CardHeader>
-              <CardContent>
-                <div className="max-h-[300px] overflow-y-auto p-4 border rounded-lg bg-muted/30">
+              <CardContent className="pt-0">
+                <div className="max-h-[250px] overflow-y-auto p-4 border rounded-lg bg-muted/20">
                   <div className="max-w-none prose prose-sm dark:prose-invert">
                     <ReactMarkdown
                       remarkPlugins={[remarkGfm]}
@@ -2006,26 +1975,26 @@ export function PromptGenerator({
         {/* Generated Text Result Section */}
         {(generatedText || isGeneratingText || isContinuing) && (
             <Card
-              className={
-                generatedTextHistory.length > 0 ? 'ring-2 ring-primary/30' : ''
-              }
+              className={`animate-in fade-in-0 slide-in-from-bottom-2 duration-300 ${
+                generatedTextHistory.length > 0 ? 'ring-1 ring-primary/20' : ''
+              }`}
             >
-              <CardHeader>
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
                   <div>
                     <div className="flex items-center gap-2">
-                      <CardTitle>
+                      <CardTitle className="text-lg">
                         {t('generateText.title', {
                           defaultValue: 'Generated Content',
                         })}
                       </CardTitle>
                       {generatedTextHistory.length > 0 && (
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
                           {t('generateText.latest', { defaultValue: 'Latest' })}
                         </Badge>
                       )}
                     </div>
-                    <CardDescription>
+                    <CardDescription className="text-xs mt-0.5">
                       {t('generateText.description', {
                         defaultValue:
                           'Content generated based on the prompt above',
@@ -2034,11 +2003,11 @@ export function PromptGenerator({
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3">
                 <div className="relative">
                   <div
                     ref={generatedTextRef}
-                    className={`min-h-[120px] max-h-[600px] overflow-y-auto p-6 border rounded-lg bg-background ${isGeneratingText ? 'ring-2 ring-primary/50' : ''}`}
+                    className={`min-h-[140px] max-h-[600px] overflow-y-auto p-5 border rounded-lg bg-background transition-all duration-200 ${isGeneratingText ? 'ring-1 ring-primary/30' : ''}`}
                   >
                     {generatedText ? (
                       <div className="max-w-none">
@@ -2168,63 +2137,59 @@ export function PromptGenerator({
                     ) : null}
                   </div>
                   {(isGeneratingText || isContinuing) && !generatedText && (
-                    <div className="absolute inset-0 pointer-events-none flex items-center justify-center bg-background/80 rounded-md">
-                      <span className="text-primary font-semibold text-lg animate-pulse">
-                        {t('generateText.generating', {
-                          defaultValue: 'Generating...',
-                        })}
-                      </span>
+                    <div className="absolute inset-0 pointer-events-none flex items-center justify-center bg-background/80 backdrop-blur-[1px] rounded-md">
+                      <div className="flex flex-col items-center gap-2">
+                        <Loader2 className="size-6 text-primary animate-spin" />
+                        <span className="text-sm font-medium text-muted-foreground">
+                          {t('generateText.generating', {
+                            defaultValue: 'Generating...',
+                          })}
+                        </span>
+                      </div>
                     </div>
                   )}
                 </div>
-                <div className="grid grid-cols-1 sm:flex sm:flex-wrap sm:items-center sm:justify-end gap-2">
+                <div className="flex flex-wrap items-center justify-end gap-1.5">
                   {/* 翻译按钮 */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
-                        variant="outline"
+                        variant="ghost"
                         size="sm"
                         disabled={
                           !generatedText.trim() ||
                           isGeneratingText ||
                           isTranslatingGeneratedText
                         }
-                        className={`h-9 px-3 ${
+                        className={`h-8 px-2.5 text-xs ${
                           isTranslatingGeneratedText
-                            ? 'text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100'
+                            ? 'text-blue-600 bg-blue-50 dark:bg-blue-500/10'
                             : ''
-                        } disabled:opacity-50`}
+                        }`}
                       >
                         {isTranslatingGeneratedText ? (
-                          <>
-                            <Loader2 className="size-4 mr-2 text-blue-600 animate-spin" />
-                            <span className="text-sm text-blue-600">
-                              {t('generateText.translating', {
-                                defaultValue: 'Translating...',
-                              })}
-                            </span>
-                          </>
+                          <Loader2 className="size-3.5 animate-spin" />
                         ) : (
                           <>
-                            <Globe className="size-4 mr-2" />
-                            <span className="text-sm">
+                            <Globe className="size-3.5" />
+                            <span className="ml-1.5 hidden sm:inline">
                               {t('generateText.translate', {
                                 defaultValue: 'Translate',
                               })}
                             </span>
-                            <ChevronDown className="size-4 ml-1" />
+                            <ChevronDown className="size-3 ml-0.5" />
                           </>
                         )}
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-40">
+                    <DropdownMenuContent align="end" className="w-36">
                       {translateLanguages.map((lang) => (
                         <DropdownMenuItem
                           key={lang.value}
                           onClick={() =>
                             handleTranslateGeneratedText(lang.value)
                           }
-                          className="cursor-pointer"
+                          className="cursor-pointer text-sm"
                         >
                           {lang.label}
                         </DropdownMenuItem>
@@ -2232,68 +2197,69 @@ export function PromptGenerator({
                     </DropdownMenuContent>
                   </DropdownMenu>
                   <Button
-                    variant="outline"
+                    variant="ghost"
                     size="sm"
-                    className="h-9 px-3"
+                    className="h-8 px-2.5 text-xs"
                     onClick={() => handleCopyGeneratedText(generatedText)}
                   >
                     {isGeneratedTextCopied ? (
-                      <span className="text-sm font-medium text-green-600">
-                        Copied
-                      </span>
+                      <>
+                        <Check className="size-3.5 text-green-600" />
+                        <span className="ml-1.5 text-green-600 hidden sm:inline">Copied</span>
+                      </>
                     ) : (
                       <>
-                        <Copy className="size-4 mr-2" />
-                        <span className="text-sm">Copy</span>
+                        <Copy className="size-3.5" />
+                        <span className="ml-1.5 hidden sm:inline">Copy</span>
                       </>
                     )}
                   </Button>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm" className="h-9 px-3">
-                        <Download className="size-4 mr-2" />
-                        <span className="text-sm">
+                      <Button variant="ghost" size="sm" className="h-8 px-2.5 text-xs">
+                        <Download className="size-3.5" />
+                        <span className="ml-1.5 hidden sm:inline">
                           {t('generateText.download', {
                             defaultValue: 'Download',
                           })}
                         </span>
-                        <ChevronDown className="size-4 ml-1" />
+                        <ChevronDown className="size-3 ml-0.5" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem
                         onClick={() => handleDownloadMD(generatedText)}
+                        className="cursor-pointer text-sm"
                       >
-                        <span className="flex items-center gap-2">
-                          📝 Markdown (.md)
-                        </span>
+                        <FileText className="size-3.5 mr-2" />
+                        Markdown (.md)
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => handleDownloadDOCX(generatedText)}
+                        className="cursor-pointer text-sm"
                       >
-                        <span className="flex items-center gap-2">
-                          📃 Word (.docx)
-                        </span>
+                        <FileText className="size-3.5 mr-2" />
+                        Word (.docx)
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
+
+                  <div className="w-px h-5 bg-border mx-0.5 hidden sm:block" />
+
                   <Button
-                    variant="outline"
                     size="sm"
-                    className="h-9 px-3"
+                    className="h-8 px-3 text-xs font-medium"
                     onClick={() => setIsContinueDialogOpen(true)}
                     disabled={isContinuing}
                   >
                     {isContinuing ? (
-                      <Loader2 className="size-4 mr-2 animate-spin" />
+                      <Loader2 className="size-3.5 mr-1.5 animate-spin" />
                     ) : (
-                      <MessageSquare className="size-4 mr-2" />
+                      <MessageSquare className="size-3.5 mr-1.5" />
                     )}
-                    <span className="text-sm">
-                      {t('continueConversation.button', {
-                        defaultValue: 'Continue',
-                      })}
-                    </span>
+                    {t('continueConversation.button', {
+                      defaultValue: 'Continue',
+                    })}
                   </Button>
                 </div>
               </CardContent>

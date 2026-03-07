@@ -12,7 +12,13 @@
       "Bash(python cleanup8.py)",
       "Bash(ls -1 cleanup*.py)",
       "Bash(rm cleanup.py cleanup2.py cleanup3.py cleanup4.py cleanup5.py cleanup6.py cleanup7.py cleanup8.py)",
-      "Bash(rm src/actions/save-image-to-prompt.ts src/actions/save-describe-image.ts src/actions/save-video-to-prompt.ts src/actions/get-daily-usage.ts src/app/api/generate-nano-banana-edit/route.ts src/app/api/storage/upload-video/route.ts src/app/api/storage/delete-video/route.ts src/app/api/storage/route.ts src/components/daily-usage-badge.tsx src/components/ui/breadcrumb.tsx src/components/ui/progress.tsx)"
+      "Bash(rm src/actions/save-image-to-prompt.ts src/actions/save-describe-image.ts src/actions/save-video-to-prompt.ts src/actions/get-daily-usage.ts src/app/api/generate-nano-banana-edit/route.ts src/app/api/storage/upload-video/route.ts src/app/api/storage/delete-video/route.ts src/app/api/storage/route.ts src/components/daily-usage-badge.tsx src/components/ui/breadcrumb.tsx src/components/ui/progress.tsx)",
+      "Bash(python .claude/skills/ui-ux-pro-max/scripts/search.py \"SaaS writing tool creative\" --domain product)",
+      "Bash(python .claude/skills/ui-ux-pro-max/scripts/search.py \"minimalism flat modern clean\" --domain style)",
+      "Bash(PYTHONIOENCODING=utf-8 python .claude/skills/ui-ux-pro-max/scripts/search.py \"minimalism flat modern clean\" --domain style)",
+      "Bash(PYTHONIOENCODING=utf-8 python .claude/skills/ui-ux-pro-max/scripts/search.py \"saas creative tool\" --domain color)",
+      "Bash(PYTHONIOENCODING=utf-8 python .claude/skills/ui-ux-pro-max/scripts/search.py \"modern professional\" --domain typography)",
+      "Bash(PYTHONIOENCODING=utf-8 python .claude/skills/ui-ux-pro-max/scripts/search.py \"animation accessibility\" --domain ux)"
     ]
   }
 }
