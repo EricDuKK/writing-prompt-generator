@@ -27,8 +27,6 @@ export default function WritingPromptsPage() {
         {/* Prompt Generator Tool */}
         <section className="container mx-auto px-4 pb-8">
           <PromptGenerator
-            defaultCategory="writing"
-            hideCategorySelector={true}
             hideHeader={true}
           />
         </section>

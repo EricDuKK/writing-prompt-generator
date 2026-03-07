@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3:*)",
+      "Bash(python cleanup2.py)",
+      "Bash(python cleanup3.py)",
+      "Bash(python cleanup4.py)",
+      "Bash(python cleanup5.py)",
+      "Bash(python cleanup6.py)",
+      "Bash(npx tsc --noEmit)",
+      "Bash(python cleanup7.py)",
+      "Bash(python cleanup8.py)",
+      "Bash(ls -1 cleanup*.py)",
+      "Bash(rm cleanup.py cleanup2.py cleanup3.py cleanup4.py cleanup5.py cleanup6.py cleanup7.py cleanup8.py)",
+      "Bash(rm src/actions/save-image-to-prompt.ts src/actions/save-describe-image.ts src/actions/save-video-to-prompt.ts src/actions/get-daily-usage.ts src/app/api/generate-nano-banana-edit/route.ts src/app/api/storage/upload-video/route.ts src/app/api/storage/delete-video/route.ts src/app/api/storage/route.ts src/components/daily-usage-badge.tsx src/components/ui/breadcrumb.tsx src/components/ui/progress.tsx)"
+    ]
+  }
+}
