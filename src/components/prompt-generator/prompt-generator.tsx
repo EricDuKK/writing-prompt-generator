@@ -64,6 +64,7 @@ import {
 } from 'lucide-react';
 import { Download } from 'lucide-react';
 import { useLocale, useMessages, useTranslations } from '@/i18n/next-intl-shim';
+import { notifyCreditsUpdated } from '@/components/auth/credit-badge';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -324,8 +325,14 @@ export function PromptGenerator({
       });
 
       if (!response.ok) {
+        if (response.status === 402) {
+          const data = await response.json();
+          alert(data.error || 'Insufficient credits. Please sign in or upgrade.');
+          return;
+        }
         throw new Error('Failed to generate ideas');
       }
+      notifyCreditsUpdated();
 
       // Stream ideas one by one
       if (response.body) {
@@ -397,6 +404,11 @@ export function PromptGenerator({
       });
 
       if (!response.ok) {
+        if (response.status === 402) {
+          const data = await response.json();
+          alert(data.error || 'Insufficient credits. Please sign in or upgrade.');
+          return;
+        }
         try {
           const errorData = await response.json();
           throw new Error(errorData.error || 'Failed to generate prompt');
@@ -405,6 +417,7 @@ export function PromptGenerator({
           throw new Error('Failed to generate prompt');
         }
       }
+      notifyCreditsUpdated();
 
       const contentType = response.headers.get('content-type');
       const isStreaming =
@@ -929,8 +942,14 @@ export function PromptGenerator({
       });
 
       if (!response.ok) {
+        if (response.status === 402) {
+          const data = await response.json();
+          alert(data.error || 'Insufficient credits.');
+          return;
+        }
         throw new Error('Continue conversation failed');
       }
+      notifyCreditsUpdated();
 
       const reader = response.body?.getReader();
       if (!reader) {
@@ -1017,9 +1036,15 @@ export function PromptGenerator({
       });
 
       if (!response.ok) {
+        if (response.status === 402) {
+          const data = await response.json();
+          alert(data.error || 'Insufficient credits.');
+          return;
+        }
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || 'Failed to translate prompt');
       }
+      notifyCreditsUpdated();
 
       // 流式读取翻译结果
       const reader = response.body?.getReader();
@@ -1098,9 +1123,15 @@ export function PromptGenerator({
       });
 
       if (!response.ok) {
+        if (response.status === 402) {
+          const data = await response.json();
+          alert(data.error || 'Insufficient credits.');
+          return;
+        }
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || 'Failed to translate text');
       }
+      notifyCreditsUpdated();
 
       // 流式读取翻译结果
       const reader = response.body?.getReader();
@@ -1168,6 +1199,11 @@ export function PromptGenerator({
       });
 
       if (!response.ok) {
+        if (response.status === 402) {
+          const data = await response.json();
+          alert(data.error || 'Insufficient credits.');
+          return;
+        }
         try {
           const errorData = await response.json();
           throw new Error(errorData.error || 'Failed to generate text');
@@ -1176,6 +1212,7 @@ export function PromptGenerator({
           throw new Error('Failed to generate text');
         }
       }
+      notifyCreditsUpdated();
 
       // Stream the text response
       if (response.body) {
@@ -1291,8 +1328,14 @@ export function PromptGenerator({
       });
 
       if (!response.ok) {
+        if (response.status === 402) {
+          const data = await response.json();
+          alert(data.error || 'Insufficient credits.');
+          return;
+        }
         throw new Error('Failed to edit prompt');
       }
+      notifyCreditsUpdated();
 
       const contentType = response.headers.get('content-type');
       const isStreaming = contentType?.includes('text/event-stream');

@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server';
+import { useCredits } from '@/lib/credits';
 
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const MODEL = 'google/gemini-2.5-flash';
@@ -140,6 +141,12 @@ function createStreamResponse(response: Response): Response {
 
 export async function POST(req: NextRequest) {
   try {
+    // Credit check
+    const creditResult = await useCredits('generate-prompt');
+    if (!creditResult.ok) {
+      return NextResponse.json({ error: creditResult.error }, { status: 402 });
+    }
+
     const body = await req.json();
     const {
       input,

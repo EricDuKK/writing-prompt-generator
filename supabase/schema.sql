@@ -1,0 +1,188 @@
+-- ============================================
+-- Writing Prompt Generator - Credit System Schema
+-- ============================================
+
+-- 1. User profiles (synced from Supabase Auth)
+create table if not exists public.profiles (
+  id uuid references auth.users on delete cascade primary key,
+  email text,
+  plan text not null default 'free' check (plan in ('free', 'basic', 'pro', 'power')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+-- 2. Credits table
+create table if not exists public.credits (
+  user_id uuid references public.profiles(id) on delete cascade primary key,
+  balance int not null default 20,
+  last_reset_date date not null default current_date,
+  created_at timestamptz not null default now()
+);
+
+-- 3. Usage log
+create table if not exists public.usage_log (
+  id bigint generated always as identity primary key,
+  user_id uuid references public.profiles(id) on delete cascade not null,
+  action text not null,
+  credits_used int not null,
+  created_at timestamptz not null default now()
+);
+
+-- Index for fast lookups
+create index if not exists idx_usage_log_user_date on public.usage_log(user_id, created_at);
+
+-- ============================================
+-- Functions
+-- ============================================
+
+-- Auto-create profile + credits on user signup
+create or replace function public.handle_new_user()
+returns trigger as $$
+begin
+  insert into public.profiles (id, email)
+  values (new.id, new.email);
+
+  insert into public.credits (user_id, balance, last_reset_date)
+  values (new.id, 20, current_date);
+
+  return new;
+end;
+$$ language plpgsql security definer;
+
+-- Trigger on auth.users insert
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
+
+-- Check and deduct credits (atomic operation)
+-- Returns remaining balance, or -1 if insufficient
+create or replace function public.use_credits(
+  p_user_id uuid,
+  p_action text,
+  p_cost int
+)
+returns int as $$
+declare
+  v_plan text;
+  v_daily_limit int;
+  v_balance int;
+  v_last_reset date;
+begin
+  -- Get user plan
+  select plan into v_plan from public.profiles where id = p_user_id;
+  if not found then return -1; end if;
+
+  -- Determine daily limit based on plan
+  v_daily_limit := case v_plan
+    when 'free' then 20
+    when 'basic' then 100
+    when 'pro' then 500
+    when 'power' then 999999
+    else 20
+  end;
+
+  -- Lock the credits row
+  select balance, last_reset_date into v_balance, v_last_reset
+  from public.credits
+  where user_id = p_user_id
+  for update;
+
+  if not found then
+    -- Create credits row if missing
+    insert into public.credits (user_id, balance, last_reset_date)
+    values (p_user_id, v_daily_limit, current_date);
+    v_balance := v_daily_limit;
+    v_last_reset := current_date;
+  end if;
+
+  -- Reset if new day
+  if v_last_reset < current_date then
+    v_balance := v_daily_limit;
+    update public.credits
+    set balance = v_daily_limit, last_reset_date = current_date
+    where user_id = p_user_id;
+  end if;
+
+  -- Check sufficient balance
+  if v_balance < p_cost then
+    return -1;
+  end if;
+
+  -- Deduct
+  update public.credits
+  set balance = balance - p_cost
+  where user_id = p_user_id;
+
+  -- Log usage
+  insert into public.usage_log (user_id, action, credits_used)
+  values (p_user_id, p_action, p_cost);
+
+  return v_balance - p_cost;
+end;
+$$ language plpgsql security definer;
+
+-- Get current balance (with auto-reset)
+create or replace function public.get_credit_balance(p_user_id uuid)
+returns json as $$
+declare
+  v_plan text;
+  v_daily_limit int;
+  v_balance int;
+  v_last_reset date;
+begin
+  select plan into v_plan from public.profiles where id = p_user_id;
+  if not found then return json_build_object('balance', 0, 'daily_limit', 0, 'plan', 'free'); end if;
+
+  v_daily_limit := case v_plan
+    when 'free' then 20
+    when 'basic' then 100
+    when 'pro' then 500
+    when 'power' then 999999
+    else 20
+  end;
+
+  select balance, last_reset_date into v_balance, v_last_reset
+  from public.credits
+  where user_id = p_user_id;
+
+  if not found then
+    insert into public.credits (user_id, balance, last_reset_date)
+    values (p_user_id, v_daily_limit, current_date);
+    return json_build_object('balance', v_daily_limit, 'daily_limit', v_daily_limit, 'plan', v_plan);
+  end if;
+
+  -- Auto-reset on new day
+  if v_last_reset < current_date then
+    update public.credits
+    set balance = v_daily_limit, last_reset_date = current_date
+    where user_id = p_user_id;
+    v_balance := v_daily_limit;
+  end if;
+
+  return json_build_object('balance', v_balance, 'daily_limit', v_daily_limit, 'plan', v_plan);
+end;
+$$ language plpgsql security definer;
+
+-- ============================================
+-- Row Level Security
+-- ============================================
+
+alter table public.profiles enable row level security;
+alter table public.credits enable row level security;
+alter table public.usage_log enable row level security;
+
+-- Users can only read their own profile
+create policy "Users can view own profile"
+  on public.profiles for select
+  using (auth.uid() = id);
+
+-- Users can only read their own credits
+create policy "Users can view own credits"
+  on public.credits for select
+  using (auth.uid() = user_id);
+
+-- Users can only view their own usage
+create policy "Users can view own usage"
+  on public.usage_log for select
+  using (auth.uid() = user_id);
