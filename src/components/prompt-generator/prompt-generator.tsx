@@ -316,6 +316,7 @@ export function PromptGenerator({
         body: JSON.stringify({
           input,
           category,
+          preset: appliedCombination || undefined,
           enhancementOptions: translatedOptions,
           customEnhancement: customEnhancement.trim() || undefined,
           locale,
@@ -339,7 +340,6 @@ export function PromptGenerator({
 
   const handleGenerate = async () => {
     if (!input.trim()) return;
-    if (requireLogin()) return;
 
     setIsGenerating(true);
     setGenerationStage('analyzing');
@@ -1119,7 +1119,6 @@ export function PromptGenerator({
 
   const handleGenerateText = async () => {
     if (!enhancedResult.trim()) return;
-    if (requireLogin()) return;
 
     setIsGeneratingText(true);
     // Save current text to history before generating new text
@@ -1173,8 +1172,9 @@ export function PromptGenerator({
               if (data === '[DONE]') break;
               try {
                 const json = JSON.parse(data);
-                if (json.content) {
-                  accumulatedText += json.content;
+                const content = json.content || json.choices?.[0]?.delta?.content;
+                if (content) {
+                  accumulatedText += content;
                   setGeneratedText(accumulatedText);
                 }
               } catch {
@@ -1669,53 +1669,213 @@ export function PromptGenerator({
                   </Button>
                 </div>
 
-                {/* Generate Text Button */}
-                <div className="flex flex-wrap items-center justify-end gap-3 pt-4 border-t mt-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleGenerateText}
-                    disabled={
-                      !enhancedResult.trim() ||
-                      isGenerating ||
-                      isAiEditing ||
-                      isGeneratingText
-                    }
-                    className={`h-9 px-3 ${
-                      isGeneratingText
-                        ? 'text-green-600 hover:text-green-700 bg-green-50 hover:bg-green-100'
-                        : ''
-                    } disabled:opacity-50`}
-                  >
-                    {isGeneratingText ? (
-                      <>
-                        <Loader2 className="size-4 mr-2 text-green-600 animate-spin" />
-                        <span className="text-sm text-green-600">
-                          {t('generateText.generating', {
-                            defaultValue: 'Generating...',
-                          })}
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <Wand2 className="size-4 mr-2" />
-                        <span className="text-sm">
-                          {t('generateText.buttonContent', {
-                            defaultValue: 'Generate Content',
-                          })}
-                        </span>
-                        <span className="ml-1.5 px-1.5 py-0.5 text-[10px] font-semibold leading-none rounded bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 uppercase">
-                          Free
-                        </span>
-                      </>
-                    )}
-                  </Button>
-                </div>
             </CardContent>
           </Card>
         )}
 
 
+
+        {/* Result Section */}
+        {(enhancedResult || isGenerating) && (
+          <Card>
+            <CardHeader>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <CardTitle>{t('enhancedResult.title')}</CardTitle>
+                  <CardDescription>
+                    {t('enhancedResult.description')}
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="relative">
+                <Textarea
+                  ref={resultTextareaRef}
+                  readOnly={!isEditing}
+                  value={enhancedResult}
+                  onChange={(e) => setEnhancedResult(e.target.value)}
+                  className={`min-h-[120px] ${isEditing ? 'ring-2 ring-primary bg-primary/5' : ''} ${isGenerating ? 'ring-2 ring-primary/50' : ''}`}
+                />
+                {isGenerating && !enhancedResult && (
+                  <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center bg-background/80 rounded-md p-4">
+                    <span className="text-primary font-semibold text-lg animate-pulse">
+                      {isAiEditing
+                        ? t('aiEdit.editing', {
+                            defaultValue: 'AI Editing...',
+                          })
+                        : generationStage === 'analyzing'
+                          ? t('inputSection.analyzing', {
+                              defaultValue: 'Analyzing...',
+                            })
+                          : t('inputSection.generating', {
+                              defaultValue: 'Generating...',
+                            })}
+                    </span>
+                  </div>
+                )}
+              </div>
+              <div className="grid grid-cols-1 sm:flex sm:items-center sm:justify-end gap-2">
+                {/* Translate 下拉菜单 */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={
+                        !enhancedResult.trim() || isGenerating || isTranslating
+                      }
+                      className={`h-9 px-2 sm:px-3 w-full sm:w-auto ${
+                        isTranslating
+                          ? 'text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100'
+                          : ''
+                      } disabled:opacity-50`}
+                    >
+                      {isTranslating ? (
+                        <>
+                          <Loader2 className="size-4 text-blue-600 animate-spin" />
+                          <span className="text-sm text-blue-600 hidden sm:inline ml-2">
+                            {t('enhancedResult.translating', {
+                              defaultValue: 'Translating...',
+                            })}
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <Globe className="size-4 shrink-0" />
+                          <span className="text-sm truncate ml-1 sm:ml-2">
+                            {t('enhancedResult.translate', {
+                              defaultValue: 'Translate',
+                            })}
+                          </span>
+                          <ChevronDown className="size-3 ml-0.5 sm:ml-1 shrink-0" />
+                        </>
+                      )}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-40">
+                    {translateLanguages.map((lang) => (
+                      <DropdownMenuItem
+                        key={lang.value}
+                        onClick={() => handleTranslate(lang.value)}
+                        className="cursor-pointer"
+                      >
+                        {lang.label}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                {/* AI Editing 按钮 */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsAiEditingOpen(true)}
+                  disabled={
+                    !enhancedResult.trim() || isGenerating || isAiEditing
+                  }
+                  className={`h-9 px-2 sm:px-3 w-full sm:w-auto ${
+                    isAiEditing
+                      ? 'text-green-600 hover:text-green-700 bg-green-50 hover:bg-green-100'
+                      : ''
+                  } disabled:opacity-50`}
+                >
+                  {isAiEditing ? (
+                    <>
+                      <Loader2 className="size-4 text-green-600 animate-spin" />
+                      <span className="text-sm text-green-600 hidden sm:inline ml-2">
+                        {t('aiEdit.editing', { defaultValue: 'AI Editing...' })}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="size-4 shrink-0" />
+                      <span className="text-sm truncate ml-1 sm:ml-2">
+                        {t('aiEdit.button', { defaultValue: 'AI Edit' })}
+                      </span>
+                    </>
+                  )}
+                </Button>
+
+                {/* Edit 按钮 */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsEditing(!isEditing)}
+                  className={`h-9 px-2 sm:px-3 w-full sm:w-auto ${isEditing ? 'text-primary hover:text-primary/90' : ''}`}
+                >
+                  <Edit2
+                    className={`size-4 shrink-0 ${isEditing ? 'text-primary' : ''}`}
+                  />
+                  <span className="text-sm truncate ml-1 sm:ml-2">
+                    {isEditing
+                      ? t('imageSettings.editing', { defaultValue: 'Editing' })
+                      : t('imageSettings.edit', { defaultValue: 'Edit' })}
+                  </span>
+                </Button>
+
+                {/* Copy 按钮 */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-9 px-2 sm:px-3 w-full sm:w-auto"
+                  onClick={() => handleCopy(enhancedResult)}
+                >
+                  {isCopied ? (
+                    <span className="text-sm font-medium text-green-600">
+                      {t('imageSettings.copied', { defaultValue: 'Copied' })}
+                    </span>
+                  ) : (
+                    <>
+                      <Copy className="size-4 shrink-0" />
+                      <span className="text-sm truncate ml-1 sm:ml-2">
+                        {t('imageSettings.copy', { defaultValue: 'Copy' })}
+                      </span>
+                    </>
+                  )}
+                </Button>
+
+                {/* Generate Content 按钮 */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleGenerateText}
+                  disabled={
+                    !enhancedResult.trim() ||
+                    isGenerating ||
+                    isAiEditing ||
+                    isGeneratingText
+                  }
+                  className={`h-9 px-2 sm:px-3 w-full sm:w-auto ${
+                    isGeneratingText
+                      ? 'text-green-600 hover:text-green-700 bg-green-50 hover:bg-green-100'
+                      : ''
+                  } disabled:opacity-50`}
+                >
+                  {isGeneratingText ? (
+                    <>
+                      <Loader2 className="size-4 mr-2 text-green-600 animate-spin" />
+                      <span className="text-sm text-green-600">
+                        {t('generateText.generating', {
+                          defaultValue: 'Generating...',
+                        })}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <Wand2 className="size-4 mr-2" />
+                      <span className="text-sm">
+                        {t('generateText.buttonContent', {
+                          defaultValue: 'Generate Content',
+                        })}
+                      </span>
+                    </>
+                  )}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Generated Text History Section - 显示之前生成的文本历史记录 */}
         {generatedTextHistory.length > 0 &&

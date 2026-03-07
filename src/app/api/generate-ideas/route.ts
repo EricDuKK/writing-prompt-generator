@@ -26,7 +26,7 @@ async function fetchWithTimeout(
 
 export async function POST(request: NextRequest) {
   try {
-    const { category, preset, enhancementOptions } = await request.json();
+    const { category, preset, enhancementOptions, locale } = await request.json();
 
     if (!category) {
       return NextResponse.json({ error: 'Category is required' }, { status: 400 });
@@ -45,18 +45,22 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    const outputLang = locale === 'zh' ? 'Chinese (Simplified)' : 'English';
+
     const systemPrompt = `/no_think
 You are a creative idea generator. Based on the given context, generate exactly 10 creative and diverse ideas/topics that the user could use as input for prompt generation.
 
+IMPORTANT: You must tailor your ideas specifically based on ALL the selected options provided. Do NOT generate generic ideas for the broad category alone. Each selected option should influence and shape the ideas you generate. For example, if the user selected "Sci-Fi Adventure" with sub-genre "Cyberpunk", tech level "Post-Singularity", time setting "Near Future", conflict type "Human vs AI", and length "Novel" — then ALL 10 ideas should be cyberpunk stories set in the near future involving human-AI conflicts suitable for novel-length works.
+
 Rules:
 - Each idea should be a short phrase (5-15 words)
-- Ideas should be diverse and cover different angles
+- Ideas should be diverse but ALL must fit within the specific combination of selected options
 - Ideas should be practical and specific, not vague
-- Output in English
+- Output in ${outputLang}
 - Return ONLY a JSON array of 10 strings, no other text
 - Example format: ["idea 1", "idea 2", ...]`;
 
-    const userPrompt = `Generate 10 creative ideas for the following context:\n${context}`;
+    const userPrompt = `Generate 10 creative ideas that precisely match ALL of the following specifications:\n${context}`;
 
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
