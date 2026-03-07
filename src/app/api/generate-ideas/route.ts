@@ -74,6 +74,7 @@ Rules:
       ],
       max_tokens: 1000,
       temperature: 0.9,
+      stream: true,
     };
 
     let response = await fetchWithTimeout(
@@ -102,16 +103,77 @@ Rules:
       return NextResponse.json({ error: 'Failed to generate ideas' }, { status: 500 });
     }
 
-    const data = await response.json();
-    const content = data.choices?.[0]?.message?.content || '';
+    // Stream: accumulate text chunks and emit each idea as it's parsed
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      async start(controller) {
+        const reader = response.body?.getReader();
+        if (!reader) { controller.close(); return; }
 
-    const jsonMatch = content.match(/\[[\s\S]*\]/);
-    if (!jsonMatch) {
-      return NextResponse.json({ error: 'Failed to parse ideas' }, { status: 500 });
-    }
+        const decoder = new TextDecoder();
+        let accumulated = '';
+        let emittedCount = 0;
 
-    const ideas = JSON.parse(jsonMatch[0]);
-    return NextResponse.json({ ideas });
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            const chunk = decoder.decode(value, { stream: true });
+            const lines = chunk.split('\n');
+
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                const data = line.slice(6);
+                if (data === '[DONE]') continue;
+
+                try {
+                  const json = JSON.parse(data);
+                  const delta = json.choices?.[0]?.delta;
+                  if (delta?.reasoning_content) continue;
+                  const content = delta?.content;
+                  if (content) {
+                    accumulated += content;
+
+                    // Try to extract complete ideas from accumulated JSON array
+                    // Match each complete string in the array: "..."
+                    const ideaRegex = /"([^"\\]*(?:\\.[^"\\]*)*)"/g;
+                    let match: RegExpExecArray | null;
+                    let count = 0;
+                    while ((match = ideaRegex.exec(accumulated)) !== null) {
+                      count++;
+                      if (count > emittedCount) {
+                        const idea = match[1].replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+                        controller.enqueue(
+                          encoder.encode(`data: ${JSON.stringify({ idea })}\n\n`)
+                        );
+                        emittedCount = count;
+                      }
+                    }
+                  }
+                } catch {
+                  // ignore parse errors
+                }
+              }
+            }
+          }
+
+          controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+        } catch (error) {
+          controller.error(error);
+        } finally {
+          controller.close();
+        }
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        Connection: 'keep-alive',
+      },
+    });
   } catch (error) {
     console.error('[generate-ideas] Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

@@ -327,9 +327,33 @@ export function PromptGenerator({
         throw new Error('Failed to generate ideas');
       }
 
-      const data = await response.json();
-      if (data.ideas && Array.isArray(data.ideas)) {
-        setGeneratedIdeas(data.ideas);
+      // Stream ideas one by one
+      if (response.body) {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value, { stream: true });
+          const lines = chunk.split('\n');
+
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const data = line.slice(6);
+              if (data === '[DONE]') break;
+              try {
+                const json = JSON.parse(data);
+                if (json.idea) {
+                  setGeneratedIdeas((prev) => [...prev, json.idea]);
+                }
+              } catch {
+                // ignore parse errors
+              }
+            }
+          }
+        }
       }
     } catch (error) {
       console.error('Error generating ideas:', error);
