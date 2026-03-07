@@ -1723,13 +1723,100 @@ export function PromptGenerator({
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="relative">
-                <Textarea
-                  ref={resultTextareaRef}
-                  readOnly={!isEditing}
-                  value={enhancedResult}
-                  onChange={(e) => setEnhancedResult(e.target.value)}
-                  className={`min-h-[140px] text-sm leading-relaxed transition-all duration-200 ${isEditing ? 'ring-2 ring-primary bg-primary/5' : ''} ${isGenerating && enhancedResult ? 'ring-1 ring-primary/30' : ''}`}
-                />
+                {isEditing ? (
+                  <Textarea
+                    ref={resultTextareaRef}
+                    value={enhancedResult}
+                    onChange={(e) => setEnhancedResult(e.target.value)}
+                    className="min-h-[140px] text-sm leading-relaxed transition-all duration-200 ring-2 ring-primary bg-primary/5"
+                  />
+                ) : (
+                  <div
+                    className={`min-h-[140px] p-3 border rounded-md text-sm leading-relaxed transition-all duration-200 overflow-y-auto max-h-[500px] ${isGenerating && enhancedResult ? 'ring-1 ring-primary/30' : ''}`}
+                  >
+                    <div className="max-w-none prose prose-sm dark:prose-invert">
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          h1: ({ children }) => (
+                            <h1 className="text-xl font-bold text-foreground mb-3 mt-4 first:mt-0 pb-1 border-b">
+                              {children}
+                            </h1>
+                          ),
+                          h2: ({ children }) => (
+                            <h2 className="text-lg font-bold text-foreground mb-2 mt-4 first:mt-0">
+                              {children}
+                            </h2>
+                          ),
+                          h3: ({ children }) => (
+                            <h3 className="text-base font-semibold text-foreground mb-2 mt-3">
+                              {children}
+                            </h3>
+                          ),
+                          p: ({ children }) => (
+                            <p className="text-foreground leading-6 mb-3 text-sm">
+                              {children}
+                            </p>
+                          ),
+                          ul: ({ children }) => (
+                            <ul className="list-disc list-outside ml-5 mb-3 space-y-1 text-foreground text-sm">
+                              {children}
+                            </ul>
+                          ),
+                          ol: ({ children }) => (
+                            <ol className="list-decimal list-outside ml-5 mb-3 space-y-1 text-foreground text-sm">
+                              {children}
+                            </ol>
+                          ),
+                          li: ({ children }) => (
+                            <li className="leading-6">{children}</li>
+                          ),
+                          code: ({ className, children, ...props }) => {
+                            const isInline = !className;
+                            if (isInline) {
+                              return (
+                                <code className="bg-muted px-1 py-0.5 rounded text-xs font-mono text-primary">
+                                  {children}
+                                </code>
+                              );
+                            }
+                            return (
+                              <code
+                                className={`block bg-muted p-3 rounded-lg text-xs font-mono overflow-x-auto my-3 ${className}`}
+                                {...props}
+                              >
+                                {children}
+                              </code>
+                            );
+                          },
+                          strong: ({ children }) => (
+                            <strong className="font-semibold text-foreground">{children}</strong>
+                          ),
+                          em: ({ children }) => (
+                            <em className="italic text-foreground">{children}</em>
+                          ),
+                          blockquote: ({ children }) => (
+                            <blockquote className="border-l-2 border-primary/30 pl-4 my-3 text-muted-foreground italic">
+                              {children}
+                            </blockquote>
+                          ),
+                          a: ({ href, children }) => (
+                            <a
+                              href={href}
+                              className="text-primary hover:underline"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {children}
+                            </a>
+                          ),
+                        }}
+                      >
+                        {enhancedResult}
+                      </ReactMarkdown>
+                    </div>
+                  </div>
+                )}
                 {isGenerating && !enhancedResult && (
                   <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center bg-background/80 backdrop-blur-[1px] rounded-md p-4">
                     <div className="flex flex-col items-center gap-2">

@@ -18,7 +18,8 @@
       "Bash(PYTHONIOENCODING=utf-8 python .claude/skills/ui-ux-pro-max/scripts/search.py \"minimalism flat modern clean\" --domain style)",
       "Bash(PYTHONIOENCODING=utf-8 python .claude/skills/ui-ux-pro-max/scripts/search.py \"saas creative tool\" --domain color)",
       "Bash(PYTHONIOENCODING=utf-8 python .claude/skills/ui-ux-pro-max/scripts/search.py \"modern professional\" --domain typography)",
-      "Bash(PYTHONIOENCODING=utf-8 python .claude/skills/ui-ux-pro-max/scripts/search.py \"animation accessibility\" --domain ux)"
+      "Bash(PYTHONIOENCODING=utf-8 python .claude/skills/ui-ux-pro-max/scripts/search.py \"animation accessibility\" --domain ux)",
+      "Bash(npx next build)"
     ]
   }
 }
