@@ -1,9 +1,9 @@
 import { type NextRequest, NextResponse } from 'next/server';
 
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const FREE_MODEL = 'qwen/qwen3-vl-235b-a22b-thinking';
-const FREE_MODEL_FALLBACK1 = 'deepseek/deepseek-r1-0528:free';
-const FREE_MODEL_FALLBACK2 = 'google/gemini-2.5-flash-lite';
+const FREE_MODEL = 'google/gemini-2.5-flash';
+const FREE_MODEL_FALLBACK1 = 'qwen/qwen3-vl-235b-a22b-thinking';
+const FREE_MODEL_FALLBACK2 = 'deepseek/deepseek-r1-0528:free';
 
 async function fetchWithTimeout(
   url: string | URL,
