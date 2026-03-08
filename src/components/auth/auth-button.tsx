@@ -11,7 +11,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LogIn, LogOut, User as UserIcon, Zap } from 'lucide-react';
+import { LayoutDashboard, LogIn, LogOut, User as UserIcon, Zap } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { CreditBadge } from '@/components/auth/credit-badge';
 
 export function AuthButton() {
@@ -23,6 +24,7 @@ export function AuthButton() {
 }
 
 function AuthButtonInner() {
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -86,9 +88,18 @@ function AuthButtonInner() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="sm" className="h-8 px-2 gap-1.5">
-            <div className="size-6 rounded-full bg-primary/10 flex items-center justify-center">
-              <UserIcon className="size-3.5 text-primary" />
-            </div>
+            {user.user_metadata?.avatar_url ? (
+              <img
+                src={user.user_metadata.avatar_url}
+                alt=""
+                className="size-6 rounded-full object-cover"
+                referrerPolicy="no-referrer"
+              />
+            ) : (
+              <div className="size-6 rounded-full bg-primary/10 flex items-center justify-center">
+                <UserIcon className="size-3.5 text-primary" />
+              </div>
+            )}
             <span className="text-xs max-w-[100px] truncate hidden sm:inline">
               {user.email?.split('@')[0]}
             </span>
@@ -99,7 +110,17 @@ function AuthButtonInner() {
             <p className="text-xs text-muted-foreground truncate">{user.email}</p>
           </div>
           <DropdownMenuSeparator />
-          <DropdownMenuItem className="cursor-pointer text-xs gap-2" disabled>
+          <DropdownMenuItem
+            className="cursor-pointer text-xs gap-2"
+            onClick={() => router.push('/dashboard')}
+          >
+            <LayoutDashboard className="size-3.5" />
+            Dashboard
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="cursor-pointer text-xs gap-2"
+            onClick={() => router.push('/dashboard?tab=plans')}
+          >
             <Zap className="size-3.5" />
             Upgrade Plan
           </DropdownMenuItem>

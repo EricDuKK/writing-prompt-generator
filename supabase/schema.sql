@@ -31,6 +31,21 @@ create table if not exists public.usage_log (
 -- Index for fast lookups
 create index if not exists idx_usage_log_user_date on public.usage_log(user_id, created_at);
 
+-- 4. Generated prompts (saved works)
+create table if not exists public.generated_prompts (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references public.profiles(id) on delete cascade not null,
+  input_text text,
+  category text not null default 'writing',
+  enhanced_options jsonb,
+  prompt text not null,
+  generated_content text,
+  model_id text,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_generated_prompts_user on public.generated_prompts(user_id, created_at desc);
+
 -- ============================================
 -- Functions
 -- ============================================
@@ -185,4 +200,21 @@ create policy "Users can view own credits"
 -- Users can only view their own usage
 create policy "Users can view own usage"
   on public.usage_log for select
+  using (auth.uid() = user_id);
+
+alter table public.generated_prompts enable row level security;
+
+-- Users can view their own generated prompts
+create policy "Users can view own prompts"
+  on public.generated_prompts for select
+  using (auth.uid() = user_id);
+
+-- Users can insert their own generated prompts
+create policy "Users can insert own prompts"
+  on public.generated_prompts for insert
+  with check (auth.uid() = user_id);
+
+-- Users can delete their own generated prompts
+create policy "Users can delete own prompts"
+  on public.generated_prompts for delete
   using (auth.uid() = user_id);

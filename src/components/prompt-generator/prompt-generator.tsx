@@ -114,6 +114,7 @@ export function PromptGenerator({
 
   // Login dialog state - shown when unauthenticated users try to interact
   const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const [loginDialogMessage, setLoginDialogMessage] = useState<string>('');
 
   // Track if component is mounted to avoid hydration mismatch
   const [mounted, setMounted] = useState(false);
@@ -284,10 +285,17 @@ export function PromptGenerator({
   // Check login and show dialog if not authenticated
   const requireLogin = (): boolean => {
     if (!isLoggedIn) {
+      setLoginDialogMessage('');
       setShowLoginDialog(true);
       return true; // blocked
     }
     return false; // allowed
+  };
+
+  // Show login/credit dialog for 402 errors
+  const showCreditError = (message: string) => {
+    setLoginDialogMessage(message);
+    setShowLoginDialog(true);
   };
 
 
@@ -327,7 +335,7 @@ export function PromptGenerator({
       if (!response.ok) {
         if (response.status === 402) {
           const data = await response.json();
-          alert(data.error || 'Insufficient credits. Please sign in or upgrade.');
+          showCreditError(data.error || 'Insufficient credits. Please sign in or upgrade.');
           return;
         }
         throw new Error('Failed to generate ideas');
@@ -406,7 +414,7 @@ export function PromptGenerator({
       if (!response.ok) {
         if (response.status === 402) {
           const data = await response.json();
-          alert(data.error || 'Insufficient credits. Please sign in or upgrade.');
+          showCreditError(data.error || 'Insufficient credits. Please sign in or upgrade.');
           return;
         }
         try {
@@ -489,7 +497,7 @@ export function PromptGenerator({
               inputText: input,
               enhancedOptions:
                 Object.keys(enhancedOptions).length > 0
-                  ? JSON.stringify(enhancedOptions)
+                  ? enhancedOptions
                   : undefined,
               prompt: finalPrompt,
               category: category,
@@ -500,7 +508,7 @@ export function PromptGenerator({
             } else {
               console.error(
                 'Failed to save prompt:',
-                saveResult?.data?.error || saveResult?.serverError
+                saveResult?.data?.error
               );
             }
           }
@@ -525,7 +533,7 @@ export function PromptGenerator({
             inputText: input,
             enhancedOptions:
               Object.keys(enhancedOptions).length > 0
-                ? JSON.stringify(enhancedOptions)
+                ? enhancedOptions
                 : undefined,
             prompt: finalPrompt,
             category: category,
@@ -536,7 +544,7 @@ export function PromptGenerator({
           } else {
             console.error(
               'Failed to save prompt:',
-              saveResult?.data?.error || saveResult?.serverError
+              saveResult?.data?.error
             );
           }
         }
@@ -944,7 +952,7 @@ export function PromptGenerator({
       if (!response.ok) {
         if (response.status === 402) {
           const data = await response.json();
-          alert(data.error || 'Insufficient credits.');
+          showCreditError(data.error || 'Insufficient credits.');
           return;
         }
         throw new Error('Continue conversation failed');
@@ -1038,7 +1046,7 @@ export function PromptGenerator({
       if (!response.ok) {
         if (response.status === 402) {
           const data = await response.json();
-          alert(data.error || 'Insufficient credits.');
+          showCreditError(data.error || 'Insufficient credits.');
           return;
         }
         const errorData = await response.json().catch(() => ({}));
@@ -1125,7 +1133,7 @@ export function PromptGenerator({
       if (!response.ok) {
         if (response.status === 402) {
           const data = await response.json();
-          alert(data.error || 'Insufficient credits.');
+          showCreditError(data.error || 'Insufficient credits.');
           return;
         }
         const errorData = await response.json().catch(() => ({}));
@@ -1201,7 +1209,7 @@ export function PromptGenerator({
       if (!response.ok) {
         if (response.status === 402) {
           const data = await response.json();
-          alert(data.error || 'Insufficient credits.');
+          showCreditError(data.error || 'Insufficient credits.');
           return;
         }
         try {
@@ -1330,7 +1338,7 @@ export function PromptGenerator({
       if (!response.ok) {
         if (response.status === 402) {
           const data = await response.json();
-          alert(data.error || 'Insufficient credits.');
+          showCreditError(data.error || 'Insufficient credits.');
           return;
         }
         throw new Error('Failed to edit prompt');
@@ -2928,14 +2936,15 @@ export function PromptGenerator({
 
         {/* Login Required Dialog */}
         <Dialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
-          <DialogContent className="sm:max-w-[400px] p-0">
-            <DialogHeader className="hidden">
-              <DialogTitle />
+          <DialogContent className="sm:max-w-[380px] p-0 overflow-hidden">
+            <DialogHeader className="sr-only">
+              <DialogTitle>登录</DialogTitle>
             </DialogHeader>
             <LoginForm
               callbackUrl={
                 typeof window !== 'undefined' ? window.location.pathname : '/'
               }
+              errorMessage={loginDialogMessage}
               className="border-none"
             />
           </DialogContent>

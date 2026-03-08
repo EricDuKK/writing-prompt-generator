@@ -22,7 +22,8 @@
       "Bash(npx next build)",
       "Bash(npm install @supabase/supabase-js @supabase/ssr)",
       "Bash(pnpm add @supabase/supabase-js @supabase/ssr)",
-      "Bash(npx tsc --noEmit --pretty)"
+      "Bash(npx tsc --noEmit --pretty)",
+      "Bash(ls -la /c/Users/Administrator/writing-prompt-generator/src/app/[locale]/)"
     ]
   }
 }
