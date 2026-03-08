@@ -21,7 +21,8 @@
       "Bash(PYTHONIOENCODING=utf-8 python .claude/skills/ui-ux-pro-max/scripts/search.py \"animation accessibility\" --domain ux)",
       "Bash(npx next build)",
       "Bash(npm install @supabase/supabase-js @supabase/ssr)",
-      "Bash(pnpm add @supabase/supabase-js @supabase/ssr)"
+      "Bash(pnpm add @supabase/supabase-js @supabase/ssr)",
+      "Bash(npx tsc --noEmit --pretty)"
     ]
   }
 }

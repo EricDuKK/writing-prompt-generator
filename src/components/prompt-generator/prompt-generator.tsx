@@ -2442,180 +2442,8 @@ export function PromptGenerator({
 
                   type ContinueOptionItem = { icon: string; label: Record<string, string>; instruction: Record<string, string>; className?: string };
 
-                  // Preset-specific continue options per category
-                  const allPresetContinueOptions: Record<string, Record<string, { storyOptions: ContinueOptionItem[]; writingTools: ContinueOptionItem[] }>> = {
-                    general: {
-                      c1: { // Deep Research Report
-                        storyOptions: [],
-                        writingTools: [
-                          { icon: '🔍', label: { en: 'Go Deeper', zh: '深入分析' }, instruction: { en: 'Go deeper into the analysis, explore root causes and underlying mechanisms', zh: '深入分析，探索根本原因和底层机制' }, className: 'border-blue-300 bg-blue-50 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950 dark:hover:bg-blue-900' },
-                          { icon: '📊', label: { en: 'Add Data', zh: '添加数据' }, instruction: { en: 'Add relevant data points, statistics, and evidence to support the analysis', zh: '添加相关数据点、统计数据和证据来支持分析' }, className: 'border-green-300 bg-green-50 hover:bg-green-100 dark:border-green-700 dark:bg-green-950 dark:hover:bg-green-900' },
-                          { icon: '🔄', label: { en: 'Alternative Views', zh: '不同观点' }, instruction: { en: 'Present alternative perspectives and counter-arguments for a more balanced analysis', zh: '展示不同视角和反面论点，使分析更平衡' }, className: 'border-purple-300 bg-purple-50 hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-950 dark:hover:bg-purple-900' },
-                          { icon: '📋', label: { en: 'Executive Summary', zh: '执行摘要' }, instruction: { en: 'Add a concise executive summary with key findings and actionable recommendations', zh: '添加简洁的执行摘要，包含关键发现和可操作的建议' }, className: 'border-amber-300 bg-amber-50 hover:bg-amber-100 dark:border-amber-700 dark:bg-amber-950 dark:hover:bg-amber-900' },
-                          { icon: '🎯', label: { en: 'Action Items', zh: '行动项' }, instruction: { en: 'Add specific action items and next steps based on the analysis', zh: '根据分析添加具体的行动项和后续步骤' }, className: 'border-rose-300 bg-rose-50 hover:bg-rose-100 dark:border-rose-700 dark:bg-rose-950 dark:hover:bg-rose-900' },
-                          { icon: '➕', label: { en: 'Expand', zh: '扩展内容' }, instruction: { en: 'Expand and add more details to the current content', zh: '扩展并添加更多细节' }, className: 'border-indigo-300 bg-indigo-50 hover:bg-indigo-100 dark:border-indigo-700 dark:bg-indigo-950 dark:hover:bg-indigo-900' },
-                        ],
-                      },
-                      c2: { // Creative Brainstorming
-                        storyOptions: [],
-                        writingTools: [
-                          { icon: '💡', label: { en: 'More Ideas', zh: '更多创意' }, instruction: { en: 'Generate more creative ideas, think outside the box with unconventional approaches', zh: '生成更多创意想法，用非传统方法跳出思维框架' }, className: 'border-yellow-300 bg-yellow-50 hover:bg-yellow-100 dark:border-yellow-700 dark:bg-yellow-950 dark:hover:bg-yellow-900' },
-                          { icon: '🔗', label: { en: 'Connect Ideas', zh: '关联创意' }, instruction: { en: 'Find connections between the ideas and create synergies or combined concepts', zh: '找到创意之间的联系，创造协同效应或组合概念' }, className: 'border-blue-300 bg-blue-50 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950 dark:hover:bg-blue-900' },
-                          { icon: '🎯', label: { en: 'Feasibility', zh: '可行性分析' }, instruction: { en: 'Evaluate the feasibility of each idea with pros, cons, and implementation difficulty', zh: '评估每个创意的可行性，包括优缺点和实施难度' }, className: 'border-green-300 bg-green-50 hover:bg-green-100 dark:border-green-700 dark:bg-green-950 dark:hover:bg-green-900' },
-                          { icon: '🚀', label: { en: 'Action Plan', zh: '行动计划' }, instruction: { en: 'Turn the best ideas into actionable plans with concrete steps', zh: '将最佳创意转化为具有具体步骤的行动计划' }, className: 'border-purple-300 bg-purple-50 hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-950 dark:hover:bg-purple-900' },
-                          { icon: '🌍', label: { en: 'Different Angle', zh: '不同角度' }, instruction: { en: 'Approach the topic from a completely different angle or industry perspective', zh: '从完全不同的角度或行业视角来看待这个话题' }, className: 'border-orange-300 bg-orange-50 hover:bg-orange-100 dark:border-orange-700 dark:bg-orange-950 dark:hover:bg-orange-900' },
-                          { icon: '✨', label: { en: 'Refine Best', zh: '精炼最佳' }, instruction: { en: 'Pick the top 3 ideas and refine them with more detail and specificity', zh: '选出前3个最佳创意并添加更多细节和具体性' }, className: 'border-rose-300 bg-rose-50 hover:bg-rose-100 dark:border-rose-700 dark:bg-rose-950 dark:hover:bg-rose-900' },
-                        ],
-                      },
-                      c3: { // Quick Overview
-                        storyOptions: [],
-                        writingTools: [
-                          { icon: '🔍', label: { en: 'More Detail', zh: '更多细节' }, instruction: { en: 'Expand on the key points with more details and examples', zh: '用更多细节和示例扩展关键点' }, className: 'border-blue-300 bg-blue-50 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950 dark:hover:bg-blue-900' },
-                          { icon: '📝', label: { en: 'Bullet Points', zh: '要点列表' }, instruction: { en: 'Restructure as clear bullet points for easier scanning', zh: '重新组织为清晰的要点列表，便于快速浏览' }, className: 'border-green-300 bg-green-50 hover:bg-green-100 dark:border-green-700 dark:bg-green-950 dark:hover:bg-green-900' },
-                          { icon: '❓', label: { en: 'FAQ', zh: '常见问题' }, instruction: { en: 'Add a FAQ section addressing common questions about this topic', zh: '添加常见问题解答部分' }, className: 'border-purple-300 bg-purple-50 hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-950 dark:hover:bg-purple-900' },
-                          { icon: '✂️', label: { en: 'Even Shorter', zh: '更简洁' }, instruction: { en: 'Make it even more concise, keep only the most essential information', zh: '使其更加简洁，只保留最核心的信息' }, className: 'border-amber-300 bg-amber-50 hover:bg-amber-100 dark:border-amber-700 dark:bg-amber-950 dark:hover:bg-amber-900' },
-                          { icon: '💡', label: { en: 'Add Examples', zh: '添加示例' }, instruction: { en: 'Add practical examples to illustrate each key point', zh: '添加实际示例来说明每个关键点' }, className: 'border-orange-300 bg-orange-50 hover:bg-orange-100 dark:border-orange-700 dark:bg-orange-950 dark:hover:bg-orange-900' },
-                          { icon: '🎯', label: { en: 'Key Takeaways', zh: '关键结论' }, instruction: { en: 'Add a "Key Takeaways" section summarizing the most important points', zh: '添加"关键结论"部分总结最重要的要点' }, className: 'border-rose-300 bg-rose-50 hover:bg-rose-100 dark:border-rose-700 dark:bg-rose-950 dark:hover:bg-rose-900' },
-                        ],
-                      },
-                      c4: { // Comprehensive Analysis
-                        storyOptions: [],
-                        writingTools: [
-                          { icon: '📊', label: { en: 'Add Framework', zh: '添加框架' }, instruction: { en: 'Add an analytical framework (SWOT, PESTEL, etc.) to structure the analysis', zh: '添加分析框架（SWOT、PESTEL等）来构建分析' }, className: 'border-blue-300 bg-blue-50 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950 dark:hover:bg-blue-900' },
-                          { icon: '🔬', label: { en: 'Case Studies', zh: '案例研究' }, instruction: { en: 'Add relevant case studies or real-world examples to support the analysis', zh: '添加相关案例研究或现实世界的例子来支持分析' }, className: 'border-green-300 bg-green-50 hover:bg-green-100 dark:border-green-700 dark:bg-green-950 dark:hover:bg-green-900' },
-                          { icon: '📈', label: { en: 'Trends', zh: '趋势分析' }, instruction: { en: 'Add trend analysis and future outlook based on current data', zh: '基于当前数据添加趋势分析和未来展望' }, className: 'border-purple-300 bg-purple-50 hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-950 dark:hover:bg-purple-900' },
-                          { icon: '⚖️', label: { en: 'Pros & Cons', zh: '优劣对比' }, instruction: { en: 'Add a balanced pros and cons evaluation for each option or approach', zh: '为每个选项或方法添加平衡的优劣评估' }, className: 'border-amber-300 bg-amber-50 hover:bg-amber-100 dark:border-amber-700 dark:bg-amber-950 dark:hover:bg-amber-900' },
-                          { icon: '🎯', label: { en: 'Recommendations', zh: '建议' }, instruction: { en: 'Add clear recommendations with prioritization and implementation roadmap', zh: '添加明确的建议，包含优先级排序和实施路线图' }, className: 'border-orange-300 bg-orange-50 hover:bg-orange-100 dark:border-orange-700 dark:bg-orange-950 dark:hover:bg-orange-900' },
-                          { icon: '➕', label: { en: 'Expand', zh: '扩展内容' }, instruction: { en: 'Expand and add more details to the current content', zh: '扩展并添加更多细节' }, className: 'border-rose-300 bg-rose-50 hover:bg-rose-100 dark:border-rose-700 dark:bg-rose-950 dark:hover:bg-rose-900' },
-                        ],
-                      },
-                      c5: { // Comparative Research
-                        storyOptions: [],
-                        writingTools: [
-                          { icon: '📊', label: { en: 'Comparison Table', zh: '对比表格' }, instruction: { en: 'Add a structured comparison table highlighting key differences and similarities', zh: '添加结构化对比表格，突出关键差异和相似点' }, className: 'border-blue-300 bg-blue-50 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950 dark:hover:bg-blue-900' },
-                          { icon: '🏆', label: { en: 'Best Choice', zh: '最佳选择' }, instruction: { en: 'Provide a clear recommendation on the best choice with justification', zh: '提供明确的最佳选择建议及其理由' }, className: 'border-green-300 bg-green-50 hover:bg-green-100 dark:border-green-700 dark:bg-green-950 dark:hover:bg-green-900' },
-                          { icon: '🔍', label: { en: 'More Options', zh: '更多选项' }, instruction: { en: 'Add more alternatives or solutions to the comparison', zh: '向对比中添加更多替代方案或解决方案' }, className: 'border-purple-300 bg-purple-50 hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-950 dark:hover:bg-purple-900' },
-                          { icon: '💰', label: { en: 'Cost Analysis', zh: '成本分析' }, instruction: { en: 'Add cost-benefit analysis for each option', zh: '为每个选项添加成本效益分析' }, className: 'border-amber-300 bg-amber-50 hover:bg-amber-100 dark:border-amber-700 dark:bg-amber-950 dark:hover:bg-amber-900' },
-                          { icon: '⚠️', label: { en: 'Risks', zh: '风险评估' }, instruction: { en: 'Add risk assessment and potential pitfalls for each option', zh: '为每个选项添加风险评估和潜在陷阱' }, className: 'border-orange-300 bg-orange-50 hover:bg-orange-100 dark:border-orange-700 dark:bg-orange-950 dark:hover:bg-orange-900' },
-                          { icon: '📝', label: { en: 'Use Cases', zh: '使用场景' }, instruction: { en: 'Add specific use cases or scenarios where each option excels', zh: '添加每个选项表现突出的具体使用场景' }, className: 'border-rose-300 bg-rose-50 hover:bg-rose-100 dark:border-rose-700 dark:bg-rose-950 dark:hover:bg-rose-900' },
-                        ],
-                      },
-                    },
-                    code: {
-                      c1: { // Enterprise Development
-                        storyOptions: [],
-                        writingTools: [
-                          { icon: '🧪', label: { en: 'Add Tests', zh: '添加测试' }, instruction: { en: 'Add comprehensive unit tests and integration tests for the code', zh: '为代码添加全面的单元测试和集成测试' }, className: 'border-green-300 bg-green-50 hover:bg-green-100 dark:border-green-700 dark:bg-green-950 dark:hover:bg-green-900' },
-                          { icon: '🛡️', label: { en: 'Error Handling', zh: '错误处理' }, instruction: { en: 'Add robust error handling, input validation, and edge case coverage', zh: '添加健壮的错误处理、输入验证和边界情况覆盖' }, className: 'border-blue-300 bg-blue-50 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950 dark:hover:bg-blue-900' },
-                          { icon: '📝', label: { en: 'Documentation', zh: '添加文档' }, instruction: { en: 'Add JSDoc/docstring documentation for all functions and classes', zh: '为所有函数和类添加JSDoc/docstring文档' }, className: 'border-purple-300 bg-purple-50 hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-950 dark:hover:bg-purple-900' },
-                          { icon: '🔒', label: { en: 'Security', zh: '安全加固' }, instruction: { en: 'Add security measures: input sanitization, authentication checks, and vulnerability prevention', zh: '添加安全措施：输入净化、认证检查和漏洞防护' }, className: 'border-red-300 bg-red-50 hover:bg-red-100 dark:border-red-700 dark:bg-red-950 dark:hover:bg-red-900' },
-                          { icon: '📊', label: { en: 'Logging', zh: '日志监控' }, instruction: { en: 'Add structured logging, monitoring, and observability features', zh: '添加结构化日志、监控和可观测性功能' }, className: 'border-amber-300 bg-amber-50 hover:bg-amber-100 dark:border-amber-700 dark:bg-amber-950 dark:hover:bg-amber-900' },
-                          { icon: '♻️', label: { en: 'Refactor', zh: '重构优化' }, instruction: { en: 'Refactor for better maintainability: extract functions, apply design patterns, improve naming', zh: '重构以提高可维护性：提取函数、应用设计模式、改善命名' }, className: 'border-teal-300 bg-teal-50 hover:bg-teal-100 dark:border-teal-700 dark:bg-teal-950 dark:hover:bg-teal-900' },
-                        ],
-                      },
-                      c2: { // Extreme Performance
-                        storyOptions: [],
-                        writingTools: [
-                          { icon: '⚡', label: { en: 'Optimize Speed', zh: '优化速度' }, instruction: { en: 'Optimize for maximum speed: reduce time complexity, minimize allocations, use efficient algorithms', zh: '优化最大速度：降低时间复杂度、减少内存分配、使用高效算法' }, className: 'border-yellow-300 bg-yellow-50 hover:bg-yellow-100 dark:border-yellow-700 dark:bg-yellow-950 dark:hover:bg-yellow-900' },
-                          { icon: '💾', label: { en: 'Memory Optimize', zh: '内存优化' }, instruction: { en: 'Optimize memory usage: reduce allocations, use pooling, implement caching strategies', zh: '优化内存使用：减少分配、使用池化、实现缓存策略' }, className: 'border-blue-300 bg-blue-50 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950 dark:hover:bg-blue-900' },
-                          { icon: '🔄', label: { en: 'Concurrency', zh: '并发处理' }, instruction: { en: 'Add concurrency support: async processing, thread pooling, or parallel execution', zh: '添加并发支持：异步处理、线程池或并行执行' }, className: 'border-green-300 bg-green-50 hover:bg-green-100 dark:border-green-700 dark:bg-green-950 dark:hover:bg-green-900' },
-                          { icon: '📈', label: { en: 'Benchmarks', zh: '性能基准' }, instruction: { en: 'Add performance benchmarks and profiling code to measure improvements', zh: '添加性能基准测试和分析代码来衡量改进' }, className: 'border-purple-300 bg-purple-50 hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-950 dark:hover:bg-purple-900' },
-                          { icon: '🗜️', label: { en: 'Reduce Size', zh: '减小体积' }, instruction: { en: 'Minimize code size and bundle size, remove unnecessary dependencies', zh: '最小化代码体积和包大小，移除不必要的依赖' }, className: 'border-orange-300 bg-orange-50 hover:bg-orange-100 dark:border-orange-700 dark:bg-orange-950 dark:hover:bg-orange-900' },
-                          { icon: '🏗️', label: { en: 'Architecture', zh: '架构优化' }, instruction: { en: 'Improve architecture for better scalability and performance at scale', zh: '改进架构以提高大规模场景下的可扩展性和性能' }, className: 'border-rose-300 bg-rose-50 hover:bg-rose-100 dark:border-rose-700 dark:bg-rose-950 dark:hover:bg-rose-900' },
-                        ],
-                      },
-                      c3: { // Full-Stack Web App
-                        storyOptions: [],
-                        writingTools: [
-                          { icon: '🎨', label: { en: 'Add UI', zh: '添加界面' }, instruction: { en: 'Add frontend UI components with responsive design and styling', zh: '添加前端UI组件，包含响应式设计和样式' }, className: 'border-pink-300 bg-pink-50 hover:bg-pink-100 dark:border-pink-700 dark:bg-pink-950 dark:hover:bg-pink-900' },
-                          { icon: '🔌', label: { en: 'API Routes', zh: 'API路由' }, instruction: { en: 'Add API routes/endpoints with proper request handling and validation', zh: '添加API路由/端点，包含正确的请求处理和验证' }, className: 'border-blue-300 bg-blue-50 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950 dark:hover:bg-blue-900' },
-                          { icon: '🗄️', label: { en: 'Database', zh: '数据库' }, instruction: { en: 'Add database schema, models, and data access layer', zh: '添加数据库模式、模型和数据访问层' }, className: 'border-green-300 bg-green-50 hover:bg-green-100 dark:border-green-700 dark:bg-green-950 dark:hover:bg-green-900' },
-                          { icon: '🔐', label: { en: 'Auth', zh: '认证授权' }, instruction: { en: 'Add authentication and authorization with login, registration, and protected routes', zh: '添加认证和授权，包含登录、注册和受保护路由' }, className: 'border-amber-300 bg-amber-50 hover:bg-amber-100 dark:border-amber-700 dark:bg-amber-950 dark:hover:bg-amber-900' },
-                          { icon: '🧪', label: { en: 'E2E Tests', zh: '端到端测试' }, instruction: { en: 'Add end-to-end tests covering main user flows', zh: '添加覆盖主要用户流程的端到端测试' }, className: 'border-purple-300 bg-purple-50 hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-950 dark:hover:bg-purple-900' },
-                          { icon: '🚀', label: { en: 'Deploy Config', zh: '部署配置' }, instruction: { en: 'Add deployment configuration: Docker, CI/CD, environment variables', zh: '添加部署配置：Docker、CI/CD、环境变量' }, className: 'border-teal-300 bg-teal-50 hover:bg-teal-100 dark:border-teal-700 dark:bg-teal-950 dark:hover:bg-teal-900' },
-                        ],
-                      },
-                      c4: { // API Service Development
-                        storyOptions: [],
-                        writingTools: [
-                          { icon: '📋', label: { en: 'API Docs', zh: 'API文档' }, instruction: { en: 'Add OpenAPI/Swagger documentation for all endpoints', zh: '为所有端点添加OpenAPI/Swagger文档' }, className: 'border-blue-300 bg-blue-50 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950 dark:hover:bg-blue-900' },
-                          { icon: '✅', label: { en: 'Validation', zh: '参数校验' }, instruction: { en: 'Add request/response validation with proper error messages', zh: '添加请求/响应验证和适当的错误消息' }, className: 'border-green-300 bg-green-50 hover:bg-green-100 dark:border-green-700 dark:bg-green-950 dark:hover:bg-green-900' },
-                          { icon: '🔄', label: { en: 'Pagination', zh: '分页排序' }, instruction: { en: 'Add pagination, sorting, and filtering support to list endpoints', zh: '为列表端点添加分页、排序和过滤支持' }, className: 'border-purple-300 bg-purple-50 hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-950 dark:hover:bg-purple-900' },
-                          { icon: '🚦', label: { en: 'Rate Limiting', zh: '限流' }, instruction: { en: 'Add rate limiting, throttling, and API key management', zh: '添加限流、节流和API密钥管理' }, className: 'border-amber-300 bg-amber-50 hover:bg-amber-100 dark:border-amber-700 dark:bg-amber-950 dark:hover:bg-amber-900' },
-                          { icon: '📊', label: { en: 'Middleware', zh: '中间件' }, instruction: { en: 'Add middleware for logging, cors, compression, and request tracking', zh: '添加日志、CORS、压缩和请求追踪中间件' }, className: 'border-orange-300 bg-orange-50 hover:bg-orange-100 dark:border-orange-700 dark:bg-orange-950 dark:hover:bg-orange-900' },
-                          { icon: '🧪', label: { en: 'API Tests', zh: 'API测试' }, instruction: { en: 'Add API integration tests with mock data and edge cases', zh: '添加API集成测试，包含模拟数据和边界情况' }, className: 'border-rose-300 bg-rose-50 hover:bg-rose-100 dark:border-rose-700 dark:bg-rose-950 dark:hover:bg-rose-900' },
-                        ],
-                      },
-                      c5: { // Rapid Prototyping
-                        storyOptions: [],
-                        writingTools: [
-                          { icon: '🎨', label: { en: 'Add UI', zh: '添加界面' }, instruction: { en: 'Add a quick and functional UI with basic styling', zh: '添加快速可用的界面和基础样式' }, className: 'border-pink-300 bg-pink-50 hover:bg-pink-100 dark:border-pink-700 dark:bg-pink-950 dark:hover:bg-pink-900' },
-                          { icon: '➕', label: { en: 'Add Feature', zh: '添加功能' }, instruction: { en: 'Add another key feature to the prototype', zh: '为原型添加另一个关键功能' }, className: 'border-blue-300 bg-blue-50 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950 dark:hover:bg-blue-900' },
-                          { icon: '🔧', label: { en: 'Fix & Polish', zh: '修复完善' }, instruction: { en: 'Fix bugs and polish the prototype for a demo-ready state', zh: '修复bug并打磨原型至可演示状态' }, className: 'border-green-300 bg-green-50 hover:bg-green-100 dark:border-green-700 dark:bg-green-950 dark:hover:bg-green-900' },
-                          { icon: '📱', label: { en: 'Responsive', zh: '响应式' }, instruction: { en: 'Make the prototype responsive and mobile-friendly', zh: '使原型响应式且适配移动端' }, className: 'border-purple-300 bg-purple-50 hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-950 dark:hover:bg-purple-900' },
-                          { icon: '🗄️', label: { en: 'Add Storage', zh: '添加存储' }, instruction: { en: 'Add simple data persistence with localStorage or a lightweight database', zh: '使用localStorage或轻量数据库添加简单的数据持久化' }, className: 'border-amber-300 bg-amber-50 hover:bg-amber-100 dark:border-amber-700 dark:bg-amber-950 dark:hover:bg-amber-900' },
-                          { icon: '🚀', label: { en: 'Deploy', zh: '部署' }, instruction: { en: 'Add deployment configuration for quick hosting (Vercel, Netlify, etc.)', zh: '添加快速部署配置（Vercel、Netlify等）' }, className: 'border-teal-300 bg-teal-50 hover:bg-teal-100 dark:border-teal-700 dark:bg-teal-950 dark:hover:bg-teal-900' },
-                        ],
-                      },
-                    },
-                    marketing: {
-                      c1: { // High Conversion Landing Page
-                        storyOptions: [],
-                        writingTools: [
-                          { icon: '🎯', label: { en: 'Stronger CTA', zh: '更强CTA' }, instruction: { en: 'Strengthen the call-to-action with more compelling language and urgency', zh: '用更有说服力的语言和紧迫感加强行动号召' }, className: 'border-red-300 bg-red-50 hover:bg-red-100 dark:border-red-700 dark:bg-red-950 dark:hover:bg-red-900' },
-                          { icon: '⭐', label: { en: 'Social Proof', zh: '社会证明' }, instruction: { en: 'Add testimonials, reviews, statistics, and trust badges', zh: '添加用户评价、评论、统计数据和信任标识' }, className: 'border-yellow-300 bg-yellow-50 hover:bg-yellow-100 dark:border-yellow-700 dark:bg-yellow-950 dark:hover:bg-yellow-900' },
-                          { icon: '😰', label: { en: 'Pain Points', zh: '痛点挖掘' }, instruction: { en: 'Dig deeper into customer pain points and show how the product solves them', zh: '深挖客户痛点并展示产品如何解决这些问题' }, className: 'border-blue-300 bg-blue-50 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950 dark:hover:bg-blue-900' },
-                          { icon: '💎', label: { en: 'Value Prop', zh: '价值主张' }, instruction: { en: 'Sharpen the value proposition: focus on benefits over features, emphasize ROI', zh: '锐化价值主张：关注收益而非功能，强调投资回报' }, className: 'border-purple-300 bg-purple-50 hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-950 dark:hover:bg-purple-900' },
-                          { icon: '⏰', label: { en: 'Add Urgency', zh: '增加紧迫感' }, instruction: { en: 'Add scarcity and urgency elements: limited time, limited quantity, exclusive access', zh: '增加稀缺和紧迫元素：限时、限量、独家访问' }, className: 'border-orange-300 bg-orange-50 hover:bg-orange-100 dark:border-orange-700 dark:bg-orange-950 dark:hover:bg-orange-900' },
-                          { icon: '📋', label: { en: 'Add Sections', zh: '添加板块' }, instruction: { en: 'Add more landing page sections: pricing table, FAQ, feature comparison, guarantee', zh: '添加更多落地页板块：定价表、FAQ、功能对比、保证条款' }, className: 'border-teal-300 bg-teal-50 hover:bg-teal-100 dark:border-teal-700 dark:bg-teal-950 dark:hover:bg-teal-900' },
-                        ],
-                      },
-                      c2: { // Brand Storytelling
-                        storyOptions: [],
-                        writingTools: [
-                          { icon: '💝', label: { en: 'Emotional Hook', zh: '情感钩子' }, instruction: { en: 'Add a stronger emotional hook that creates deep connection with the audience', zh: '添加更强的情感钩子，与受众建立深层连接' }, className: 'border-rose-300 bg-rose-50 hover:bg-rose-100 dark:border-rose-700 dark:bg-rose-950 dark:hover:bg-rose-900' },
-                          { icon: '👤', label: { en: 'Founder Story', zh: '创始人故事' }, instruction: { en: 'Add the founder\'s personal story and the origin behind the brand', zh: '添加创始人个人故事和品牌背后的起源' }, className: 'border-blue-300 bg-blue-50 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950 dark:hover:bg-blue-900' },
-                          { icon: '🌟', label: { en: 'Brand Values', zh: '品牌价值' }, instruction: { en: 'Highlight the core brand values and mission that differentiate from competitors', zh: '突出区别于竞争对手的核心品牌价值和使命' }, className: 'border-purple-300 bg-purple-50 hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-950 dark:hover:bg-purple-900' },
-                          { icon: '📸', label: { en: 'Customer Stories', zh: '客户故事' }, instruction: { en: 'Add real customer success stories that showcase the brand impact', zh: '添加展示品牌影响力的真实客户成功故事' }, className: 'border-green-300 bg-green-50 hover:bg-green-100 dark:border-green-700 dark:bg-green-950 dark:hover:bg-green-900' },
-                          { icon: '🎭', label: { en: 'Brand Voice', zh: '品牌调性' }, instruction: { en: 'Refine the brand voice and tone to be more distinctive and memorable', zh: '优化品牌声音和调性，使其更独特和令人难忘' }, className: 'border-amber-300 bg-amber-50 hover:bg-amber-100 dark:border-amber-700 dark:bg-amber-950 dark:hover:bg-amber-900' },
-                          { icon: '➕', label: { en: 'Expand', zh: '扩展内容' }, instruction: { en: 'Expand and add more details to the brand story', zh: '扩展并添加更多品牌故事细节' }, className: 'border-orange-300 bg-orange-50 hover:bg-orange-100 dark:border-orange-700 dark:bg-orange-950 dark:hover:bg-orange-900' },
-                        ],
-                      },
-                      c3: { // Viral Social Media Post
-                        storyOptions: [],
-                        writingTools: [
-                          { icon: '🔥', label: { en: 'More Viral', zh: '更易传播' }, instruction: { en: 'Make it more shareable: add hooks, hot takes, or controversial angles', zh: '使内容更易分享：添加吸引力、热点话题或争议性角度' }, className: 'border-red-300 bg-red-50 hover:bg-red-100 dark:border-red-700 dark:bg-red-950 dark:hover:bg-red-900' },
-                          { icon: '#️⃣', label: { en: 'Hashtags', zh: '标签优化' }, instruction: { en: 'Add trending hashtags and optimize for platform discoverability', zh: '添加热门标签，优化平台可发现性' }, className: 'border-blue-300 bg-blue-50 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950 dark:hover:bg-blue-900' },
-                          { icon: '💬', label: { en: 'Engagement', zh: '互动性' }, instruction: { en: 'Add engagement elements: questions, polls, challenges, or conversation starters', zh: '添加互动元素：问题、投票、挑战或话题引导' }, className: 'border-green-300 bg-green-50 hover:bg-green-100 dark:border-green-700 dark:bg-green-950 dark:hover:bg-green-900' },
-                          { icon: '😂', label: { en: 'Add Humor', zh: '添加幽默' }, instruction: { en: 'Add humor, memes, or relatable content to boost engagement', zh: '添加幽默、梗或有共鸣的内容来提升互动' }, className: 'border-yellow-300 bg-yellow-50 hover:bg-yellow-100 dark:border-yellow-700 dark:bg-yellow-950 dark:hover:bg-yellow-900' },
-                          { icon: '📱', label: { en: 'Platform Fit', zh: '平台适配' }, instruction: { en: 'Optimize the format, length, and style for the specific social media platform', zh: '针对特定社交媒体平台优化格式、长度和风格' }, className: 'border-purple-300 bg-purple-50 hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-950 dark:hover:bg-purple-900' },
-                          { icon: '✂️', label: { en: 'Shorter', zh: '精简' }, instruction: { en: 'Make it shorter and punchier for maximum impact', zh: '使内容更短更有力以达到最大影响' }, className: 'border-orange-300 bg-orange-50 hover:bg-orange-100 dark:border-orange-700 dark:bg-orange-950 dark:hover:bg-orange-900' },
-                        ],
-                      },
-                      c4: { // Email Marketing Campaign
-                        storyOptions: [],
-                        writingTools: [
-                          { icon: '📧', label: { en: 'Subject Line', zh: '优化标题' }, instruction: { en: 'Improve the email subject line for higher open rates', zh: '优化邮件标题以提高打开率' }, className: 'border-blue-300 bg-blue-50 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950 dark:hover:bg-blue-900' },
-                          { icon: '👤', label: { en: 'Personalize', zh: '个性化' }, instruction: { en: 'Add personalization elements: dynamic fields, segmented content, tailored recommendations', zh: '添加个性化元素：动态字段、分段内容、定制推荐' }, className: 'border-green-300 bg-green-50 hover:bg-green-100 dark:border-green-700 dark:bg-green-950 dark:hover:bg-green-900' },
-                          { icon: '🎯', label: { en: 'CTA Optimize', zh: '优化CTA' }, instruction: { en: 'Optimize the call-to-action button text and placement for better click-through', zh: '优化行动号召按钮文本和位置以提高点击率' }, className: 'border-purple-300 bg-purple-50 hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-950 dark:hover:bg-purple-900' },
-                          { icon: '📊', label: { en: 'A/B Version', zh: 'A/B版本' }, instruction: { en: 'Create an A/B test variant with a different approach or angle', zh: '创建一个采用不同方法或角度的A/B测试版本' }, className: 'border-amber-300 bg-amber-50 hover:bg-amber-100 dark:border-amber-700 dark:bg-amber-950 dark:hover:bg-amber-900' },
-                          { icon: '🔄', label: { en: 'Follow-up', zh: '跟进邮件' }, instruction: { en: 'Create a follow-up email sequence for non-openers or non-converters', zh: '为未打开或未转化的用户创建跟进邮件序列' }, className: 'border-orange-300 bg-orange-50 hover:bg-orange-100 dark:border-orange-700 dark:bg-orange-950 dark:hover:bg-orange-900' },
-                          { icon: '✂️', label: { en: 'Simplify', zh: '精简' }, instruction: { en: 'Simplify the email for mobile-friendly reading', zh: '精简邮件以适配移动端阅读' }, className: 'border-rose-300 bg-rose-50 hover:bg-rose-100 dark:border-rose-700 dark:bg-rose-950 dark:hover:bg-rose-900' },
-                        ],
-                      },
-                      c5: { // Product Launch
-                        storyOptions: [],
-                        writingTools: [
-                          { icon: '🎉', label: { en: 'Hype Build', zh: '造势' }, instruction: { en: 'Build more hype and excitement around the product launch', zh: '围绕产品发布营造更多期待和兴奋感' }, className: 'border-yellow-300 bg-yellow-50 hover:bg-yellow-100 dark:border-yellow-700 dark:bg-yellow-950 dark:hover:bg-yellow-900' },
-                          { icon: '📋', label: { en: 'Feature List', zh: '功能列表' }, instruction: { en: 'Add a detailed feature list with benefit-focused descriptions', zh: '添加以收益为导向的详细功能列表' }, className: 'border-blue-300 bg-blue-50 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950 dark:hover:bg-blue-900' },
-                          { icon: '💰', label: { en: 'Pricing', zh: '定价策略' }, instruction: { en: 'Add pricing information with value anchoring and tier comparison', zh: '添加定价信息，包含价值锚定和层级对比' }, className: 'border-green-300 bg-green-50 hover:bg-green-100 dark:border-green-700 dark:bg-green-950 dark:hover:bg-green-900' },
-                          { icon: '📅', label: { en: 'Timeline', zh: '时间线' }, instruction: { en: 'Add a launch timeline with key milestones and promotional phases', zh: '添加产品发布时间线，包含关键里程碑和推广阶段' }, className: 'border-purple-300 bg-purple-50 hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-950 dark:hover:bg-purple-900' },
-                          { icon: '🎁', label: { en: 'Early Bird', zh: '早鸟优惠' }, instruction: { en: 'Add early bird offers, limited-time bonuses, or exclusive launch deals', zh: '添加早鸟优惠、限时赠品或独家发布折扣' }, className: 'border-orange-300 bg-orange-50 hover:bg-orange-100 dark:border-orange-700 dark:bg-orange-950 dark:hover:bg-orange-900' },
-                          { icon: '📢', label: { en: 'Press Release', zh: '新闻稿' }, instruction: { en: 'Rewrite as a press release format for media distribution', zh: '改写为适合媒体分发的新闻稿格式' }, className: 'border-rose-300 bg-rose-50 hover:bg-rose-100 dark:border-rose-700 dark:bg-rose-950 dark:hover:bg-rose-900' },
-                        ],
-                      },
-                    },
-                    writing: {
+                  // Preset-specific continue options for writing presets
+                  const writingPresetContinueOptions: Record<string, { storyOptions: ContinueOptionItem[]; writingTools: ContinueOptionItem[] }> = {
                     c1: { // Epic Fantasy Quest
                       storyOptions: [
                         { icon: '📖', label: { en: 'Continue Story', zh: '继续故事' }, instruction: { en: 'Continue the story from where it left off, maintaining the same tone and style', zh: '从上次停下的地方继续故事，保持相同的语气和风格' }, className: 'border-purple-300 bg-purple-50 hover:bg-purple-100 dark:border-purple-700 dark:bg-purple-950 dark:hover:bg-purple-900' },
@@ -2726,12 +2554,11 @@ export function PromptGenerator({
                         { icon: '✂️', label: { en: 'Simplify', zh: '精简' }, instruction: { en: 'Make it shorter and punchier for better social media engagement', zh: '使内容更短更有力以提高社交媒体互动' } },
                       ],
                     },
-                    },
                   };
 
-                  // Check if we have preset-specific options for the current category
+                  // Check if we have preset-specific options for writing
                   const presetKey = appliedCombinationKey || '';
-                  const presetOptions = allPresetContinueOptions[category]?.[presetKey] || null;
+                  const presetOptions = category === 'writing' ? writingPresetContinueOptions[presetKey] : null;
 
                   if (presetOptions && (presetOptions.storyOptions.length > 0 || presetOptions.writingTools.length > 0)) {
                     return (
