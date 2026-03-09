@@ -135,6 +135,7 @@ function DashboardContent() {
   const [worksLoading, setWorksLoading] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [expandedWorkId, setExpandedWorkId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
@@ -212,6 +213,8 @@ function DashboardContent() {
   };
 
   const handleDeleteWork = async (id: string, type: 'prompt' | 'content') => {
+    if (deletingId) return;
+    setDeletingId(id);
     try {
       const res = await fetch('/api/dashboard/my-works', {
         method: 'DELETE',
@@ -228,6 +231,7 @@ function DashboardContent() {
         }
       }
     } catch { /* ignore */ }
+    setDeletingId(null);
   };
 
   const handleCopy = async (text: string, id: string) => {
@@ -505,9 +509,10 @@ function DashboardContent() {
                                 variant="ghost"
                                 size="sm"
                                 className="h-7 w-7 p-0 text-destructive hover:text-destructive"
+                                disabled={deletingId === p.id}
                                 onClick={(e) => { e.stopPropagation(); handleDeleteWork(p.id, 'prompt'); }}
                               >
-                                <Trash2 className="size-3.5" />
+                                {deletingId === p.id ? <Loader2 className="size-3.5 animate-spin" /> : <Trash2 className="size-3.5" />}
                               </Button>
                             </div>
                           </div>
@@ -595,9 +600,10 @@ function DashboardContent() {
                                 variant="ghost"
                                 size="sm"
                                 className="h-7 w-7 p-0 text-destructive hover:text-destructive"
+                                disabled={deletingId === c.id}
                                 onClick={(e) => { e.stopPropagation(); handleDeleteWork(c.id, 'content'); }}
                               >
-                                <Trash2 className="size-3.5" />
+                                {deletingId === c.id ? <Loader2 className="size-3.5 animate-spin" /> : <Trash2 className="size-3.5" />}
                               </Button>
                             </div>
                           </div>
