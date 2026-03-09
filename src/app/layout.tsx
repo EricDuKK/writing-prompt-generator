@@ -6,6 +6,10 @@ export const metadata: Metadata = {
   title: 'Free Writing Prompt Generator',
   description:
     'Get instant writing prompts to spark creative ideas. Explore story starters across many genres to overcome writer\'s block and start writing now.',
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
 };
 
 export default function RootLayout({
