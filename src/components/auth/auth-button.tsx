@@ -122,7 +122,7 @@ function AuthButtonInner() {
             onClick={() => router.push('/dashboard?tab=plans')}
           >
             <Zap className="size-3.5" />
-            Buy Credits
+            Subscription
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
