@@ -157,7 +157,7 @@ export function PromptGenerator({
 
   const [enhancedOptions, setEnhancedOptions] = useState<
     Record<string, string>
-  >(initialData?.enhancedOptions || {});
+  >(initialData?.enhancedOptions || presetOptionOverrides.writing.c1.defaults);
   const [customEnhancement, setCustomEnhancement] = useState('');
   const [enhancedResult, setEnhancedResult] = useState(
     initialData?.prompt || ''
@@ -216,11 +216,11 @@ export function PromptGenerator({
   const [continueInstruction, setContinueInstruction] = useState('');
   const [isContinuing, setIsContinuing] = useState(false);
   const [appliedCombination, setAppliedCombination] = useState<string | null>(
-    null
+    () => (messages as any)?.HomePage?.promptGenerator?.enhancedOptions?.combinations?.writing?.c1?.name || 'Epic Fantasy Quest'
   );
   const [appliedCombinationKey, setAppliedCombinationKey] = useState<
     string | null
-  >(null);
+  >('c1');
   // Remember the preset key used during the last generation for continue dialog
   const [lastGeneratedPresetKey, setLastGeneratedPresetKey] = useState<
     string | null

@@ -27,7 +27,9 @@
       "Bash(xargs grep -l \"CreditBadge\\\\|credit-badge\")",
       "Bash(pnpm add stripe)",
       "Bash(npx sharp-cli --input public/images/background.png --output public/images/background.webp --format webp --quality 80)",
-      "Bash(npx @aspect-build/imagetool)"
+      "Bash(npx @aspect-build/imagetool)",
+      "Bash(python -c \"from PIL import Image; print\\(''Pillow available''\\)\")",
+      "Bash(pip install Pillow)"
     ]
   }
 }

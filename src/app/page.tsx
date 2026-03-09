@@ -17,9 +17,8 @@ export default function WritingPromptsPage() {
         {/* Top Bar with Auth */}
         <div className="container mx-auto px-4 pt-4">
           <div className="flex items-center justify-between">
-            <a href="/" className="flex items-center gap-2 ml-12 md:ml-32 lg:ml-48">
-              <Image src="/images/logo.png" alt="GenreGenie" width={40} height={40} className="rounded-lg" />
-              <span className="text-xl font-bold tracking-tight text-foreground">GenreGenie</span>
+            <a href="/" className="flex items-center ml-4 md:ml-16 lg:ml-28">
+              <Image src="/images/logo.png" alt="GenreGenie" width={120} height={120} className="rounded-lg" />
             </a>
             <AuthButton />
           </div>
