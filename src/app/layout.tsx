@@ -3,9 +3,9 @@ import { ThemeProvider } from 'next-themes';
 import '@/styles/globals.css';
 
 export const metadata: Metadata = {
-  title: 'Free Writing Prompt Generator',
+  title: 'GenreGenie: AI Writing Prompt Generator & Story Ideas',
   description:
-    'Get instant writing prompts to spark creative ideas. Explore story starters across many genres to overcome writer\'s block and start writing now.',
+    'GenreGenie is the best writing prompt generator. Our writing prompt generator creates story ideas. Try this free writing prompt generator!',
   icons: {
     icon: '/favicon.ico',
     apple: '/apple-touch-icon.png',

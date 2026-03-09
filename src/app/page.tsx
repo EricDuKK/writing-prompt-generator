@@ -3,9 +3,16 @@ import { AuthButton } from '@/components/auth/auth-button';
 import Image from 'next/image';
 import {
   BookOpen,
+  Briefcase,
   FileText,
+  GraduationCap,
+  Heart,
+  Info,
   Languages,
   Lightbulb,
+  Mail,
+  Megaphone,
+  Skull,
   Sparkles,
   Wand2,
 } from 'lucide-react';
@@ -28,10 +35,10 @@ export default function WritingPromptsPage() {
         <section className="container mx-auto px-4 pt-6 md:pt-10 pb-4 md:pb-6">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-foreground mb-4">
-              Free Writing Prompt Generator
+              GenreGenie – Your Professional AI Writing Prompt Generator
             </h1>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Instantly generate creative writing prompts tailored to your genre, style, and audience. Whether you need story starters, essay topics, or creative exercises, our AI-powered tool helps you overcome writer&apos;s block and spark your imagination.
+              GenreGenie is a free AI writing prompt generator for creative writing prompts across any genre. Use this random writing prompt generator for short story prompts, novel ideas, or writing exercises — overcome writer&apos;s block and spark your imagination instantly.
             </p>
           </div>
         </section>
@@ -51,11 +58,11 @@ export default function WritingPromptsPage() {
                 <Lightbulb className="size-6 text-primary" />
               </div>
               <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-                Overcome Writer&apos;s Block Instantly
+                Overcome Writer&apos;s Block with Creative Writing Prompts
               </h2>
             </div>
             <p className="text-muted-foreground text-lg leading-relaxed">
-              Writer&apos;s block can strike at any time, leaving even the most experienced authors staring at a blank page. Our AI-powered writing prompt generator provides instant inspiration with carefully crafted prompts that challenge your creativity and push your writing to new heights. Each prompt is designed to spark unique storylines, develop complex characters, and explore compelling themes across every genre.
+              Writer&apos;s block can strike at any time, leaving even the most experienced authors staring at a blank page. Our AI-powered writing prompt generator provides instant inspiration with carefully crafted creative writing prompts that challenge your creativity and push your writing to new heights. Use this random prompt generator to spark unique storylines, develop complex characters, and explore compelling themes. GenreGenie&apos;s writing prompt generator delivers fresh short story prompts and story ideas every time you need them.
             </p>
           </div>
         </section>
@@ -68,11 +75,11 @@ export default function WritingPromptsPage() {
                 <BookOpen className="size-6 text-primary" />
               </div>
               <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-                Story Starters for Every Genre
+                Explore Diverse Creative Writing Prompts
               </h2>
             </div>
             <p className="text-muted-foreground text-lg leading-relaxed mb-12">
-              From epic fantasy quests to gripping psychological thrillers, our generator creates tailored prompts for any genre. Each prompt includes detailed setting descriptions, character sketches, and plot hooks to help you dive straight into your story.
+              From epic fantasy quests to gripping psychological thrillers, our story prompt generator creates tailored writing prompts for any genre. This short story prompt generator includes detailed setting descriptions, character sketches, and plot hooks to help you dive straight into your story with creative writing prompts designed for your chosen genre.
             </p>
 
             <div className="grid md:grid-cols-2 gap-8">
@@ -99,6 +106,98 @@ export default function WritingPromptsPage() {
                   Create suspenseful narratives filled with unexpected twists. Get prompts for detective stories, psychological thrillers, crime fiction, and espionage tales that will keep your readers on the edge of their seats.
                 </p>
               </div>
+
+              <div className="bg-background rounded-xl p-6 shadow-sm border border-border/50">
+                <div className="flex items-center gap-2 mb-3">
+                  <Heart className="size-5 text-primary" />
+                  <h3 className="text-xl font-semibold text-foreground">
+                    Romance &amp; Drama
+                  </h3>
+                </div>
+                <p className="text-muted-foreground leading-relaxed">
+                  Craft heartfelt love stories and emotionally charged dramas. Get writing prompts for meet-cutes, forbidden romances, family sagas, and coming-of-age tales that resonate with readers on a deeply personal level.
+                </p>
+              </div>
+
+              <div className="bg-background rounded-xl p-6 shadow-sm border border-border/50">
+                <div className="flex items-center gap-2 mb-3">
+                  <Skull className="size-5 text-primary" />
+                  <h3 className="text-xl font-semibold text-foreground">
+                    Horror &amp; Dark Fiction
+                  </h3>
+                </div>
+                <p className="text-muted-foreground leading-relaxed">
+                  Unleash your darkest imagination with chilling writing prompts. Generate story ideas featuring haunted locations, supernatural entities, psychological horror, and cosmic dread that will leave your readers sleeping with the lights on.
+                </p>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        {/* Section: Business Writing Prompts */}
+        <section className="container mx-auto px-4 py-16 md:py-20 border-t border-border/50">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <Briefcase className="size-6 text-primary" />
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+                Business &amp; Professional Writing Prompt Generator
+              </h2>
+            </div>
+            <p className="text-muted-foreground text-lg leading-relaxed mb-12">
+              Go beyond fiction with our writing prompt generator for professional and business content. Generate tailored writing prompts for emails, academic papers, marketing copy, and more — helping you craft polished, effective business communications every time.
+            </p>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="bg-background rounded-xl p-6 shadow-sm border border-border/50">
+                <div className="flex items-center gap-2 mb-3">
+                  <Mail className="size-5 text-primary" />
+                  <h3 className="text-xl font-semibold text-foreground">
+                    Business Email Prompts
+                  </h3>
+                </div>
+                <p className="text-muted-foreground leading-relaxed">
+                  Generate writing prompts for professional emails including cold outreach, follow-ups, client communications, and internal memos. Our writing prompt generator helps you strike the right tone for every business email scenario.
+                </p>
+              </div>
+
+              <div className="bg-background rounded-xl p-6 shadow-sm border border-border/50">
+                <div className="flex items-center gap-2 mb-3">
+                  <GraduationCap className="size-5 text-primary" />
+                  <h3 className="text-xl font-semibold text-foreground">
+                    Academic Paper Prompts
+                  </h3>
+                </div>
+                <p className="text-muted-foreground leading-relaxed">
+                  Get writing prompts for research papers, essays, thesis statements, and literature reviews. This prompt generator for writing helps students and researchers develop compelling academic arguments and structure their papers effectively.
+                </p>
+              </div>
+
+              <div className="bg-background rounded-xl p-6 shadow-sm border border-border/50">
+                <div className="flex items-center gap-2 mb-3">
+                  <Megaphone className="size-5 text-primary" />
+                  <h3 className="text-xl font-semibold text-foreground">
+                    Sales Copy &amp; Marketing Prompts
+                  </h3>
+                </div>
+                <p className="text-muted-foreground leading-relaxed">
+                  Create persuasive writing prompts for landing pages, ad copy, product descriptions, and social media campaigns. Our writing prompt generator delivers conversion-focused prompts that drive results for your marketing content.
+                </p>
+              </div>
+
+              <div className="bg-background rounded-xl p-6 shadow-sm border border-border/50">
+                <div className="flex items-center gap-2 mb-3">
+                  <FileText className="size-5 text-primary" />
+                  <h3 className="text-xl font-semibold text-foreground">
+                    Product Documentation Prompts
+                  </h3>
+                </div>
+                <p className="text-muted-foreground leading-relaxed">
+                  Generate writing prompts for user guides, API documentation, release notes, and technical manuals. Our prompt generator for writing helps you produce clear, structured documentation that your users will actually want to read.
+                </p>
+              </div>
             </div>
           </div>
         </section>
@@ -115,7 +214,7 @@ export default function WritingPromptsPage() {
               </h2>
             </div>
             <p className="text-muted-foreground text-lg leading-relaxed mb-10">
-              Getting started is simple. Follow these four easy steps to generate the perfect writing prompt for your next project.
+              Getting started with this writing prompt generator is simple. Follow these four easy steps to generate the perfect random writing prompt for your next creative writing project.
             </p>
 
             <div className="grid gap-6 mb-10">
@@ -185,11 +284,11 @@ export default function WritingPromptsPage() {
                 <Sparkles className="size-6 text-primary" />
               </div>
               <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-                Why Choose Our Writing Prompt Generator?
+                Why Choose Our AI Writing Prompt Generator?
               </h2>
             </div>
             <p className="text-muted-foreground text-lg leading-relaxed mb-10">
-              Our tool stands out with advanced AI technology, deep customization options, and a user-friendly interface designed for writers of all levels.
+              GenreGenie&apos;s AI writing prompt generator stands out with advanced AI technology, deep customization options, and a user-friendly interface designed for writers of all levels. As a random prompt generator built for creative writing, it delivers unique writing prompts every time.
             </p>
 
             <div className="grid md:grid-cols-2 gap-6">
@@ -233,6 +332,23 @@ export default function WritingPromptsPage() {
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* Section: About GenreGenie Writing Prompt Generator */}
+        <section className="container mx-auto px-4 py-16 md:py-20 border-t border-border/50">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <Info className="size-6 text-primary" />
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+                About GenreGenie Writing Prompt Generator
+              </h2>
+            </div>
+            <p className="text-muted-foreground text-lg leading-relaxed">
+              As a leading writing prompt generator, GenreGenie is designed to be the only writing prompt generator you need. Whether you&apos;re looking for an AI writing prompt generator for a novel or a random writing prompt generator for daily practice, our tool delivers. This writing prompt generator supports multiple genres, making it the most versatile writing prompt generator online. Every writing prompt generator result is tailored to your style. Experience the power of our writing prompt generator and see why writers prefer this writing prompt generator for endless inspiration. From creative writing prompts to short story prompt ideas, GenreGenie&apos;s prompt generator for writing covers it all.
+            </p>
           </div>
         </section>
       </div>
