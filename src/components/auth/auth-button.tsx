@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LayoutDashboard, LogIn, LogOut, User as UserIcon, Zap } from 'lucide-react';
+import { LayoutDashboard, LogOut, User as UserIcon, UserCircle2, Zap } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { CreditBadge } from '@/components/auth/credit-badge';
 
@@ -76,7 +76,7 @@ function AuthButtonInner() {
         onClick={handleSignIn}
         className="h-8 px-3 text-xs gap-1.5"
       >
-        <LogIn className="size-3.5" />
+        <UserCircle2 className="size-3.5" />
         Sign In
       </Button>
     );
