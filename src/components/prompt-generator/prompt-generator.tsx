@@ -1611,7 +1611,7 @@ export function PromptGenerator({
                 </div>
 
                 {/* Options Grid */}
-                <div className="flex flex-wrap gap-x-4 gap-y-2.5">
+                <div className="flex flex-wrap gap-x-4 gap-y-2.5 overflow-hidden">
                   {(() => {
                     const override = appliedCombinationKey
                       ? presetOptionOverrides[category]?.[appliedCombinationKey]
@@ -1633,8 +1633,8 @@ export function PromptGenerator({
                       : categoryOptionValues[category]?.[option] || [];
 
                     return (
-                      <div key={option} className="flex items-center gap-2">
-                        <Label className="text-xs font-medium text-muted-foreground whitespace-nowrap">{optionLabel}</Label>
+                      <div key={option} className="flex items-center gap-2 min-w-0">
+                        <Label className="text-xs font-medium text-muted-foreground whitespace-nowrap shrink-0">{optionLabel}</Label>
                         <Select
                           value={enhancedOptions[option] || undefined}
                           onValueChange={(value) => {
@@ -1645,7 +1645,7 @@ export function PromptGenerator({
                             }
                           }}
                         >
-                          <SelectTrigger className="h-8 text-sm w-auto min-w-[120px]">
+                          <SelectTrigger className="h-8 text-sm w-auto min-w-0 max-w-[140px] sm:max-w-none">
                             <SelectValue
                               placeholder={t('enhancedOptions.selectPlaceholder', {
                                 defaultValue: 'Select...',
