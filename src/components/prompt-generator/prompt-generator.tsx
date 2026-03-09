@@ -221,6 +221,10 @@ export function PromptGenerator({
   const [appliedCombinationKey, setAppliedCombinationKey] = useState<
     string | null
   >(null);
+  // Remember the preset key used during the last generation for continue dialog
+  const [lastGeneratedPresetKey, setLastGeneratedPresetKey] = useState<
+    string | null
+  >(null);
   // 推荐组合弹窗状态
   const [isCombinationsDialogOpen, setIsCombinationsDialogOpen] =
     useState(false);
@@ -384,6 +388,7 @@ export function PromptGenerator({
     setGenerationStage('analyzing');
     setEnhancedResult('');
     setPreviousResult('');
+    setLastGeneratedPresetKey(appliedCombinationKey);
     setCurrentRecordId(null);
 
     try {
@@ -1184,6 +1189,7 @@ export function PromptGenerator({
     if (!enhancedResult.trim()) return;
 
     setIsGeneratingText(true);
+    setLastGeneratedPresetKey(appliedCombinationKey);
     // Save current text to history before generating new text
     if (generatedText.trim()) {
       setGeneratedTextHistory((prev) => [...prev, generatedText]);
@@ -2565,7 +2571,8 @@ export function PromptGenerator({
                   };
 
                   // Check if we have preset-specific options for writing
-                  const presetKey = appliedCombinationKey || '';
+                  // Use lastGeneratedPresetKey to remember the preset even if user deselected it
+                  const presetKey = lastGeneratedPresetKey || appliedCombinationKey || '';
                   const presetOptions = category === 'writing' ? writingPresetContinueOptions[presetKey] : null;
 
                   if (presetOptions && (presetOptions.storyOptions.length > 0 || presetOptions.writingTools.length > 0)) {
@@ -2818,7 +2825,7 @@ export function PromptGenerator({
 
                 const isZh = locale.startsWith('zh');
                 const lang = isZh ? 'zh' : 'en';
-                const presetKey = appliedCombinationKey || '';
+                const presetKey = lastGeneratedPresetKey || appliedCombinationKey || '';
                 const quickEdits = writingPresetQuickEdits[presetKey];
 
                 if (quickEdits) {
