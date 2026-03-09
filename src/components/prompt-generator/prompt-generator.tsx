@@ -662,7 +662,8 @@ export function PromptGenerator({
   // Download functions for generated text
   const handleDownloadMD = useCallback(
     async (text: string) => {
-      const { saveAs } = await import('file-saver');
+      const fileSaver = await import('file-saver');
+      const saveAs = fileSaver.saveAs || fileSaver.default;
       const filename = extractTitleFromEnhancedPrompt();
       const blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
       saveAs(blob, `${filename}.md`);
@@ -674,7 +675,8 @@ export function PromptGenerator({
     async (text: string) => {
       const { Document, HeadingLevel, Packer, Paragraph, TextRun } =
         await import('docx');
-      const { saveAs } = await import('file-saver');
+      const fileSaver = await import('file-saver');
+      const saveAs = fileSaver.saveAs || fileSaver.default;
       const lines = text.split('\n');
       const paragraphs: ParagraphType[] = [];
 
