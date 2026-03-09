@@ -24,6 +24,8 @@ import {
   Zap,
 } from 'lucide-react';
 import type { User } from '@supabase/supabase-js';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 // --- Types ---
 interface UsageRecord {
@@ -33,13 +35,23 @@ interface UsageRecord {
   created_at: string;
 }
 
-interface WorkRecord {
+interface PromptRecord {
   id: string;
+  seq: number;
   input_text: string | null;
   category: string;
-  enhanced_options: Record<string, string> | null;
   prompt: string;
   generated_content: string | null;
+  created_at: string;
+}
+
+interface ContentRecord {
+  id: string;
+  prompt_id: string | null;
+  prompt_seq: number | null;
+  sub_seq: number;
+  input_prompt: string | null;
+  content: string;
   created_at: string;
 }
 
@@ -113,11 +125,16 @@ function DashboardContent() {
   const [usageLoading, setUsageLoading] = useState(false);
 
   // My works state
-  const [worksData, setWorksData] = useState<WorkRecord[]>([]);
-  const [worksTotal, setWorksTotal] = useState(0);
-  const [worksPage, setWorksPage] = useState(1);
+  const [worksSubTab, setWorksSubTab] = useState<'prompt' | 'content'>('prompt');
+  const [promptsData, setPromptsData] = useState<PromptRecord[]>([]);
+  const [promptsTotal, setPromptsTotal] = useState(0);
+  const [promptsPage, setPromptsPage] = useState(1);
+  const [contentsData, setContentsData] = useState<ContentRecord[]>([]);
+  const [contentsTotal, setContentsTotal] = useState(0);
+  const [contentsPage, setContentsPage] = useState(1);
   const [worksLoading, setWorksLoading] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [expandedWorkId, setExpandedWorkId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
@@ -140,7 +157,8 @@ function DashboardContent() {
     if (user) {
       fetchCredits();
       fetchUsageHistory(1);
-      fetchWorks(1);
+      fetchPrompts(1);
+      fetchContents(1);
     }
   }, [user]);
 
@@ -165,30 +183,49 @@ function DashboardContent() {
     setUsageLoading(false);
   };
 
-  const fetchWorks = async (page: number) => {
+  const fetchPrompts = async (page: number) => {
     setWorksLoading(true);
     try {
-      const res = await fetch(`/api/dashboard/my-works?page=${page}&limit=10`);
+      const res = await fetch(`/api/dashboard/my-works?type=prompt&page=${page}&limit=10`);
       if (res.ok) {
         const json = await res.json();
-        setWorksData(json.data);
-        setWorksTotal(json.total);
-        setWorksPage(page);
+        setPromptsData(json.data);
+        setPromptsTotal(json.total);
+        setPromptsPage(page);
       }
     } catch { /* ignore */ }
     setWorksLoading(false);
   };
 
-  const handleDeleteWork = async (id: string) => {
+  const fetchContents = async (page: number) => {
+    setWorksLoading(true);
+    try {
+      const res = await fetch(`/api/dashboard/my-works?type=content&page=${page}&limit=10`);
+      if (res.ok) {
+        const json = await res.json();
+        setContentsData(json.data);
+        setContentsTotal(json.total);
+        setContentsPage(page);
+      }
+    } catch { /* ignore */ }
+    setWorksLoading(false);
+  };
+
+  const handleDeleteWork = async (id: string, type: 'prompt' | 'content') => {
     try {
       const res = await fetch('/api/dashboard/my-works', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id }),
+        body: JSON.stringify({ id, type }),
       });
       if (res.ok) {
-        setWorksData((prev) => prev.filter((w) => w.id !== id));
-        setWorksTotal((prev) => prev - 1);
+        if (type === 'prompt') {
+          setPromptsData((prev) => prev.filter((w) => w.id !== id));
+          setPromptsTotal((prev) => prev - 1);
+        } else {
+          setContentsData((prev) => prev.filter((w) => w.id !== id));
+          setContentsTotal((prev) => prev - 1);
+        }
       }
     } catch { /* ignore */ }
   };
@@ -218,7 +255,8 @@ function DashboardContent() {
   }
 
   const usageTotalPages = Math.ceil(usageTotal / 20);
-  const worksTotalPages = Math.ceil(worksTotal / 10);
+  const promptsTotalPages = Math.ceil(promptsTotal / 10);
+  const contentsTotalPages = Math.ceil(contentsTotal / 10);
 
   return (
     <div className="min-h-screen bg-muted/30">
@@ -384,110 +422,218 @@ function DashboardContent() {
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">My Works</h2>
               <span className="text-sm text-muted-foreground">
-                {worksTotal} saved works
+                {promptsTotal} prompts / {contentsTotal} contents
               </span>
+            </div>
+
+            {/* Sub tabs: Prompt / Content */}
+            <div className="flex gap-2">
+              <Button
+                variant={worksSubTab === 'prompt' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => { setWorksSubTab('prompt'); setExpandedWorkId(null); }}
+              >
+                <Sparkles className="size-3.5 mr-1.5" />
+                Prompts
+                <Badge variant="secondary" className="ml-1.5 text-xs px-1.5 py-0">{promptsTotal}</Badge>
+              </Button>
+              <Button
+                variant={worksSubTab === 'content' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => { setWorksSubTab('content'); setExpandedWorkId(null); }}
+              >
+                <FileText className="size-3.5 mr-1.5" />
+                Contents
+                <Badge variant="secondary" className="ml-1.5 text-xs px-1.5 py-0">{contentsTotal}</Badge>
+              </Button>
             </div>
 
             {worksLoading ? (
               <div className="flex justify-center py-12">
                 <Loader2 className="size-6 animate-spin text-muted-foreground" />
               </div>
-            ) : worksData.length === 0 ? (
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                  <FileText className="size-10 mb-3 opacity-50" />
-                  <p>No saved works yet</p>
-                  <p className="text-sm">Generate prompts and they will appear here.</p>
-                </CardContent>
-              </Card>
-            ) : (
-              <>
-                <div className="space-y-4">
-                  {worksData.map((work) => (
-                    <Card key={work.id} className="overflow-hidden">
-                      <CardHeader className="pb-2">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1 min-w-0">
-                            {work.input_text && (
-                              <p className="text-xs text-muted-foreground mb-1 truncate">
-                                Input: {work.input_text}
-                              </p>
-                            )}
-                            <CardTitle className="text-sm font-medium leading-snug">
-                              {work.prompt.length > 150
-                                ? work.prompt.slice(0, 150) + '...'
-                                : work.prompt}
-                            </CardTitle>
+            ) : worksSubTab === 'prompt' ? (
+              /* ---- Prompts Sub Tab ---- */
+              promptsData.length === 0 ? (
+                <Card>
+                  <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                    <Sparkles className="size-10 mb-3 opacity-50" />
+                    <p>No saved prompts yet</p>
+                    <p className="text-sm">Generate prompts and they will appear here.</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <>
+                  <div className="space-y-3">
+                    {promptsData.map((p) => (
+                      <Card key={p.id} className="overflow-hidden cursor-pointer" onClick={() => setExpandedWorkId(expandedWorkId === p.id ? null : p.id)}>
+                        <CardHeader className="pb-2 overflow-hidden">
+                          <div className="flex items-start justify-between overflow-hidden">
+                            <div className="flex-1 min-w-0 overflow-hidden">
+                              <div className="flex items-center gap-2 mb-1">
+                                <Badge variant="outline" className="text-xs shrink-0 font-mono">{p.seq}#</Badge>
+                                {p.input_text && (
+                                  <p className="text-xs text-muted-foreground truncate">
+                                    {p.input_text}
+                                  </p>
+                                )}
+                              </div>
+                              <div className={`text-sm leading-relaxed overflow-hidden ${expandedWorkId === p.id ? '' : 'max-h-24'}`}>
+                                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                  {expandedWorkId === p.id
+                                    ? p.prompt
+                                    : p.prompt.length > 200
+                                      ? p.prompt.slice(0, 200) + '...'
+                                      : p.prompt}
+                                </ReactMarkdown>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-1 ml-2 shrink-0">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 w-7 p-0"
+                                onClick={(e) => { e.stopPropagation(); handleCopy(p.prompt, p.id); }}
+                              >
+                                {copiedId === p.id ? (
+                                  <Check className="size-3.5 text-green-500" />
+                                ) : (
+                                  <Copy className="size-3.5" />
+                                )}
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 w-7 p-0 text-destructive hover:text-destructive"
+                                onClick={(e) => { e.stopPropagation(); handleDeleteWork(p.id, 'prompt'); }}
+                              >
+                                <Trash2 className="size-3.5" />
+                              </Button>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-1 ml-2 shrink-0">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-7 w-7 p-0"
-                              onClick={() => handleCopy(work.prompt, work.id)}
-                            >
-                              {copiedId === work.id ? (
-                                <Check className="size-3.5 text-green-500" />
-                              ) : (
-                                <Copy className="size-3.5" />
-                              )}
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-7 w-7 p-0 text-destructive hover:text-destructive"
-                              onClick={() => handleDeleteWork(work.id)}
-                            >
-                              <Trash2 className="size-3.5" />
-                            </Button>
-                          </div>
+                        </CardHeader>
+                        <div className="px-6 pb-3 flex items-center gap-2 text-xs text-muted-foreground">
+                          <Calendar className="size-3" />
+                          {formatDate(p.created_at)}
+                          {p.prompt.length > 200 && (
+                            <span className="text-primary/70">
+                              {expandedWorkId === p.id ? '▲ Collapse' : '▼ Expand'}
+                            </span>
+                          )}
+                          <Badge variant="secondary" className="text-xs ml-auto">{p.category}</Badge>
                         </div>
-                      </CardHeader>
-                      {work.generated_content && (
-                        <CardContent className="pt-0">
-                          <div className="bg-muted/50 rounded-md p-3 text-xs text-muted-foreground max-h-32 overflow-y-auto whitespace-pre-wrap">
-                            {work.generated_content.length > 500
-                              ? work.generated_content.slice(0, 500) + '...'
-                              : work.generated_content}
-                          </div>
-                        </CardContent>
-                      )}
-                      <div className="px-6 pb-3 flex items-center gap-2 text-xs text-muted-foreground">
-                        <Calendar className="size-3" />
-                        {formatDate(work.created_at)}
-                        <Badge variant="secondary" className="text-xs ml-auto capitalize">
-                          {work.category}
-                        </Badge>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-
-                {/* Pagination */}
-                {worksTotalPages > 1 && (
-                  <div className="flex items-center justify-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={worksPage <= 1}
-                      onClick={() => fetchWorks(worksPage - 1)}
-                    >
-                      Previous
-                    </Button>
-                    <span className="text-sm text-muted-foreground">
-                      Page {worksPage} of {worksTotalPages}
-                    </span>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={worksPage >= worksTotalPages}
-                      onClick={() => fetchWorks(worksPage + 1)}
-                    >
-                      Next
-                    </Button>
+                      </Card>
+                    ))}
                   </div>
-                )}
-              </>
+                  {promptsTotalPages > 1 && (
+                    <div className="flex items-center justify-center gap-2">
+                      <Button variant="outline" size="sm" disabled={promptsPage <= 1} onClick={() => fetchPrompts(promptsPage - 1)}>
+                        Previous
+                      </Button>
+                      <span className="text-sm text-muted-foreground">
+                        Page {promptsPage} of {promptsTotalPages}
+                      </span>
+                      <Button variant="outline" size="sm" disabled={promptsPage >= promptsTotalPages} onClick={() => fetchPrompts(promptsPage + 1)}>
+                        Next
+                      </Button>
+                    </div>
+                  )}
+                </>
+              )
+            ) : (
+              /* ---- Contents Sub Tab ---- */
+              contentsData.length === 0 ? (
+                <Card>
+                  <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                    <FileText className="size-10 mb-3 opacity-50" />
+                    <p>No saved contents yet</p>
+                    <p className="text-sm">Generate content from prompts and they will appear here.</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <>
+                  <div className="space-y-3">
+                    {contentsData.map((c) => (
+                      <Card key={c.id} className="overflow-hidden cursor-pointer" onClick={() => setExpandedWorkId(expandedWorkId === c.id ? null : c.id)}>
+                        <CardHeader className="pb-2 overflow-hidden">
+                          <div className="flex items-start justify-between overflow-hidden">
+                            <div className="flex-1 min-w-0 overflow-hidden">
+                              <div className="flex items-center gap-2 mb-1">
+                                <Badge variant="outline" className="text-xs shrink-0 font-mono">
+                                  {c.prompt_seq ? `${c.prompt_seq}-${c.sub_seq}#` : `?-${c.sub_seq}#`}
+                                </Badge>
+                                {c.input_prompt && (
+                                  <p className="text-xs text-muted-foreground truncate">
+                                    {c.input_prompt}
+                                  </p>
+                                )}
+                              </div>
+                              <div className={`text-sm leading-relaxed overflow-hidden ${expandedWorkId === c.id ? '' : 'max-h-32'}`}>
+                                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                  {expandedWorkId === c.id
+                                    ? c.content
+                                    : c.content.length > 300
+                                      ? c.content.slice(0, 300) + '...'
+                                      : c.content}
+                                </ReactMarkdown>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-1 ml-2 shrink-0">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 w-7 p-0"
+                                onClick={(e) => { e.stopPropagation(); handleCopy(c.content, c.id); }}
+                              >
+                                {copiedId === c.id ? (
+                                  <Check className="size-3.5 text-green-500" />
+                                ) : (
+                                  <Copy className="size-3.5" />
+                                )}
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 w-7 p-0 text-destructive hover:text-destructive"
+                                onClick={(e) => { e.stopPropagation(); handleDeleteWork(c.id, 'content'); }}
+                              >
+                                <Trash2 className="size-3.5" />
+                              </Button>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <div className="px-6 pb-3 flex items-center gap-2 text-xs text-muted-foreground">
+                          <Calendar className="size-3" />
+                          {formatDate(c.created_at)}
+                          {c.content.length > 300 && (
+                            <span className="text-primary/70">
+                              {expandedWorkId === c.id ? '▲ Collapse' : '▼ Expand'}
+                            </span>
+                          )}
+                          {c.prompt_seq && (
+                            <Badge variant="secondary" className="text-xs ml-auto font-mono">
+                              from {c.prompt_seq}#
+                            </Badge>
+                          )}
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                  {contentsTotalPages > 1 && (
+                    <div className="flex items-center justify-center gap-2">
+                      <Button variant="outline" size="sm" disabled={contentsPage <= 1} onClick={() => fetchContents(contentsPage - 1)}>
+                        Previous
+                      </Button>
+                      <span className="text-sm text-muted-foreground">
+                        Page {contentsPage} of {contentsTotalPages}
+                      </span>
+                      <Button variant="outline" size="sm" disabled={contentsPage >= contentsTotalPages} onClick={() => fetchContents(contentsPage + 1)}>
+                        Next
+                      </Button>
+                    </div>
+                  )}
+                </>
+              )
             )}
           </TabsContent>
 

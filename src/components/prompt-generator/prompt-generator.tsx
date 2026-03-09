@@ -1000,6 +1000,22 @@ export function PromptGenerator({
         }
       }
 
+      // Save continue result to database
+      if (isLoggedIn && result) {
+        try {
+          const { saveGeneratedContentAction } = await import(
+            '@/actions/save-generated-content'
+          );
+          await saveGeneratedContentAction({
+            promptId: currentRecordId || undefined,
+            inputPrompt: continueInstruction,
+            content: result,
+          });
+        } catch (saveError) {
+          console.error('Error saving continued content:', saveError);
+        }
+      }
+
       setContinueInstruction('');
     } catch (error) {
       console.error('Continue conversation error:', error);
@@ -1262,17 +1278,18 @@ export function PromptGenerator({
         }
 
         // Save to database
-        if (isLoggedIn && currentRecordId) {
+        if (isLoggedIn && accumulatedText) {
           try {
-            const { updateGeneratedImageAction } = await import(
-              '@/actions/update-generated-image'
+            const { saveGeneratedContentAction } = await import(
+              '@/actions/save-generated-content'
             );
-            await updateGeneratedImageAction({
-              id: currentRecordId,
-              generatedContent: accumulatedText,
+            await saveGeneratedContentAction({
+              promptId: currentRecordId || undefined,
+              inputPrompt: enhancedResult,
+              content: accumulatedText,
             });
           } catch (saveError) {
-            console.error('Error saving generated text:', saveError);
+            console.error('Error saving generated content:', saveError);
           }
         }
       }

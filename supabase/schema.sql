@@ -218,3 +218,39 @@ create policy "Users can insert own prompts"
 create policy "Users can delete own prompts"
   on public.generated_prompts for delete
   using (auth.uid() = user_id);
+
+-- Users can update their own generated prompts
+create policy "Users can update own prompts"
+  on public.generated_prompts for update
+  using (auth.uid() = user_id);
+
+-- 5. Generated contents (saved generated text from "Generate Content" and "Continue")
+create table if not exists public.generated_contents (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references public.profiles(id) on delete cascade not null,
+  prompt_id uuid references public.generated_prompts(id) on delete set null,
+  input_prompt text,
+  content text not null,
+  model_id text,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_generated_contents_user on public.generated_contents(user_id, created_at desc);
+
+alter table public.generated_contents enable row level security;
+
+create policy "Users can view own contents"
+  on public.generated_contents for select
+  using (auth.uid() = user_id);
+
+create policy "Users can insert own contents"
+  on public.generated_contents for insert
+  with check (auth.uid() = user_id);
+
+create policy "Users can delete own contents"
+  on public.generated_contents for delete
+  using (auth.uid() = user_id);
+
+create policy "Users can update own contents"
+  on public.generated_contents for update
+  using (auth.uid() = user_id);
