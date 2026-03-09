@@ -12,7 +12,7 @@ import {
 export default function WritingPromptsPage() {
   return (
     <div className="flex flex-col">
-      <div className="bg-muted/30">
+      <div className="bg-muted/30 bg-[url('/images/background.webp')] bg-cover bg-center bg-no-repeat bg-fixed">
         {/* Top Bar with Auth */}
         <div className="container mx-auto px-4 pt-4">
           <div className="flex justify-end">

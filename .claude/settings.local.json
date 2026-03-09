@@ -25,7 +25,9 @@
       "Bash(npx tsc --noEmit --pretty)",
       "Bash(ls -la /c/Users/Administrator/writing-prompt-generator/src/app/[locale]/)",
       "Bash(xargs grep -l \"CreditBadge\\\\|credit-badge\")",
-      "Bash(pnpm add stripe)"
+      "Bash(pnpm add stripe)",
+      "Bash(npx sharp-cli --input public/images/background.png --output public/images/background.webp --format webp --quality 80)",
+      "Bash(npx @aspect-build/imagetool)"
     ]
   }
 }
