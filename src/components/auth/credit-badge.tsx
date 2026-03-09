@@ -51,7 +51,6 @@ export function CreditBadge() {
     >
       <Coins className="size-3.5" />
       <span>{credits.balance}</span>
-      <span className="text-muted-foreground/60">/ {credits.daily_limit}</span>
     </div>
   );
 }

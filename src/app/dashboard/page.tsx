@@ -279,7 +279,6 @@ function DashboardContent() {
               <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                 <Coins className="size-4" />
                 <span className="font-medium">{credits.balance}</span>
-                <span>/ {credits.daily_limit}</span>
                 <Badge variant="outline" className="ml-1 text-xs capitalize">
                   {credits.plan}
                 </Badge>
