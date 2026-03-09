@@ -1,6 +1,6 @@
 import { PromptGenerator } from '@/components/prompt-generator/prompt-generator';
-import { AuthButton } from '@/components/auth/auth-button';
-import Image from 'next/image';
+import { Navbar } from '@/components/navbar';
+import { Footer } from '@/components/footer';
 import {
   BookOpen,
   Briefcase,
@@ -21,15 +21,8 @@ export default function WritingPromptsPage() {
   return (
     <div className="flex flex-col">
       <div className="bg-muted/30 bg-[url('/images/background.webp')] bg-cover bg-center bg-no-repeat bg-fixed">
-        {/* Top Bar with Auth */}
-        <div className="container mx-auto px-4 pt-4">
-          <div className="flex items-center justify-between">
-            <a href="/" className="flex items-center ml-4 md:ml-16 lg:ml-28">
-              <Image src="/images/logo.png" alt="GenreGenie" width={120} height={120} className="rounded-lg" />
-            </a>
-            <AuthButton />
-          </div>
-        </div>
+        {/* Navbar */}
+        <Navbar />
 
         {/* Hero Section with H1 */}
         <section className="container mx-auto px-4 pt-6 md:pt-10 pb-4 md:pb-6">
@@ -277,7 +270,7 @@ export default function WritingPromptsPage() {
         </section>
 
         {/* Section: Why Choose Us */}
-        <section className="container mx-auto px-4 py-16 md:py-20 border-t border-border/50">
+        <section id="features" className="container mx-auto px-4 py-16 md:py-20 border-t border-border/50">
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 rounded-lg bg-primary/10">
@@ -336,7 +329,7 @@ export default function WritingPromptsPage() {
         </section>
 
         {/* Section: About GenreGenie Writing Prompt Generator */}
-        <section className="container mx-auto px-4 py-16 md:py-20 border-t border-border/50">
+        <section id="about" className="container mx-auto px-4 py-16 md:py-20 border-t border-border/50">
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 rounded-lg bg-primary/10">
@@ -352,6 +345,9 @@ export default function WritingPromptsPage() {
           </div>
         </section>
       </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }
