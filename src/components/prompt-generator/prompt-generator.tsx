@@ -1674,7 +1674,7 @@ export function PromptGenerator({
                 <div className="border-t pt-4 space-y-4">
                   {/* Input */}
                   <div className="space-y-2.5">
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                       <Label htmlFor="prompt-input" className="text-sm font-medium">
                         {t('inputSection.inputLabel')}
                       </Label>
@@ -1696,7 +1696,7 @@ export function PromptGenerator({
                       </Button>
                     </div>
                     <div className="relative">
-                      <Input
+                      <Textarea
                         id="prompt-input"
                         placeholder={
                           t(`inputSection.placeholders.${category}` as any) ||
@@ -1710,7 +1710,8 @@ export function PromptGenerator({
                             handleGenerate();
                           }
                         }}
-                        className="h-11 text-sm pr-4"
+                        rows={2}
+                        className="min-h-[44px] text-sm pr-4 resize-none"
                       />
                     </div>
                     {/* AI Generated Ideas */}
