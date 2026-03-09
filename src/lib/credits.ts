@@ -40,7 +40,7 @@ export async function useCredits(action: CreditAction): Promise<CreditCheckResul
 
   const remaining = data as number;
   if (remaining < 0) {
-    return { ok: false, error: 'Insufficient credits. Please wait until tomorrow or upgrade your plan.' };
+    return { ok: false, error: 'Insufficient credits. Please wait until tomorrow or purchase a credit pack.' };
   }
 
   return { ok: true, remaining, userId: user.id };
@@ -70,5 +70,5 @@ export async function getCreditBalance() {
     return null;
   }
 
-  return data as { balance: number; daily_limit: number; plan: string };
+  return data as { balance: number; daily_limit: number; purchased_credits: number; plan: string };
 }

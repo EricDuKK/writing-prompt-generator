@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { CREDIT_COSTS } from '@/config/credits';
+import { CREDIT_COSTS, CREDIT_PACKS } from '@/config/credits';
 import {
   ArrowLeft,
   Calendar,
@@ -19,6 +19,7 @@ import {
   FileText,
   History,
   Loader2,
+  Package,
   Sparkles,
   Trash2,
   Zap,
@@ -58,6 +59,7 @@ interface ContentRecord {
 interface CreditInfo {
   balance: number;
   daily_limit: number;
+  purchased_credits: number;
   plan: string;
 }
 
@@ -74,27 +76,36 @@ const PLANS = [
   {
     id: 'free',
     name: 'Free',
-    price: '$0',
-    period: 'forever',
-    credits: 20,
-    features: ['20 daily credits', 'All AI features', 'Basic support'],
+    price: { monthly: '$0', yearly: '$0' },
+    period: { monthly: 'forever', yearly: 'forever' },
+    credits: { monthly: 15, yearly: 15 },
+    features: {
+      monthly: ['15 daily credits', 'Standard models', 'All AI features'],
+      yearly: ['15 daily credits', 'Standard models', 'All AI features'],
+    },
   },
   {
     id: 'basic',
     name: 'Basic',
-    price: '$9.99',
-    period: '/month',
-    credits: 100,
-    features: ['100 daily credits', 'All AI features', 'Priority support'],
+    price: { monthly: '$4.99', yearly: '$49.99' },
+    period: { monthly: '/month', yearly: '/year' },
+    credits: { monthly: 60, yearly: 80 },
+    features: {
+      monthly: ['60 daily credits', 'Standard models', 'All AI features'],
+      yearly: ['80 daily credits', 'Standard models', 'All AI features'],
+    },
     popular: true,
   },
   {
     id: 'pro',
     name: 'Pro',
-    price: '$29.99',
-    period: '/month',
-    credits: 500,
-    features: ['500 daily credits', 'All AI features', 'Priority support', 'API access'],
+    price: { monthly: '$12.99', yearly: '$129.99' },
+    period: { monthly: '/month', yearly: '/year' },
+    credits: { monthly: 200, yearly: 220 },
+    features: {
+      monthly: ['200 daily credits', 'Advanced models', 'Higher quality & longer outputs', 'All AI features'],
+      yearly: ['220 daily credits', 'Advanced models', 'Higher quality & longer outputs', 'All AI features'],
+    },
   },
 ];
 
@@ -136,6 +147,7 @@ function DashboardContent() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [expandedWorkId, setExpandedWorkId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
@@ -276,9 +288,18 @@ function DashboardContent() {
           </div>
           <div className="flex items-center gap-3">
             {credits && (
-              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                <Coins className="size-4" />
-                <span className="font-medium">{credits.balance}</span>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-1.5" title="Daily credits">
+                  <Coins className="size-4" />
+                  <span className="font-medium">{credits.balance}</span>
+                </div>
+                {credits.purchased_credits > 0 && (
+                  <div className="flex items-center gap-1" title="Purchased credits">
+                    <span className="text-muted-foreground/60">+</span>
+                    <Package className="size-3.5 text-emerald-500" />
+                    <span className="font-medium text-emerald-600 dark:text-emerald-400">{credits.purchased_credits}</span>
+                  </div>
+                )}
                 <Badge variant="outline" className="ml-1 text-xs capitalize">
                   {credits.plan}
                 </Badge>
@@ -643,81 +664,162 @@ function DashboardContent() {
           </TabsContent>
 
           {/* Upgrade Plan Tab */}
-          <TabsContent value="plans" className="space-y-4">
-            <div className="text-center mb-6">
-              <h2 className="text-lg font-semibold mb-1">Choose Your Plan</h2>
-              <p className="text-sm text-muted-foreground">
-                Upgrade to get more daily credits and unlock premium features.
+          <TabsContent value="plans" className="space-y-6">
+            {/* Subscription Plans Section */}
+            <div>
+              <div className="text-center mb-4">
+                <h2 className="text-lg font-semibold mb-1">Subscription Plans</h2>
+                <p className="text-sm text-muted-foreground">
+                  Upgrade to get more daily credits and unlock premium features.
+                </p>
+              </div>
+
+              {/* Billing period toggle */}
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <Button
+                  variant={billingPeriod === 'monthly' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setBillingPeriod('monthly')}
+                >
+                  Monthly
+                </Button>
+                <Button
+                  variant={billingPeriod === 'yearly' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setBillingPeriod('yearly')}
+                >
+                  Yearly
+                  <Badge variant="secondary" className="ml-1.5 text-[10px] px-1.5 py-0">Save up to 37%</Badge>
+                </Button>
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-4">
+                {PLANS.map((plan) => {
+                  const isCurrent = credits?.plan === plan.id;
+                  return (
+                    <Card
+                      key={plan.id}
+                      className={`relative overflow-hidden transition-shadow ${
+                        plan.popular
+                          ? 'border-primary shadow-md'
+                          : isCurrent
+                            ? 'border-green-500'
+                            : ''
+                      }`}
+                    >
+                      {plan.popular && (
+                        <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs px-3 py-1 rounded-bl-lg font-medium">
+                          Popular
+                        </div>
+                      )}
+                      <CardHeader className="pb-2">
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                          {plan.id === 'pro' && <Sparkles className="size-5 text-primary" />}
+                          {plan.name}
+                          {isCurrent && (
+                            <Badge variant="secondary" className="text-xs">
+                              Current
+                            </Badge>
+                          )}
+                        </CardTitle>
+                        <div className="flex items-baseline gap-1 mt-1">
+                          <span className="text-3xl font-bold">{plan.price[billingPeriod]}</span>
+                          <span className="text-sm text-muted-foreground">{plan.period[billingPeriod]}</span>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center gap-2 mb-4 text-sm">
+                          <Coins className="size-4 text-amber-500" />
+                          <span className="font-medium">{plan.credits[billingPeriod]} credits / day</span>
+                        </div>
+                        <ul className="space-y-2 mb-6">
+                          {plan.features[billingPeriod].map((feature) => (
+                            <li key={feature} className="flex items-center gap-2 text-sm">
+                              <Check className="size-4 text-green-500 shrink-0" />
+                              <span>{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        <Button
+                          className="w-full"
+                          variant={plan.popular ? 'default' : 'outline'}
+                          disabled={isCurrent || plan.id === 'free'}
+                        >
+                          {isCurrent
+                            ? 'Current Plan'
+                            : plan.id === 'free'
+                              ? 'Free Forever'
+                              : 'Coming Soon'}
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+
+              <p className="text-xs text-center text-muted-foreground mt-4">
+                Paid subscription plans are coming soon. Stay tuned for updates!
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-4">
-              {PLANS.map((plan) => {
-                const isCurrent = credits?.plan === plan.id;
-                return (
-                  <Card
-                    key={plan.id}
-                    className={`relative overflow-hidden transition-shadow ${
-                      plan.popular
-                        ? 'border-primary shadow-md'
-                        : isCurrent
-                          ? 'border-green-500'
-                          : ''
-                    }`}
-                  >
-                    {plan.popular && (
-                      <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs px-3 py-1 rounded-bl-lg font-medium">
-                        Popular
+            {/* Credit Packs Section */}
+            <div>
+              <div className="text-center mb-4">
+                <h2 className="text-lg font-semibold mb-1">Credit Packs</h2>
+                <p className="text-sm text-muted-foreground">
+                  Buy credits that never expire. Used after daily credits run out.
+                </p>
+              </div>
+
+              {credits && credits.purchased_credits > 0 && (
+                <div className="flex items-center justify-center gap-2 mb-4 text-sm">
+                  <Package className="size-4 text-emerald-500" />
+                  <span>You have <span className="font-semibold text-emerald-600 dark:text-emerald-400">{credits.purchased_credits}</span> purchased credits remaining</span>
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {CREDIT_PACKS.map((pack) => (
+                  <Card key={pack.id} className="relative overflow-hidden hover:shadow-md transition-shadow">
+                    {pack.id === 'pack-500' && (
+                      <div className="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] px-2 py-0.5 rounded-bl-lg font-medium">
+                        Best Value
                       </div>
                     )}
-                    <CardHeader className="pb-2">
-                      <CardTitle className="flex items-center gap-2 text-lg">
-                        {plan.id === 'pro' && <Sparkles className="size-5 text-primary" />}
-                        {plan.name}
-                        {isCurrent && (
-                          <Badge variant="secondary" className="text-xs">
-                            Current
-                          </Badge>
-                        )}
-                      </CardTitle>
-                      <div className="flex items-baseline gap-1 mt-1">
-                        <span className="text-3xl font-bold">{plan.price}</span>
-                        <span className="text-sm text-muted-foreground">{plan.period}</span>
+                    <CardContent className="pt-5 pb-4 text-center">
+                      <div className="text-2xl font-bold mb-1">{pack.credits}</div>
+                      <div className="text-xs text-muted-foreground mb-3">credits</div>
+                      <div className="text-lg font-semibold mb-1">{pack.priceDisplay}</div>
+                      <div className="text-[10px] text-muted-foreground mb-3">
+                        ${(pack.price / pack.credits / 100).toFixed(4)}/credit
                       </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center gap-2 mb-4 text-sm">
-                        <Coins className="size-4 text-amber-500" />
-                        <span className="font-medium">{plan.credits} credits / day</span>
-                      </div>
-                      <ul className="space-y-2 mb-6">
-                        {plan.features.map((feature) => (
-                          <li key={feature} className="flex items-center gap-2 text-sm">
-                            <Check className="size-4 text-green-500 shrink-0" />
-                            <span>{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
                       <Button
+                        size="sm"
                         className="w-full"
-                        variant={plan.popular ? 'default' : 'outline'}
-                        disabled={isCurrent || plan.id === 'free'}
+                        variant={pack.id === 'pack-500' ? 'default' : 'outline'}
+                        onClick={async () => {
+                          try {
+                            const res = await fetch('/api/stripe/checkout', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ packId: pack.id }),
+                            });
+                            const data = await res.json();
+                            if (data.url) {
+                              window.location.href = data.url;
+                            }
+                          } catch {
+                            // ignore
+                          }
+                        }}
                       >
-                        {isCurrent
-                          ? 'Current Plan'
-                          : plan.id === 'free'
-                            ? 'Free Forever'
-                            : 'Coming Soon'}
+                        Buy
                       </Button>
                     </CardContent>
                   </Card>
-                );
-              })}
+                ))}
+              </div>
             </div>
-
-            <p className="text-xs text-center text-muted-foreground mt-4">
-              Paid plans are coming soon. Stay tuned for updates!
-            </p>
           </TabsContent>
         </Tabs>
       </div>

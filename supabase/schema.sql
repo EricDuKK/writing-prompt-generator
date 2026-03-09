@@ -14,7 +14,8 @@ create table if not exists public.profiles (
 -- 2. Credits table
 create table if not exists public.credits (
   user_id uuid references public.profiles(id) on delete cascade primary key,
-  balance int not null default 20,
+  balance int not null default 15,
+  purchased_credits int not null default 0,
   last_reset_date date not null default current_date,
   created_at timestamptz not null default now()
 );
@@ -25,6 +26,7 @@ create table if not exists public.usage_log (
   user_id uuid references public.profiles(id) on delete cascade not null,
   action text not null,
   credits_used int not null,
+  source text not null default 'daily',
   created_at timestamptz not null default now()
 );
 
@@ -46,6 +48,21 @@ create table if not exists public.generated_prompts (
 
 create index if not exists idx_generated_prompts_user on public.generated_prompts(user_id, created_at desc);
 
+-- 5. Credit purchases (one-time packs)
+create table if not exists public.credit_purchases (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references public.profiles(id) on delete cascade not null,
+  pack_id text not null,
+  credits int not null,
+  amount_cents int not null,
+  stripe_session_id text unique,
+  status text not null default 'pending' check (status in ('pending', 'completed', 'failed')),
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_credit_purchases_user on public.credit_purchases(user_id, created_at desc);
+create index if not exists idx_credit_purchases_session on public.credit_purchases(stripe_session_id);
+
 -- ============================================
 -- Functions
 -- ============================================
@@ -57,8 +74,8 @@ begin
   insert into public.profiles (id, email)
   values (new.id, new.email);
 
-  insert into public.credits (user_id, balance, last_reset_date)
-  values (new.id, 20, current_date);
+  insert into public.credits (user_id, balance, purchased_credits, last_reset_date)
+  values (new.id, 15, 0, current_date);
 
   return new;
 end;
@@ -71,7 +88,8 @@ create trigger on_auth_user_created
   for each row execute procedure public.handle_new_user();
 
 -- Check and deduct credits (atomic operation)
--- Returns remaining balance, or -1 if insufficient
+-- Priority: daily credits first, then purchased credits
+-- Returns remaining total balance, or -1 if insufficient
 create or replace function public.use_credits(
   p_user_id uuid,
   p_action text,
@@ -82,7 +100,10 @@ declare
   v_plan text;
   v_daily_limit int;
   v_balance int;
+  v_purchased int;
   v_last_reset date;
+  v_remaining_cost int;
+  v_source text;
 begin
   -- Get user plan
   select plan into v_plan from public.profiles where id = p_user_id;
@@ -90,28 +111,29 @@ begin
 
   -- Determine daily limit based on plan
   v_daily_limit := case v_plan
-    when 'free' then 20
-    when 'basic' then 100
-    when 'pro' then 500
+    when 'free' then 15
+    when 'basic' then 60
+    when 'pro' then 200
     when 'power' then 999999
-    else 20
+    else 15
   end;
 
   -- Lock the credits row
-  select balance, last_reset_date into v_balance, v_last_reset
+  select balance, purchased_credits, last_reset_date into v_balance, v_purchased, v_last_reset
   from public.credits
   where user_id = p_user_id
   for update;
 
   if not found then
     -- Create credits row if missing
-    insert into public.credits (user_id, balance, last_reset_date)
-    values (p_user_id, v_daily_limit, current_date);
+    insert into public.credits (user_id, balance, purchased_credits, last_reset_date)
+    values (p_user_id, v_daily_limit, 0, current_date);
     v_balance := v_daily_limit;
+    v_purchased := 0;
     v_last_reset := current_date;
   end if;
 
-  -- Reset if new day
+  -- Reset daily credits if new day (purchased credits never reset)
   if v_last_reset < current_date then
     v_balance := v_daily_limit;
     update public.credits
@@ -119,21 +141,44 @@ begin
     where user_id = p_user_id;
   end if;
 
-  -- Check sufficient balance
-  if v_balance < p_cost then
+  -- Check total sufficient balance
+  if (v_balance + v_purchased) < p_cost then
     return -1;
   end if;
 
-  -- Deduct
-  update public.credits
-  set balance = balance - p_cost
-  where user_id = p_user_id;
+  -- Deduct: daily credits first, then purchased
+  v_remaining_cost := p_cost;
+
+  if v_balance >= v_remaining_cost then
+    -- All from daily
+    update public.credits
+    set balance = balance - v_remaining_cost
+    where user_id = p_user_id;
+    v_source := 'daily';
+    v_balance := v_balance - v_remaining_cost;
+  elsif v_balance > 0 then
+    -- Partial from daily, rest from purchased
+    v_remaining_cost := v_remaining_cost - v_balance;
+    update public.credits
+    set balance = 0, purchased_credits = purchased_credits - v_remaining_cost
+    where user_id = p_user_id;
+    v_source := 'mixed';
+    v_purchased := v_purchased - v_remaining_cost;
+    v_balance := 0;
+  else
+    -- All from purchased
+    update public.credits
+    set purchased_credits = purchased_credits - v_remaining_cost
+    where user_id = p_user_id;
+    v_source := 'purchased';
+    v_purchased := v_purchased - v_remaining_cost;
+  end if;
 
   -- Log usage
-  insert into public.usage_log (user_id, action, credits_used)
-  values (p_user_id, p_action, p_cost);
+  insert into public.usage_log (user_id, action, credits_used, source)
+  values (p_user_id, p_action, p_cost, v_source);
 
-  return v_balance - p_cost;
+  return v_balance + v_purchased;
 end;
 $$ language plpgsql security definer;
 
@@ -144,30 +189,31 @@ declare
   v_plan text;
   v_daily_limit int;
   v_balance int;
+  v_purchased int;
   v_last_reset date;
 begin
   select plan into v_plan from public.profiles where id = p_user_id;
-  if not found then return json_build_object('balance', 0, 'daily_limit', 0, 'plan', 'free'); end if;
+  if not found then return json_build_object('balance', 0, 'daily_limit', 0, 'purchased_credits', 0, 'plan', 'free'); end if;
 
   v_daily_limit := case v_plan
-    when 'free' then 20
-    when 'basic' then 100
-    when 'pro' then 500
+    when 'free' then 15
+    when 'basic' then 60
+    when 'pro' then 200
     when 'power' then 999999
-    else 20
+    else 15
   end;
 
-  select balance, last_reset_date into v_balance, v_last_reset
+  select balance, purchased_credits, last_reset_date into v_balance, v_purchased, v_last_reset
   from public.credits
   where user_id = p_user_id;
 
   if not found then
-    insert into public.credits (user_id, balance, last_reset_date)
-    values (p_user_id, v_daily_limit, current_date);
-    return json_build_object('balance', v_daily_limit, 'daily_limit', v_daily_limit, 'plan', v_plan);
+    insert into public.credits (user_id, balance, purchased_credits, last_reset_date)
+    values (p_user_id, v_daily_limit, 0, current_date);
+    return json_build_object('balance', v_daily_limit, 'daily_limit', v_daily_limit, 'purchased_credits', 0, 'plan', v_plan);
   end if;
 
-  -- Auto-reset on new day
+  -- Auto-reset daily credits on new day
   if v_last_reset < current_date then
     update public.credits
     set balance = v_daily_limit, last_reset_date = current_date
@@ -175,7 +221,38 @@ begin
     v_balance := v_daily_limit;
   end if;
 
-  return json_build_object('balance', v_balance, 'daily_limit', v_daily_limit, 'plan', v_plan);
+  return json_build_object('balance', v_balance, 'daily_limit', v_daily_limit, 'purchased_credits', v_purchased, 'plan', v_plan);
+end;
+$$ language plpgsql security definer;
+
+-- Add purchased credits after successful payment
+create or replace function public.add_purchased_credits(
+  p_user_id uuid,
+  p_credits int,
+  p_purchase_id uuid
+)
+returns int as $$
+declare
+  v_new_total int;
+begin
+  -- Update purchase status
+  update public.credit_purchases
+  set status = 'completed'
+  where id = p_purchase_id and user_id = p_user_id;
+
+  -- Add credits
+  update public.credits
+  set purchased_credits = purchased_credits + p_credits
+  where user_id = p_user_id
+  returning purchased_credits into v_new_total;
+
+  if not found then
+    insert into public.credits (user_id, balance, purchased_credits, last_reset_date)
+    values (p_user_id, 15, p_credits, current_date);
+    v_new_total := p_credits;
+  end if;
+
+  return v_new_total;
 end;
 $$ language plpgsql security definer;
 
@@ -224,7 +301,7 @@ create policy "Users can update own prompts"
   on public.generated_prompts for update
   using (auth.uid() = user_id);
 
--- 5. Generated contents (saved generated text from "Generate Content" and "Continue")
+-- 6. Generated contents (saved generated text from "Generate Content" and "Continue")
 create table if not exists public.generated_contents (
   id uuid default gen_random_uuid() primary key,
   user_id uuid references public.profiles(id) on delete cascade not null,
@@ -253,4 +330,11 @@ create policy "Users can delete own contents"
 
 create policy "Users can update own contents"
   on public.generated_contents for update
+  using (auth.uid() = user_id);
+
+-- Credit purchases RLS
+alter table public.credit_purchases enable row level security;
+
+create policy "Users can view own purchases"
+  on public.credit_purchases for select
   using (auth.uid() = user_id);

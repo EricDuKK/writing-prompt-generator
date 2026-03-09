@@ -6,6 +6,7 @@ import { Coins } from 'lucide-react';
 interface CreditInfo {
   balance: number;
   daily_limit: number;
+  purchased_credits: number;
   plan: string;
 }
 
@@ -35,9 +36,9 @@ export function CreditBadge() {
 
   if (!credits) return null;
 
-  const percentage = (credits.balance / credits.daily_limit) * 100;
-  const isLow = percentage <= 25;
-  const isEmpty = credits.balance <= 0;
+  const total = credits.balance + credits.purchased_credits;
+  const isEmpty = total <= 0;
+  const isLow = total <= 3;
 
   return (
     <div
@@ -50,7 +51,7 @@ export function CreditBadge() {
       }`}
     >
       <Coins className="size-3.5" />
-      <span>{credits.balance}</span>
+      <span>{total}</span>
     </div>
   );
 }
