@@ -145,26 +145,30 @@ export async function POST(req: NextRequest) {
     if (event.type === 'customer.subscription.updated') {
       const subscription = event.data.object;
       const userId = subscription.metadata?.user_id;
-      const planId = subscription.metadata?.plan_id;
 
       if (userId) {
-        // Determine the new plan from the price if metadata wasn't updated
-        let newPlanId = planId;
-        if (!newPlanId) {
-          const priceId = subscription.items.data[0]?.price?.id;
-          const priceBasicMonthly = process.env.STRIPE_PRICE_BASIC_MONTHLY;
-          const priceBasicYearly = process.env.STRIPE_PRICE_BASIC_YEARLY;
-          const priceProMonthly = process.env.STRIPE_PRICE_PRO_MONTHLY;
-          const priceProYearly = process.env.STRIPE_PRICE_PRO_YEARLY;
+        // Always determine plan from the current price (metadata may be stale after Portal upgrade)
+        const priceId = subscription.items.data[0]?.price?.id;
+        let newPlanId: string | undefined;
 
-          if (priceId === priceBasicMonthly || priceId === priceBasicYearly) {
-            newPlanId = 'basic';
-          } else if (priceId === priceProMonthly || priceId === priceProYearly) {
-            newPlanId = 'pro';
-          }
+        const priceBasicMonthly = process.env.STRIPE_PRICE_BASIC_MONTHLY;
+        const priceBasicYearly = process.env.STRIPE_PRICE_BASIC_YEARLY;
+        const priceProMonthly = process.env.STRIPE_PRICE_PRO_MONTHLY;
+        const priceProYearly = process.env.STRIPE_PRICE_PRO_YEARLY;
+
+        if (priceId === priceBasicMonthly || priceId === priceBasicYearly) {
+          newPlanId = 'basic';
+        } else if (priceId === priceProMonthly || priceId === priceProYearly) {
+          newPlanId = 'pro';
         }
 
+        console.log(`[stripe webhook] subscription.updated priceId: ${priceId}, resolved plan: ${newPlanId}`);
+
         if (newPlanId) {
+          // Also update subscription metadata to keep it in sync
+          await stripe.subscriptions.update(subscription.id, {
+            metadata: { user_id: userId, plan_id: newPlanId },
+          });
           const { error } = await supabase
             .from('profiles')
             .update({
