@@ -6,6 +6,7 @@ import { Mail } from 'lucide-react';
 export const metadata: Metadata = {
   title: 'Contact Us | GenreGenie',
   description: 'Get in touch with the GenreGenie team. We are happy to help with any questions about our writing prompt generator.',
+  alternates: { canonical: '/contact' },
 };
 
 export default function ContactPage() {

@@ -5,6 +5,7 @@ import { Footer } from '@/components/footer';
 export const metadata: Metadata = {
   title: 'Privacy Policy | GenreGenie',
   description: 'Privacy Policy for GenreGenie writing prompt generator. Learn how we collect, use, and protect your personal information.',
+  alternates: { canonical: '/privacy' },
 };
 
 export default function PrivacyPage() {

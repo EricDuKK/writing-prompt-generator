@@ -11,6 +11,9 @@ export const metadata: Metadata = {
     apple: '/apple-touch-icon.png',
   },
   metadataBase: new URL('https://writing-prompt-generator.top'),
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     title: 'GenreGenie: AI Writing Prompt Generator & Story Ideas',
     description:

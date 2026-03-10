@@ -5,6 +5,7 @@ import { Footer } from '@/components/footer';
 export const metadata: Metadata = {
   title: 'Refund Policy | GenreGenie',
   description: 'Refund Policy for GenreGenie writing prompt generator. Learn about our refund and cancellation policies.',
+  alternates: { canonical: '/refund' },
 };
 
 export default function RefundPage() {

@@ -5,6 +5,7 @@ import { Footer } from '@/components/footer';
 export const metadata: Metadata = {
   title: 'Terms and Conditions | GenreGenie',
   description: 'Terms and Conditions for GenreGenie writing prompt generator. Read our terms of service before using our platform.',
+  alternates: { canonical: '/terms' },
 };
 
 export default function TermsPage() {

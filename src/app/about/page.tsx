@@ -6,6 +6,7 @@ import { BookOpen, Lightbulb, Sparkles, Wand2 } from 'lucide-react';
 export const metadata: Metadata = {
   title: 'About GenreGenie | AI Writing Prompt Generator',
   description: 'Learn about GenreGenie, the AI-powered writing prompt generator that helps writers overcome creative blocks and generate unique story ideas across every genre.',
+  alternates: { canonical: '/about' },
 };
 
 export default function AboutPage() {
