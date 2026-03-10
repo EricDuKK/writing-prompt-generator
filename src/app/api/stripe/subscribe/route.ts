@@ -69,13 +69,14 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'No subscription item found' }, { status: 400 });
       }
 
-      // Update the subscription (Stripe handles proration automatically)
+      // Update the subscription and immediately invoice the proration difference
       const updatedSubscription = await stripe.subscriptions.update(profile.stripe_subscription_id, {
         items: [{
           id: currentItemId,
           price: priceId,
         }],
-        proration_behavior: 'create_prorations',
+        proration_behavior: 'always_invoice',
+        payment_behavior: 'error_if_incomplete',
         metadata: {
           user_id: user.id,
           plan_id: planId,
