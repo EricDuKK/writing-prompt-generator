@@ -139,6 +139,10 @@ begin
     update public.credits
     set balance = v_daily_limit, last_reset_date = current_date
     where user_id = p_user_id;
+
+    -- Log the daily refresh
+    insert into public.usage_log (user_id, action, credits_used, source)
+    values (p_user_id, 'daily-refresh', v_daily_limit, 'system');
   end if;
 
   -- Check total sufficient balance
@@ -219,6 +223,10 @@ begin
     set balance = v_daily_limit, last_reset_date = current_date
     where user_id = p_user_id;
     v_balance := v_daily_limit;
+
+    -- Log the daily refresh
+    insert into public.usage_log (user_id, action, credits_used, source)
+    values (p_user_id, 'daily-refresh', v_daily_limit, 'system');
   end if;
 
   return json_build_object('balance', v_balance, 'daily_limit', v_daily_limit, 'purchased_credits', v_purchased, 'plan', v_plan);

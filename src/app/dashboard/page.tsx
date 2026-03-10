@@ -70,6 +70,7 @@ const ACTION_LABELS: Record<string, string> = {
   'generate-text': 'Generate Text',
   'translate-prompt': 'Translate',
   'ai-edit': 'AI Edit',
+  'daily-refresh': 'Daily Credit Refresh',
 };
 
 const PLANS = [
@@ -385,14 +386,20 @@ function DashboardContent() {
                 <Card>
                   <CardContent className="p-0">
                     <div className="divide-y">
-                      {usageData.map((record) => (
+                      {usageData.map((record) => {
+                      const isRefresh = record.action === 'daily-refresh';
+                      return (
                         <div
                           key={record.id}
                           className="flex items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors"
                         >
                           <div className="flex items-center gap-3">
-                            <div className="p-1.5 rounded-md bg-primary/10">
-                              <Zap className="size-3.5 text-primary" />
+                            <div className={`p-1.5 rounded-md ${isRefresh ? 'bg-emerald-500/10' : 'bg-primary/10'}`}>
+                              {isRefresh ? (
+                                <Coins className="size-3.5 text-emerald-500" />
+                              ) : (
+                                <Zap className="size-3.5 text-primary" />
+                              )}
                             </div>
                             <div>
                               <p className="text-sm font-medium">
@@ -404,11 +411,15 @@ function DashboardContent() {
                               </div>
                             </div>
                           </div>
-                          <Badge variant="outline" className="text-xs">
-                            -{record.credits_used} credits
+                          <Badge
+                            variant="outline"
+                            className={`text-xs ${isRefresh ? 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400' : ''}`}
+                          >
+                            {isRefresh ? '+' : '-'}{record.credits_used} credits
                           </Badge>
                         </div>
-                      ))}
+                      );
+                    })}
                     </div>
                   </CardContent>
                 </Card>
