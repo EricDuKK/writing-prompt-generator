@@ -10,6 +10,30 @@ export const metadata: Metadata = {
     icon: '/favicon.ico',
     apple: '/apple-touch-icon.png',
   },
+  metadataBase: new URL('https://writing-prompt-generator.top'),
+  openGraph: {
+    title: 'GenreGenie: AI Writing Prompt Generator & Story Ideas',
+    description:
+      'GenreGenie is the best writing prompt generator. Our writing prompt generator creates story ideas. Try this free writing prompt generator!',
+    url: 'https://writing-prompt-generator.top',
+    siteName: 'GenreGenie',
+    type: 'website',
+    images: [
+      {
+        url: '/images/logo.png',
+        width: 512,
+        height: 512,
+        alt: 'GenreGenie - AI Writing Prompt Generator',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary',
+    title: 'GenreGenie: AI Writing Prompt Generator & Story Ideas',
+    description:
+      'GenreGenie is the best writing prompt generator. Our writing prompt generator creates story ideas. Try this free writing prompt generator!',
+    images: ['/images/logo.png'],
+  },
 };
 
 export default function RootLayout({

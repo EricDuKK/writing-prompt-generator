@@ -309,7 +309,7 @@ function DashboardContent() {
             {user?.user_metadata?.avatar_url ? (
               <img
                 src={user.user_metadata.avatar_url}
-                alt=""
+                alt="User avatar"
                 className="size-8 rounded-full object-cover"
                 referrerPolicy="no-referrer"
               />
