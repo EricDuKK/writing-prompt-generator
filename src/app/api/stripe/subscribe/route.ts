@@ -32,8 +32,32 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid plan or period' }, { status: 400 });
   }
 
+  // Check if user already has an active subscription
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('plan, stripe_subscription_id')
+    .eq('id', user.id)
+    .single();
+
+  if (profile?.stripe_subscription_id) {
+    // User already has an active subscription, redirect to customer portal
+    const customers = await stripe.customers.list({
+      email: user.email!,
+      limit: 1,
+    });
+
+    if (customers.data.length > 0) {
+      const portalSession = await stripe.billingPortal.sessions.create({
+        customer: customers.data[0].id,
+        return_url: `${req.nextUrl.origin}/dashboard?tab=plans`,
+      });
+      return NextResponse.json({ url: portalSession.url });
+    }
+  }
+
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
+    customer_email: user.email!,
     line_items: [{ price: priceId, quantity: 1 }],
     mode: 'subscription',
     success_url: `${req.nextUrl.origin}/dashboard?tab=plans&subscription=success`,

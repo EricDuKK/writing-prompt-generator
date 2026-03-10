@@ -83,6 +83,29 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // Handle subscription created (backup for checkout.session.completed)
+  if (event.type === 'customer.subscription.created') {
+    const subscription = event.data.object;
+    const userId = subscription.metadata?.user_id;
+    const planId = subscription.metadata?.plan_id;
+
+    if (userId && planId) {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          plan: planId,
+          stripe_subscription_id: subscription.id,
+        })
+        .eq('id', userId);
+
+      if (error) {
+        console.error('[stripe webhook] Failed to update plan on subscription.created:', error);
+      } else {
+        console.log(`[stripe webhook] subscription.created: User ${userId} -> ${planId}`);
+      }
+    }
+  }
+
   // Handle subscription cancelled/expired
   if (event.type === 'customer.subscription.deleted') {
     const subscription = event.data.object;

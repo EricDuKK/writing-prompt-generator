@@ -7,6 +7,7 @@ create table if not exists public.profiles (
   id uuid references auth.users on delete cascade primary key,
   email text,
   plan text not null default 'free' check (plan in ('free', 'basic', 'pro', 'power')),
+  stripe_subscription_id text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
