@@ -28,32 +28,78 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 
+  const supabase = getServiceClient();
+
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
     const userId = session.metadata?.user_id;
-    const purchaseId = session.metadata?.purchase_id;
-    const credits = parseInt(session.metadata?.credits || '0', 10);
 
-    if (!userId || !purchaseId || !credits) {
-      console.error('[stripe webhook] Missing metadata:', session.metadata);
-      return NextResponse.json({ error: 'Missing metadata' }, { status: 400 });
+    // Handle subscription checkout
+    if (session.mode === 'subscription' && session.subscription) {
+      const planId = session.metadata?.plan_id;
+      if (!userId || !planId) {
+        console.error('[stripe webhook] Missing subscription metadata:', session.metadata);
+        return NextResponse.json({ error: 'Missing metadata' }, { status: 400 });
+      }
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          plan: planId,
+          stripe_subscription_id: session.subscription,
+        })
+        .eq('id', userId);
+
+      if (error) {
+        console.error('[stripe webhook] Failed to update plan:', error);
+        return NextResponse.json({ error: 'Failed to update plan' }, { status: 500 });
+      }
+
+      console.log(`[stripe webhook] User ${userId} subscribed to ${planId}`);
     }
 
-    const supabase = getServiceClient();
+    // Handle credit pack purchase
+    if (session.mode === 'payment') {
+      const purchaseId = session.metadata?.purchase_id;
+      const credits = parseInt(session.metadata?.credits || '0', 10);
 
-    // Add purchased credits via RPC
-    const { error } = await supabase.rpc('add_purchased_credits', {
-      p_user_id: userId,
-      p_credits: credits,
-      p_purchase_id: purchaseId,
-    });
+      if (!userId || !purchaseId || !credits) {
+        console.error('[stripe webhook] Missing metadata:', session.metadata);
+        return NextResponse.json({ error: 'Missing metadata' }, { status: 400 });
+      }
 
-    if (error) {
-      console.error('[stripe webhook] Failed to add credits:', error);
-      return NextResponse.json({ error: 'Failed to add credits' }, { status: 500 });
+      const { error } = await supabase.rpc('add_purchased_credits', {
+        p_user_id: userId,
+        p_credits: credits,
+        p_purchase_id: purchaseId,
+      });
+
+      if (error) {
+        console.error('[stripe webhook] Failed to add credits:', error);
+        return NextResponse.json({ error: 'Failed to add credits' }, { status: 500 });
+      }
+
+      console.log(`[stripe webhook] Added ${credits} credits for user ${userId}`);
     }
+  }
 
-    console.log(`[stripe webhook] Added ${credits} credits for user ${userId}`);
+  // Handle subscription cancelled/expired
+  if (event.type === 'customer.subscription.deleted') {
+    const subscription = event.data.object;
+    const userId = subscription.metadata?.user_id;
+
+    if (userId) {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ plan: 'free', stripe_subscription_id: null })
+        .eq('id', userId);
+
+      if (error) {
+        console.error('[stripe webhook] Failed to downgrade plan:', error);
+      } else {
+        console.log(`[stripe webhook] User ${userId} downgraded to free`);
+      }
+    }
   }
 
   return NextResponse.json({ received: true });

@@ -4,16 +4,16 @@
   "inputSection": {
     "title": "Input Your Idea",
     "description": "Input a simple word or phrase, select a prompt category",
-    "inputLabel": "Describe Your Idea",
-    "inputPlaceholder": "For example: a cute kitten",
+    "inputLabel": "Describe Your Writing Idea",
+    "inputPlaceholder": "e.g. a mystery set in a haunted lighthouse",
     "placeholders": {
-      "general": "For example: basic principles of quantum computing",
-      "image": "For example: a cute kitten walking in a forest",
-      "video": "For example: a spectacular seaside sunset time-lapse",
-      "code": "For example: a simple React counter component",
-      "writing": "For example: a short speech about environmental protection",
-      "marketing": "For example: social media promotional copy for a new smartwatch",
-      "image-edit": "For example: change the background to a sunset beach scene"
+      "general": "e.g. a time traveler who can only go forward, never back",
+      "image": "e.g. a lonely astronaut floating above a dying planet",
+      "video": "e.g. a cinematic trailer for a dystopian love story",
+      "code": "e.g. an interactive story choice engine in React",
+      "writing": "e.g. a villain who believes they are the hero of the story",
+      "marketing": "e.g. launch copy for an AI-powered writing assistant app",
+      "image-edit": "e.g. transform the setting into a foggy Victorian street"
     },
     "categoryLabel": "Prompt Category",
     "generateButton": "Generate Prompt",

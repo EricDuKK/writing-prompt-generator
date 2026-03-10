@@ -149,6 +149,7 @@ function DashboardContent() {
   const [expandedWorkId, setExpandedWorkId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
+  const [subscribing, setSubscribing] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
@@ -754,13 +755,34 @@ function DashboardContent() {
                         <Button
                           className="w-full"
                           variant={plan.popular ? 'default' : 'outline'}
-                          disabled={isCurrent || plan.id === 'free'}
+                          disabled={isCurrent || plan.id === 'free' || subscribing === plan.id}
+                          onClick={async () => {
+                            if (plan.id === 'free' || isCurrent) return;
+                            setSubscribing(plan.id);
+                            try {
+                              const res = await fetch('/api/stripe/subscribe', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ planId: plan.id, period: billingPeriod }),
+                              });
+                              const data = await res.json();
+                              if (data.url) {
+                                window.location.href = data.url;
+                              }
+                            } catch {
+                              // ignore
+                            } finally {
+                              setSubscribing(null);
+                            }
+                          }}
                         >
-                          {isCurrent
-                            ? 'Current Plan'
-                            : plan.id === 'free'
-                              ? 'Free Forever'
-                              : 'Coming Soon'}
+                          {subscribing === plan.id
+                            ? 'Redirecting...'
+                            : isCurrent
+                              ? 'Current Plan'
+                              : plan.id === 'free'
+                                ? 'Free Forever'
+                                : 'Subscribe'}
                         </Button>
                       </CardContent>
                     </Card>
@@ -769,7 +791,7 @@ function DashboardContent() {
               </div>
 
               <p className="text-xs text-center text-muted-foreground mt-4">
-                Paid subscription plans are coming soon. Stay tuned for updates!
+                Subscribe to unlock more daily credits and advanced features.
               </p>
             </div>
 
