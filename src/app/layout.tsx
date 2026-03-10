@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     icon: '/favicon.ico',
     apple: '/apple-touch-icon.png',
   },
-  metadataBase: new URL('https://writing-prompt-generator.top'),
+  metadataBase: new URL('https://genregenie.top'),
   alternates: {
     canonical: '/',
   },
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     title: 'GenreGenie: AI Writing Prompt Generator & Story Ideas',
     description:
       'GenreGenie is the best writing prompt generator. Our writing prompt generator creates story ideas. Try this free writing prompt generator!',
-    url: 'https://writing-prompt-generator.top',
+    url: 'https://genregenie.top',
     siteName: 'GenreGenie',
     type: 'website',
     images: [

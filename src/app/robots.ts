@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/api/', '/dashboard/'],
     },
-    sitemap: 'https://writing-prompt-generator.top/sitemap.xml',
+    sitemap: 'https://genregenie.top/sitemap.xml',
   };
 }

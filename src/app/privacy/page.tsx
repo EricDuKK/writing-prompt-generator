@@ -18,7 +18,7 @@ export default function PrivacyPage() {
           <p><strong>Last updated:</strong> March 9, 2026</p>
 
           <p>
-            GenreGenie (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) operates the website writing-prompt-generator.top. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website.
+            GenreGenie (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) operates the website genregenie.top. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website.
           </p>
 
           <h2>Information We Collect</h2>

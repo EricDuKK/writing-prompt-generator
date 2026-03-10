@@ -57,7 +57,7 @@ export function Footer() {
 
         {/* Copyright */}
         <div className="max-w-4xl mx-auto mt-8 pt-6 border-t border-border/50 text-center text-sm text-muted-foreground">
-          &copy; {new Date().getFullYear()} writing-prompt-generator.top All rights reserved.
+          &copy; {new Date().getFullYear()} genregenie.top All rights reserved.
         </div>
       </div>
     </footer>

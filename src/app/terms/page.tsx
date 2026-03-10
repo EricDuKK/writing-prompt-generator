@@ -18,7 +18,7 @@ export default function TermsPage() {
           <p><strong>Last updated:</strong> March 9, 2026</p>
 
           <p>
-            Welcome to GenreGenie. By accessing or using writing-prompt-generator.top (&quot;the Service&quot;), you agree to be bound by these Terms and Conditions.
+            Welcome to GenreGenie. By accessing or using genregenie.top (&quot;the Service&quot;), you agree to be bound by these Terms and Conditions.
           </p>
 
           <h2>1. Use of Service</h2>
