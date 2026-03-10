@@ -141,6 +141,59 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Handle subscription updated (plan change via Customer Portal)
+    if (event.type === 'customer.subscription.updated') {
+      const subscription = event.data.object;
+      const userId = subscription.metadata?.user_id;
+      const planId = subscription.metadata?.plan_id;
+
+      if (userId) {
+        // Determine the new plan from the price if metadata wasn't updated
+        let newPlanId = planId;
+        if (!newPlanId) {
+          const priceId = subscription.items.data[0]?.price?.id;
+          const priceBasicMonthly = process.env.STRIPE_PRICE_BASIC_MONTHLY;
+          const priceBasicYearly = process.env.STRIPE_PRICE_BASIC_YEARLY;
+          const priceProMonthly = process.env.STRIPE_PRICE_PRO_MONTHLY;
+          const priceProYearly = process.env.STRIPE_PRICE_PRO_YEARLY;
+
+          if (priceId === priceBasicMonthly || priceId === priceBasicYearly) {
+            newPlanId = 'basic';
+          } else if (priceId === priceProMonthly || priceId === priceProYearly) {
+            newPlanId = 'pro';
+          }
+        }
+
+        if (newPlanId) {
+          const { error } = await supabase
+            .from('profiles')
+            .update({
+              plan: newPlanId,
+              stripe_subscription_id: subscription.id,
+            })
+            .eq('id', userId);
+
+          if (error) {
+            console.error('[stripe webhook] Failed to update plan on subscription.updated:', error);
+          } else {
+            console.log(`[stripe webhook] subscription.updated: User ${userId} -> ${newPlanId}`);
+
+            // Refresh daily credits to match new plan
+            const dailyLimit = newPlanId === 'power' ? 999999 : newPlanId === 'pro' ? 200 : newPlanId === 'basic' ? 60 : 15;
+            await supabase
+              .from('credits')
+              .update({
+                balance: dailyLimit,
+                last_reset_date: new Date().toISOString().split('T')[0],
+              })
+              .eq('user_id', userId);
+
+            console.log(`[stripe webhook] Refreshed credits for ${userId}: ${dailyLimit}`);
+          }
+        }
+      }
+    }
+
     // Handle subscription cancelled/expired
     if (event.type === 'customer.subscription.deleted') {
       const subscription = event.data.object;

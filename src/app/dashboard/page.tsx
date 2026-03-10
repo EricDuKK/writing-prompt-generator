@@ -767,11 +767,7 @@ function DashboardContent() {
                               });
                               const data = await res.json();
                               if (data.url) {
-                                // New subscription — redirect to Stripe Checkout
                                 window.location.href = data.url;
-                              } else if (data.success) {
-                                // Upgrade/downgrade — refresh credits immediately
-                                await fetchCredits();
                               }
                             } catch {
                               // ignore

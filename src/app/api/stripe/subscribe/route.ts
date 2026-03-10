@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { createClient, isSupabaseServerConfigured } from '@/lib/supabase/server';
-import { createClient as createServiceClient } from '@supabase/supabase-js';
-
 const PRICE_MAP: Record<string, Record<string, string | undefined>> = {
   basic: {
     monthly: process.env.STRIPE_PRICE_BASIC_MONTHLY,
@@ -13,20 +11,6 @@ const PRICE_MAP: Record<string, Record<string, string | undefined>> = {
     yearly: process.env.STRIPE_PRICE_PRO_YEARLY,
   },
 };
-
-const PLAN_ORDER: Record<string, number> = {
-  free: 0,
-  basic: 1,
-  pro: 2,
-  power: 3,
-};
-
-function getServiceClient() {
-  return createServiceClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
-}
 
 export async function POST(req: NextRequest) {
   if (!isSupabaseServerConfigured()) {
@@ -55,68 +39,39 @@ export async function POST(req: NextRequest) {
     .single();
 
   if (profile?.stripe_subscription_id) {
-    // User has an existing subscription — upgrade/downgrade via Stripe API
+    // User has an existing subscription — redirect to Customer Portal for upgrade/downgrade
     try {
       const subscription = await stripe.subscriptions.retrieve(profile.stripe_subscription_id);
 
       if (subscription.status !== 'active') {
-        // Subscription is not active, treat as new subscription
         return await createNewSubscription(req, user, planId, period, priceId);
       }
 
-      const currentItemId = subscription.items.data[0]?.id;
-      if (!currentItemId) {
-        return NextResponse.json({ error: 'No subscription item found' }, { status: 400 });
-      }
+      const customerId = typeof subscription.customer === 'string'
+        ? subscription.customer
+        : subscription.customer.id;
 
-      // Update the subscription and immediately invoice the proration difference
-      const updatedSubscription = await stripe.subscriptions.update(profile.stripe_subscription_id, {
-        items: [{
-          id: currentItemId,
-          price: priceId,
-        }],
-        proration_behavior: 'always_invoice',
-        payment_behavior: 'error_if_incomplete',
-        metadata: {
-          user_id: user.id,
-          plan_id: planId,
+      // Open portal directly on the subscription update flow with the target price
+      const portalSession = await stripe.billingPortal.sessions.create({
+        customer: customerId,
+        return_url: `${req.nextUrl.origin}/dashboard?tab=plans&subscription=success`,
+        flow_data: {
+          type: 'subscription_update_confirm',
+          subscription_update_confirm: {
+            subscription: profile.stripe_subscription_id,
+            items: [{
+              id: subscription.items.data[0].id,
+              price: priceId,
+              quantity: 1,
+            }],
+          },
         },
       });
 
-      // Immediately update plan and credits in database
-      const serviceClient = getServiceClient();
-      const dailyLimit = planId === 'power' ? 999999 : planId === 'pro' ? 200 : planId === 'basic' ? 60 : 15;
-
-      await serviceClient
-        .from('profiles')
-        .update({
-          plan: planId,
-          stripe_subscription_id: updatedSubscription.id,
-        })
-        .eq('id', user.id);
-
-      // Only increase credits on upgrade, don't reduce on downgrade
-      const isUpgrade = (PLAN_ORDER[planId] || 0) > (PLAN_ORDER[profile.plan] || 0);
-      if (isUpgrade) {
-        await serviceClient
-          .from('credits')
-          .update({
-            balance: dailyLimit,
-            last_reset_date: new Date().toISOString().split('T')[0],
-          })
-          .eq('user_id', user.id);
-      }
-
-      console.log(`[stripe subscribe] User ${user.id} changed plan: ${profile.plan} -> ${planId}`);
-
-      return NextResponse.json({
-        success: true,
-        plan: planId,
-        message: isUpgrade ? 'Plan upgraded successfully!' : 'Plan changed successfully!',
-      });
+      return NextResponse.json({ url: portalSession.url });
     } catch (err) {
-      console.error('[stripe subscribe] Failed to update subscription:', err);
-      return NextResponse.json({ error: 'Failed to update subscription' }, { status: 500 });
+      console.error('[stripe subscribe] Failed to create portal session:', err);
+      return NextResponse.json({ error: 'Failed to create portal session' }, { status: 500 });
     }
   }
 
