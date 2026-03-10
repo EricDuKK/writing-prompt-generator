@@ -63,6 +63,16 @@ export async function POST(req: NextRequest) {
         }
 
         console.log(`[stripe webhook] User ${userId} subscribed to ${planId}`);
+
+        // Immediately refresh daily credits to match new plan
+        const dailyLimit = planId === 'power' ? 999999 : planId === 'pro' ? 200 : planId === 'basic' ? 60 : 15;
+        await supabase
+          .from('credits')
+          .update({
+            balance: dailyLimit,
+            last_reset_date: new Date().toISOString().split('T')[0],
+          })
+          .eq('user_id', userId);
       }
 
       // Handle credit pack purchase
@@ -111,6 +121,22 @@ export async function POST(req: NextRequest) {
           console.error('[stripe webhook] Failed to update plan on subscription.created:', error);
         } else {
           console.log(`[stripe webhook] subscription.created: User ${userId} -> ${planId}`);
+
+          // Immediately refresh daily credits to match new plan
+          const dailyLimit = planId === 'power' ? 999999 : planId === 'pro' ? 200 : planId === 'basic' ? 60 : 15;
+          const { error: creditError } = await supabase
+            .from('credits')
+            .update({
+              balance: dailyLimit,
+              last_reset_date: new Date().toISOString().split('T')[0],
+            })
+            .eq('user_id', userId);
+
+          if (creditError) {
+            console.error('[stripe webhook] Failed to refresh credits:', creditError);
+          } else {
+            console.log(`[stripe webhook] Refreshed credits for ${userId}: ${dailyLimit}`);
+          }
         }
       }
     }
