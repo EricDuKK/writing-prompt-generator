@@ -81,6 +81,7 @@ const ACTION_LABELS: Record<string, string> = {
   'translate-prompt': 'Translate',
   'ai-edit': 'AI Edit',
   'daily-refresh': 'Daily Credit Refresh',
+  'purchase-credits': 'Purchase Credits',
 };
 
 const PLANS = [
@@ -303,17 +304,10 @@ function DashboardContent() {
           <div className="flex items-center gap-3">
             {credits && (
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <div className="flex items-center gap-1.5" title="Daily credits">
+                <div className="flex items-center gap-1.5" title="Total credits">
                   <Coins className="size-4" />
-                  <span className="font-medium">{credits.balance}</span>
+                  <span className="font-medium">{credits.balance + credits.purchased_credits}</span>
                 </div>
-                {credits.purchased_credits > 0 && (
-                  <div className="flex items-center gap-1" title="Purchased credits">
-                    <span className="text-muted-foreground/60">+</span>
-                    <Package className="size-3.5 text-emerald-500" />
-                    <span className="font-medium text-emerald-600 dark:text-emerald-400">{credits.purchased_credits}</span>
-                  </div>
-                )}
                 <Badge variant="outline" className="ml-1 text-xs capitalize">
                   {credits.plan}
                 </Badge>
@@ -400,15 +394,15 @@ function DashboardContent() {
                   <CardContent className="p-0">
                     <div className="divide-y">
                       {usageData.map((record) => {
-                      const isRefresh = record.action === 'daily-refresh';
+                      const isCredit = record.action === 'daily-refresh' || record.action === 'purchase-credits';
                       return (
                         <div
                           key={record.id}
                           className="flex items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors"
                         >
                           <div className="flex items-center gap-3">
-                            <div className={`p-1.5 rounded-md ${isRefresh ? 'bg-emerald-500/10' : 'bg-primary/10'}`}>
-                              {isRefresh ? (
+                            <div className={`p-1.5 rounded-md ${isCredit ? 'bg-emerald-500/10' : 'bg-primary/10'}`}>
+                              {isCredit ? (
                                 <Coins className="size-3.5 text-emerald-500" />
                               ) : (
                                 <Zap className="size-3.5 text-primary" />
@@ -426,9 +420,9 @@ function DashboardContent() {
                           </div>
                           <Badge
                             variant="outline"
-                            className={`text-xs ${isRefresh ? 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400' : ''}`}
+                            className={`text-xs ${isCredit ? 'border-emerald-500/50 text-emerald-600 dark:text-emerald-400' : ''}`}
                           >
-                            {isRefresh ? '+' : '-'}{record.credits_used} credits
+                            {isCredit ? '+' : '-'}{record.credits_used} credits
                           </Badge>
                         </div>
                       );

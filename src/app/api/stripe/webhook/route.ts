@@ -96,6 +96,15 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ error: 'Failed to add credits' }, { status: 500 });
         }
 
+        // Log the purchase in usage_log so it shows in Usage History
+        const packId = session.metadata?.pack_id || 'unknown';
+        await supabase.from('usage_log').insert({
+          user_id: userId,
+          action: 'purchase-credits',
+          credits_used: credits,
+          source: packId,
+        });
+
         console.log(`[stripe webhook] Added ${credits} credits for user ${userId}`);
       }
     }
