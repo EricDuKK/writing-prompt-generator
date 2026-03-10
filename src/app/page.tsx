@@ -1,4 +1,3 @@
-import type { Metadata } from 'next';
 import { PromptGenerator } from '@/components/prompt-generator/prompt-generator';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
@@ -18,14 +17,14 @@ import {
   Wand2,
 } from 'lucide-react';
 
-export const metadata: Metadata = {
-  alternates: { canonical: 'https://genregenie.top/' },
-};
-
 export default function WritingPromptsPage() {
   return (
-    <div className="flex flex-col">
-      <div className="bg-muted/30 bg-[url('/images/background.webp')] bg-cover bg-center bg-no-repeat bg-fixed">
+    <>
+      <head>
+        <link rel="canonical" href="https://genregenie.top/" />
+      </head>
+      <div className="flex flex-col">
+        <div className="bg-muted/30 bg-[url('/images/background.webp')] bg-cover bg-center bg-no-repeat bg-fixed">
         {/* Navbar */}
         <Navbar />
 
@@ -349,10 +348,11 @@ export default function WritingPromptsPage() {
             </p>
           </div>
         </section>
-      </div>
+        </div>
 
-      {/* Footer */}
-      <Footer />
-    </div>
+        {/* Footer */}
+        <Footer />
+      </div>
+    </>
   );
 }

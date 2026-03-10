@@ -34,7 +34,8 @@
       "Bash(python:*)",
       "Bash(npx shadcn@latest add alert-dialog --yes)",
       "Bash(npx shadcn@latest add alert-dialog)",
-      "Bash(npm install @radix-ui/react-alert-dialog)"
+      "Bash(npm install @radix-ui/react-alert-dialog)",
+      "Bash(curl -s https://genregenie.top/)"
     ]
   }
 }
