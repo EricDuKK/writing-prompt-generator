@@ -310,7 +310,7 @@ function DashboardContent() {
                   <span className="font-medium">{credits.balance + credits.purchased_credits}</span>
                 </div>
                 <Badge variant="outline" className="ml-1 text-xs capitalize">
-                  {credits.plan}
+                  {credits.plan}{credits.billing_interval ? `-${credits.billing_interval}` : ''}
                 </Badge>
               </div>
             )}
