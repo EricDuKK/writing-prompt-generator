@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     icon: '/favicon.ico',
     apple: '/apple-touch-icon.png',
   },
-  metadataBase: new URL('https://genregenie.top'),
+  metadataBase: new URL('https://genregenie.top/'),
   alternates: {
     canonical: '/',
   },
