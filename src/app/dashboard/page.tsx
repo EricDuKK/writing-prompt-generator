@@ -767,7 +767,11 @@ function DashboardContent() {
                               });
                               const data = await res.json();
                               if (data.url) {
+                                // New subscription — redirect to Stripe Checkout
                                 window.location.href = data.url;
+                              } else if (data.success) {
+                                // Upgrade/downgrade — refresh credits immediately
+                                await fetchCredits();
                               }
                             } catch {
                               // ignore
@@ -777,12 +781,14 @@ function DashboardContent() {
                           }}
                         >
                           {subscribing === plan.id
-                            ? 'Redirecting...'
+                            ? 'Processing...'
                             : isCurrent
                               ? 'Current Plan'
                               : plan.id === 'free'
                                 ? 'Free Forever'
-                                : 'Subscribe'}
+                                : credits?.plan && credits.plan !== 'free'
+                                  ? 'Switch Plan'
+                                  : 'Subscribe'}
                         </Button>
                       </CardContent>
                     </Card>

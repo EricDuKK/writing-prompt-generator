@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { createClient, isSupabaseServerConfigured } from '@/lib/supabase/server';
+import { createClient as createServiceClient } from '@supabase/supabase-js';
 
 const PRICE_MAP: Record<string, Record<string, string | undefined>> = {
   basic: {
@@ -12,6 +13,20 @@ const PRICE_MAP: Record<string, Record<string, string | undefined>> = {
     yearly: process.env.STRIPE_PRICE_PRO_YEARLY,
   },
 };
+
+const PLAN_ORDER: Record<string, number> = {
+  free: 0,
+  basic: 1,
+  pro: 2,
+  power: 3,
+};
+
+function getServiceClient() {
+  return createServiceClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 export async function POST(req: NextRequest) {
   if (!isSupabaseServerConfigured()) {
@@ -40,21 +55,81 @@ export async function POST(req: NextRequest) {
     .single();
 
   if (profile?.stripe_subscription_id) {
-    // User already has an active subscription, redirect to customer portal
-    const customers = await stripe.customers.list({
-      email: user.email!,
-      limit: 1,
-    });
+    // User has an existing subscription — upgrade/downgrade via Stripe API
+    try {
+      const subscription = await stripe.subscriptions.retrieve(profile.stripe_subscription_id);
 
-    if (customers.data.length > 0) {
-      const portalSession = await stripe.billingPortal.sessions.create({
-        customer: customers.data[0].id,
-        return_url: `${req.nextUrl.origin}/dashboard?tab=plans`,
+      if (subscription.status !== 'active') {
+        // Subscription is not active, treat as new subscription
+        return await createNewSubscription(req, user, planId, period, priceId);
+      }
+
+      const currentItemId = subscription.items.data[0]?.id;
+      if (!currentItemId) {
+        return NextResponse.json({ error: 'No subscription item found' }, { status: 400 });
+      }
+
+      // Update the subscription (Stripe handles proration automatically)
+      const updatedSubscription = await stripe.subscriptions.update(profile.stripe_subscription_id, {
+        items: [{
+          id: currentItemId,
+          price: priceId,
+        }],
+        proration_behavior: 'create_prorations',
+        metadata: {
+          user_id: user.id,
+          plan_id: planId,
+        },
       });
-      return NextResponse.json({ url: portalSession.url });
+
+      // Immediately update plan and credits in database
+      const serviceClient = getServiceClient();
+      const dailyLimit = planId === 'power' ? 999999 : planId === 'pro' ? 200 : planId === 'basic' ? 60 : 15;
+
+      await serviceClient
+        .from('profiles')
+        .update({
+          plan: planId,
+          stripe_subscription_id: updatedSubscription.id,
+        })
+        .eq('id', user.id);
+
+      // Only increase credits on upgrade, don't reduce on downgrade
+      const isUpgrade = (PLAN_ORDER[planId] || 0) > (PLAN_ORDER[profile.plan] || 0);
+      if (isUpgrade) {
+        await serviceClient
+          .from('credits')
+          .update({
+            balance: dailyLimit,
+            last_reset_date: new Date().toISOString().split('T')[0],
+          })
+          .eq('user_id', user.id);
+      }
+
+      console.log(`[stripe subscribe] User ${user.id} changed plan: ${profile.plan} -> ${planId}`);
+
+      return NextResponse.json({
+        success: true,
+        plan: planId,
+        message: isUpgrade ? 'Plan upgraded successfully!' : 'Plan changed successfully!',
+      });
+    } catch (err) {
+      console.error('[stripe subscribe] Failed to update subscription:', err);
+      return NextResponse.json({ error: 'Failed to update subscription' }, { status: 500 });
     }
   }
 
+  // No existing subscription — create new checkout session
+  return await createNewSubscription(req, user, planId, period, priceId);
+}
+
+async function createNewSubscription(
+  req: NextRequest,
+  user: { id: string; email?: string },
+  planId: string,
+  period: string,
+  priceId: string,
+) {
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
     customer_email: user.email!,
