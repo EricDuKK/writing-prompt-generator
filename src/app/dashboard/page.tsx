@@ -61,6 +61,8 @@ interface CreditInfo {
   daily_limit: number;
   purchased_credits: number;
   plan: string;
+  cancel_at_period_end?: boolean;
+  current_period_end?: string;
 }
 
 // --- Constants ---
@@ -798,33 +800,40 @@ function DashboardContent() {
               </p>
 
               {credits?.plan && credits.plan !== 'free' && (
-                <div className="text-center mt-4">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-muted-foreground hover:text-destructive"
-                    disabled={cancelling}
-                    onClick={async () => {
-                      if (!confirm('Are you sure you want to cancel your subscription? You will keep access until the end of your current billing period.')) return;
-                      setCancelling(true);
-                      try {
-                        const res = await fetch('/api/stripe/cancel', { method: 'POST' });
-                        const data = await res.json();
-                        if (data.success) {
-                          alert('Subscription cancelled. You will keep access until the end of your billing period.');
-                          await fetchCredits();
-                        } else {
-                          alert(data.error || 'Failed to cancel subscription');
+                <div className="text-center mt-4 space-y-2">
+                  {credits.cancel_at_period_end ? (
+                    <p className="text-sm text-amber-600 dark:text-amber-400">
+                      Your subscription will be cancelled on{' '}
+                      {new Date(credits.current_period_end!).toLocaleDateString()}.
+                      You can continue using your plan until then.
+                    </p>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-muted-foreground hover:text-destructive"
+                      disabled={cancelling}
+                      onClick={async () => {
+                        if (!confirm('Are you sure you want to cancel your subscription? You will keep access until the end of your current billing period.')) return;
+                        setCancelling(true);
+                        try {
+                          const res = await fetch('/api/stripe/cancel', { method: 'POST' });
+                          const data = await res.json();
+                          if (data.success) {
+                            await fetchCredits();
+                          } else {
+                            alert(data.error || 'Failed to cancel subscription');
+                          }
+                        } catch {
+                          alert('Failed to cancel subscription');
+                        } finally {
+                          setCancelling(false);
                         }
-                      } catch {
-                        alert('Failed to cancel subscription');
-                      } finally {
-                        setCancelling(false);
-                      }
-                    }}
-                  >
-                    {cancelling ? 'Cancelling...' : 'Cancel Subscription'}
-                  </Button>
+                      }}
+                    >
+                      {cancelling ? 'Cancelling...' : 'Cancel Subscription'}
+                    </Button>
+                  )}
                 </div>
               )}
             </div>
