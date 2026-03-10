@@ -8,7 +8,9 @@ export function Navbar() {
         <a href="/" className="flex items-center ml-4 md:ml-16 lg:ml-28">
           <Image src="/images/logo.png" alt="GenreGenie" width={120} height={120} className="rounded-lg" />
         </a>
-        <AuthButton />
+        <div className="mr-4 md:mr-16 lg:mr-28">
+          <AuthButton />
+        </div>
       </div>
     </nav>
   );
