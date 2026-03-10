@@ -7,6 +7,7 @@ import {
   FileText,
   GraduationCap,
   Heart,
+  HelpCircle,
   Info,
   Languages,
   Lightbulb,
@@ -16,6 +17,7 @@ import {
   Sparkles,
   Wand2,
 } from 'lucide-react';
+import { FaqSection } from '@/components/faq-section';
 
 export default function WritingPromptsPage() {
   return (
@@ -329,6 +331,24 @@ export default function WritingPromptsPage() {
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* Section: FAQ */}
+        <section id="faq" className="container mx-auto px-4 py-16 md:py-20 border-t border-border/50">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <HelpCircle className="size-6 text-primary" />
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+                Frequently Asked Questions
+              </h2>
+            </div>
+            <p className="text-muted-foreground text-lg leading-relaxed mb-10">
+              Everything you need to know about GenreGenie&apos;s AI writing prompt generator.
+            </p>
+            <FaqSection />
           </div>
         </section>
 
