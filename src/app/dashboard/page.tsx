@@ -7,6 +7,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { CREDIT_COSTS, CREDIT_PACKS } from '@/config/credits';
 import {
   ArrowLeft,
@@ -153,6 +161,7 @@ function DashboardContent() {
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
   const [subscribing, setSubscribing] = useState<string | null>(null);
   const [cancelling, setCancelling] = useState(false);
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
@@ -803,23 +812,7 @@ function DashboardContent() {
                                 size="sm"
                                 className="w-full text-xs text-muted-foreground hover:text-destructive"
                                 disabled={cancelling}
-                                onClick={async () => {
-                                  if (!confirm('Are you sure you want to cancel your subscription? You will keep access until the end of your current billing period.')) return;
-                                  setCancelling(true);
-                                  try {
-                                    const res = await fetch('/api/stripe/cancel', { method: 'POST' });
-                                    const data = await res.json();
-                                    if (data.success) {
-                                      await fetchCredits();
-                                    } else {
-                                      alert(data.error || 'Failed to cancel subscription');
-                                    }
-                                  } catch {
-                                    alert('Failed to cancel subscription');
-                                  } finally {
-                                    setCancelling(false);
-                                  }
-                                }}
+                                onClick={() => setShowCancelDialog(true)}
                               >
                                 {cancelling ? 'Cancelling...' : 'Cancel Subscription'}
                               </Button>
@@ -898,6 +891,57 @@ function DashboardContent() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Cancel Subscription Confirmation Dialog */}
+      <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+        <DialogContent showCloseButton={false} className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Cancel Subscription</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to cancel your subscription? You will keep access until the end of your current billing period.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={() => setShowCancelDialog(false)}
+              disabled={cancelling}
+            >
+              Keep Subscription
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={cancelling}
+              onClick={async () => {
+                setCancelling(true);
+                try {
+                  const res = await fetch('/api/stripe/cancel', { method: 'POST' });
+                  const data = await res.json();
+                  if (data.success) {
+                    await fetchCredits();
+                    setShowCancelDialog(false);
+                  } else {
+                    alert(data.error || 'Failed to cancel subscription');
+                  }
+                } catch {
+                  alert('Failed to cancel subscription');
+                } finally {
+                  setCancelling(false);
+                }
+              }}
+            >
+              {cancelling ? (
+                <>
+                  <Loader2 className="size-4 animate-spin mr-1.5" />
+                  Cancelling...
+                </>
+              ) : (
+                'Yes, Cancel'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
