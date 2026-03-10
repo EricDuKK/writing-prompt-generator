@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { PromptGenerator } from '@/components/prompt-generator/prompt-generator';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
@@ -16,6 +17,10 @@ import {
   Sparkles,
   Wand2,
 } from 'lucide-react';
+
+export const metadata: Metadata = {
+  alternates: { canonical: 'https://genregenie.top/' },
+};
 
 export default function WritingPromptsPage() {
   return (
