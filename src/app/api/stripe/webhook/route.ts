@@ -136,7 +136,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ received: true });
   } catch (err) {
-    console.error('[stripe webhook] Unhandled error:', err);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    const message = err instanceof Error ? err.message : String(err);
+    const stack = err instanceof Error ? err.stack : undefined;
+    console.error('[stripe webhook] Unhandled error:', message, stack);
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
