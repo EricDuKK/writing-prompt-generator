@@ -71,6 +71,7 @@ interface CreditInfo {
   plan: string;
   cancel_at_period_end?: boolean;
   current_period_end?: string;
+  billing_interval?: string | null;
 }
 
 // --- Constants ---
@@ -713,7 +714,8 @@ function DashboardContent() {
 
               <div className="grid md:grid-cols-3 gap-4">
                 {PLANS.map((plan) => {
-                  const isCurrent = credits?.plan === plan.id;
+                  const isCurrent = credits?.plan === plan.id &&
+                    (plan.id === 'free' || credits?.billing_interval === billingPeriod);
                   return (
                     <Card
                       key={plan.id}

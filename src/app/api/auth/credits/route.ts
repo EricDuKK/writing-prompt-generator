@@ -13,6 +13,7 @@ export async function GET() {
   // Check if subscription is scheduled for cancellation
   let cancel_at_period_end = false;
   let current_period_end: string | null = null;
+  let billing_interval: string | null = null;
 
   if (balance.plan !== 'free') {
     try {
@@ -37,6 +38,13 @@ export async function GET() {
               current_period_end = new Date(itemPeriodEnd * 1000).toISOString();
             }
           }
+          // Extract billing interval from subscription price
+          const interval = subscription.items.data[0]?.price?.recurring?.interval;
+          if (interval === 'month') {
+            billing_interval = 'monthly';
+          } else if (interval === 'year') {
+            billing_interval = 'yearly';
+          }
         }
       }
     } catch {
@@ -44,5 +52,5 @@ export async function GET() {
     }
   }
 
-  return NextResponse.json({ ...balance, cancel_at_period_end, current_period_end });
+  return NextResponse.json({ ...balance, cancel_at_period_end, current_period_end, billing_interval });
 }
