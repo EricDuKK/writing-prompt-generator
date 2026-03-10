@@ -875,9 +875,11 @@ function DashboardContent() {
                             const data = await res.json();
                             if (data.url) {
                               window.location.href = data.url;
+                            } else {
+                              alert(data.error || 'Failed to create checkout session');
                             }
-                          } catch {
-                            // ignore
+                          } catch (err) {
+                            alert('Network error, please try again');
                           }
                         }}
                       >
