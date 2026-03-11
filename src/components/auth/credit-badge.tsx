@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Coins, Sparkles } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Coins } from 'lucide-react';
+import { getFingerprint } from '@/lib/fingerprint';
 
 interface CreditInfo {
   balance: number;
@@ -11,13 +12,14 @@ interface CreditInfo {
 }
 
 interface AnonymousInfo {
-  totalRemaining: number;
-  totalLimit: number;
+  remaining: number;
+  limit: number;
 }
 
 export function CreditBadge({ isLoggedIn }: { isLoggedIn?: boolean }) {
   const [credits, setCredits] = useState<CreditInfo | null>(null);
   const [anonymous, setAnonymous] = useState<AnonymousInfo | null>(null);
+  const fpRef = useRef<string>('');
 
   const fetchCredits = async () => {
     try {
@@ -33,7 +35,12 @@ export function CreditBadge({ isLoggedIn }: { isLoggedIn?: boolean }) {
 
   const fetchAnonymousCredits = async () => {
     try {
-      const res = await fetch('/api/auth/anonymous-credits');
+      if (!fpRef.current) {
+        fpRef.current = await getFingerprint();
+      }
+      const res = await fetch('/api/auth/anonymous-credits', {
+        headers: { 'x-fingerprint': fpRef.current },
+      });
       if (res.ok) {
         const data = await res.json();
         setAnonymous(data);
@@ -83,22 +90,25 @@ export function CreditBadge({ isLoggedIn }: { isLoggedIn?: boolean }) {
     );
   }
 
-  // Anonymous user: show remaining free trials
+  // Anonymous user: show remaining free credits
   if (!isLoggedIn && anonymous) {
-    const { totalRemaining, totalLimit } = anonymous;
-    const isEmpty = totalRemaining <= 0;
+    const { remaining, limit } = anonymous;
+    const isEmpty = remaining <= 0;
+    const isLow = remaining <= 2;
 
     return (
       <div
         className={`flex items-center gap-1.5 h-8 px-2.5 rounded-full border text-xs font-medium transition-colors ${
           isEmpty
             ? 'border-destructive/50 bg-destructive/5 text-destructive'
-            : 'border-emerald-500/50 bg-emerald-500/5 text-emerald-600 dark:text-emerald-400'
+            : isLow
+              ? 'border-amber-500/50 bg-amber-500/5 text-amber-600 dark:text-amber-400'
+              : 'border-emerald-500/50 bg-emerald-500/5 text-emerald-600 dark:text-emerald-400'
         }`}
-        title={isEmpty ? 'Free trial exhausted. Sign in for more.' : `Free trial: ${totalRemaining}/${totalLimit} remaining`}
+        title={isEmpty ? 'Free credits exhausted. Sign in for more.' : `Free credits: ${remaining}/${limit}`}
       >
-        <Sparkles className="size-3.5" />
-        <span>{totalRemaining}/{totalLimit}</span>
+        <Coins className="size-3.5" />
+        <span>{remaining}</span>
       </div>
     );
   }

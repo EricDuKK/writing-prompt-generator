@@ -1,13 +1,15 @@
 import { Redis } from '@upstash/redis';
 import { type CreditAction, CREDIT_COSTS } from '@/config/credits';
 
-// Anonymous usage limits per action per day
-export const ANONYMOUS_LIMITS: Partial<Record<CreditAction, number>> = {
-  'generate-ideas': 3,
-  'generate-prompt': 2,
-  'generate-text': 1,
-  // translate-prompt and ai-edit: not available for anonymous users
-};
+// Total daily credits for anonymous users
+export const ANONYMOUS_DAILY_CREDITS = 6;
+
+// Actions allowed for anonymous users (uses same credit costs as logged-in users)
+const ANONYMOUS_ALLOWED_ACTIONS: Set<CreditAction> = new Set([
+  'generate-ideas',    // 1 credit
+  'generate-prompt',   // 2 credits
+  'generate-text',     // 3 credits
+]);
 
 let redis: Redis | null = null;
 
@@ -24,7 +26,6 @@ function getRedis(): Redis | null {
 }
 
 function getTodayKey(): string {
-  // Use UTC date as key suffix
   const now = new Date();
   return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}-${String(now.getUTCDate()).padStart(2, '0')}`;
 }
@@ -37,71 +38,85 @@ function getSecondsUntilEndOfDay(): number {
 }
 
 /**
- * Check and consume one anonymous usage for the given action and IP.
- * Returns { ok, remaining } where remaining is the number of uses left.
+ * Check and consume anonymous credits for the given action.
+ * Uses dual limiting: both IP and fingerprint must have credits remaining.
  */
 export async function checkAndUseAnonymousQuota(
   action: CreditAction,
-  ip: string
+  ip: string,
+  fingerprint?: string
 ): Promise<{ ok: boolean; remaining: number; error?: string }> {
-  const limit = ANONYMOUS_LIMITS[action];
-
-  // Action not available for anonymous users
-  if (limit === undefined || limit <= 0) {
+  // Action not allowed for anonymous users
+  if (!ANONYMOUS_ALLOWED_ACTIONS.has(action)) {
     return { ok: false, remaining: 0, error: 'Sign in to use this feature.' };
   }
 
   const client = getRedis();
   if (!client) {
-    // Upstash not configured, deny anonymous access
     return { ok: false, remaining: 0, error: 'Authentication required. Please sign in.' };
   }
 
+  const cost = CREDIT_COSTS[action];
   const today = getTodayKey();
-  const key = `anon:${action}:${ip}:${today}`;
+  const ttl = getSecondsUntilEndOfDay();
 
-  // Atomic increment
-  const count = await client.incr(key);
+  const ipKey = `anon:credits:ip:${ip}:${today}`;
+  const ipUsed = (await client.get<number>(ipKey)) || 0;
 
-  // Set TTL on first use
-  if (count === 1) {
-    await client.expire(key, getSecondsUntilEndOfDay());
+  // Check fingerprint if provided
+  let fpUsed = 0;
+  let fpKey = '';
+  if (fingerprint) {
+    fpKey = `anon:credits:fp:${fingerprint}:${today}`;
+    fpUsed = (await client.get<number>(fpKey)) || 0;
   }
 
-  if (count > limit) {
-    // Over limit - don't decrement, just reject
+  // Both must have enough credits
+  const maxUsed = Math.max(ipUsed, fpUsed);
+  if (maxUsed + cost > ANONYMOUS_DAILY_CREDITS) {
     return {
       ok: false,
-      remaining: 0,
+      remaining: Math.max(0, ANONYMOUS_DAILY_CREDITS - maxUsed),
       error: 'Free trial limit reached. Sign in for more daily usage.',
     };
   }
 
-  return { ok: true, remaining: limit - count };
+  // Atomically increment IP counter
+  const newIpUsed = await client.incrby(ipKey, cost);
+  if (newIpUsed === cost) {
+    await client.expire(ipKey, ttl);
+  }
+
+  // Atomically increment fingerprint counter
+  let newFpUsed = newIpUsed;
+  if (fingerprint && fpKey) {
+    newFpUsed = await client.incrby(fpKey, cost);
+    if (newFpUsed === cost) {
+      await client.expire(fpKey, ttl);
+    }
+  }
+
+  const remaining = ANONYMOUS_DAILY_CREDITS - Math.max(newIpUsed, newFpUsed);
+  return { ok: true, remaining: Math.max(0, remaining) };
 }
 
 /**
- * Get anonymous usage counts for an IP (for deducting from logged-in credits).
- * Returns total credits used as anonymous today.
+ * Get total anonymous credits used today for an IP+fingerprint (for deducting from logged-in credits).
  */
-export async function getAnonymousUsageCredits(ip: string): Promise<number> {
+export async function getAnonymousUsageCredits(ip: string, fingerprint?: string): Promise<number> {
   const client = getRedis();
   if (!client) return 0;
 
   const today = getTodayKey();
-  let totalCredits = 0;
+  const ipKey = `anon:credits:ip:${ip}:${today}`;
+  const ipUsed = (await client.get<number>(ipKey)) || 0;
 
-  for (const [action, limit] of Object.entries(ANONYMOUS_LIMITS)) {
-    if (!limit) continue;
-    const key = `anon:${action}:${ip}:${today}`;
-    const count = (await client.get<number>(key)) || 0;
-    // Only count up to the limit (over-limit attempts don't cost anything)
-    const actualUsed = Math.min(count, limit);
-    const creditCost = CREDIT_COSTS[action as CreditAction];
-    totalCredits += actualUsed * creditCost;
-  }
+  if (!fingerprint) return ipUsed;
 
-  return totalCredits;
+  const fpKey = `anon:credits:fp:${fingerprint}:${today}`;
+  const fpUsed = (await client.get<number>(fpKey)) || 0;
+
+  return Math.max(ipUsed, fpUsed);
 }
 
 /**
@@ -121,38 +136,41 @@ export async function markAnonymousDeducted(userId: string, ip: string): Promise
  */
 export async function isAnonymousDeducted(userId: string, ip: string): Promise<boolean> {
   const client = getRedis();
-  if (!client) return true; // If no Redis, skip deduction
+  if (!client) return true;
   const today = getTodayKey();
   const val = await client.get(`anon:deducted:${userId}:${ip}:${today}`);
   return val === '1';
 }
 
 /**
- * Get remaining anonymous quota for display purposes.
+ * Get remaining anonymous credits for display purposes.
+ * Uses the stricter of IP or fingerprint usage.
  */
-export async function getAnonymousRemaining(ip: string): Promise<{
-  actions: Record<string, { used: number; limit: number; remaining: number }>;
-  totalRemaining: number;
-  totalLimit: number;
+export async function getAnonymousRemaining(ip: string, fingerprint?: string): Promise<{
+  used: number;
+  limit: number;
+  remaining: number;
 }> {
   const client = getRedis();
   const today = getTodayKey();
-  const actions: Record<string, { used: number; limit: number; remaining: number }> = {};
-  let totalRemaining = 0;
-  let totalLimit = 0;
 
-  for (const [action, limit] of Object.entries(ANONYMOUS_LIMITS)) {
-    if (!limit) continue;
-    let used = 0;
-    if (client) {
-      const key = `anon:${action}:${ip}:${today}`;
-      used = (await client.get<number>(key)) || 0;
+  let used = 0;
+  if (client) {
+    const ipKey = `anon:credits:ip:${ip}:${today}`;
+    const ipUsed = (await client.get<number>(ipKey)) || 0;
+
+    if (fingerprint) {
+      const fpKey = `anon:credits:fp:${fingerprint}:${today}`;
+      const fpUsed = (await client.get<number>(fpKey)) || 0;
+      used = Math.max(ipUsed, fpUsed);
+    } else {
+      used = ipUsed;
     }
-    const remaining = Math.max(0, limit - used);
-    actions[action] = { used, limit, remaining };
-    totalRemaining += remaining;
-    totalLimit += limit;
   }
 
-  return { actions, totalRemaining, totalLimit };
+  return {
+    used,
+    limit: ANONYMOUS_DAILY_CREDITS,
+    remaining: Math.max(0, ANONYMOUS_DAILY_CREDITS - used),
+  };
 }

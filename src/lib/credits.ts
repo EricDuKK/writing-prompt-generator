@@ -47,10 +47,11 @@ export async function useCredits(
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   const ip = getClientIP(request);
+  const fingerprint = request?.headers.get('x-fingerprint') || undefined;
 
   // --- Anonymous user path ---
   if (!user) {
-    const result = await checkAndUseAnonymousQuota(action, ip);
+    const result = await checkAndUseAnonymousQuota(action, ip, fingerprint);
     if (!result.ok) {
       return { ok: false, error: result.error, anonymous: true };
     }
@@ -61,7 +62,7 @@ export async function useCredits(
   // Reconcile: deduct today's anonymous usage from credits (once per user+IP per day)
   const alreadyDeducted = await isAnonymousDeducted(user.id, ip);
   if (!alreadyDeducted) {
-    const anonymousCreditsUsed = await getAnonymousUsageCredits(ip);
+    const anonymousCreditsUsed = await getAnonymousUsageCredits(ip, fingerprint);
     if (anonymousCreditsUsed > 0) {
       await supabase.rpc('use_credits', {
         p_user_id: user.id,

@@ -1,6 +1,7 @@
 'use client';
 
 import { saveGeneratedPromptAction } from '@/actions/save-generated-prompt';
+import { getFingerprint } from '@/lib/fingerprint';
 import { LoginForm } from '@/components/auth/login-form';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -128,9 +129,13 @@ export function PromptGenerator({
   // Session storage key for persisting state across login redirects
   const SESSION_STORAGE_KEY = 'prompt-generator-draft-writing';
 
+  // Browser fingerprint for anonymous rate limiting
+  const fingerprintRef = useRef<string>('');
+
   // Set mounted to true after component mounts
   useEffect(() => {
     setMounted(true);
+    getFingerprint().then(fp => { fingerprintRef.current = fp; });
   }, []);
 
   // Restore state from sessionStorage on mount (e.g., after login redirect)
@@ -325,7 +330,7 @@ export function PromptGenerator({
 
       const response = await fetch('/api/generate-ideas', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-fingerprint': fingerprintRef.current },
         body: JSON.stringify({
           input,
           category,
@@ -406,7 +411,7 @@ export function PromptGenerator({
 
       const response = await fetch('/api/generate-prompt', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-fingerprint': fingerprintRef.current },
         body: JSON.stringify({
           input,
           category,
@@ -1217,7 +1222,7 @@ export function PromptGenerator({
     try {
       const response = await fetch('/api/generate-text', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-fingerprint': fingerprintRef.current },
         body: JSON.stringify({
           prompt: enhancedResult,
           category: 'writing',

@@ -11,6 +11,7 @@ function getClientIP(request: NextRequest): string {
 
 export async function GET(request: NextRequest) {
   const ip = getClientIP(request);
-  const remaining = await getAnonymousRemaining(ip);
+  const fingerprint = request.headers.get('x-fingerprint') || undefined;
+  const remaining = await getAnonymousRemaining(ip, fingerprint);
   return NextResponse.json(remaining);
 }
