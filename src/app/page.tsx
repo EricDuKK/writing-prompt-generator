@@ -21,7 +21,6 @@ import { FaqSection } from '@/components/faq-section';
 
 const PromptGenerator = dynamic(
   () => import('@/components/prompt-generator/prompt-generator').then(mod => mod.PromptGenerator),
-  { ssr: false }
 );
 
 export default function WritingPromptsPage() {
