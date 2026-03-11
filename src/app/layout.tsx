@@ -1,7 +1,16 @@
 import type { Metadata } from 'next';
+import { Lora } from 'next/font/google';
 import Script from 'next/script';
 import { ThemeProvider } from 'next-themes';
 import '@/styles/globals.css';
+
+const lora = Lora({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  style: ['normal', 'italic'],
+  display: 'swap',
+  variable: '--font-lora',
+});
 
 export const metadata: Metadata = {
   title: 'GenreGenie: AI Writing Prompt Generator & Story Ideas',
@@ -43,7 +52,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={lora.variable} suppressHydrationWarning>
       <head>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-7EN7FET9YX"
@@ -57,12 +66,6 @@ export default function RootLayout({
             gtag('config', 'G-7EN7FET9YX');
           `}
         </Script>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap"
-          rel="stylesheet"
-        />
       </head>
       <body>
         <ThemeProvider
