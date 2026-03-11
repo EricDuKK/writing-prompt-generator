@@ -132,6 +132,14 @@ export function PromptGenerator({
   // Browser fingerprint for anonymous rate limiting
   const fingerprintRef = useRef<string>('');
 
+  // Helper to get fingerprint (lazy init if not ready yet)
+  const getFp = async () => {
+    if (!fingerprintRef.current) {
+      fingerprintRef.current = await getFingerprint();
+    }
+    return fingerprintRef.current;
+  };
+
   // Set mounted to true after component mounts
   useEffect(() => {
     setMounted(true);
@@ -330,7 +338,7 @@ export function PromptGenerator({
 
       const response = await fetch('/api/generate-ideas', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-fingerprint': fingerprintRef.current },
+        headers: { 'Content-Type': 'application/json', 'x-fingerprint': await getFp() },
         body: JSON.stringify({
           input,
           category,
@@ -411,7 +419,7 @@ export function PromptGenerator({
 
       const response = await fetch('/api/generate-prompt', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-fingerprint': fingerprintRef.current },
+        headers: { 'Content-Type': 'application/json', 'x-fingerprint': await getFp() },
         body: JSON.stringify({
           input,
           category,
@@ -1222,7 +1230,7 @@ export function PromptGenerator({
     try {
       const response = await fetch('/api/generate-text', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-fingerprint': fingerprintRef.current },
+        headers: { 'Content-Type': 'application/json', 'x-fingerprint': await getFp() },
         body: JSON.stringify({
           prompt: enhancedResult,
           category: 'writing',
