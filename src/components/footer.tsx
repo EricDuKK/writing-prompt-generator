@@ -17,7 +17,7 @@ export function Footer() {
 
           {/* Support */}
           <div>
-            <h4 className="font-semibold text-foreground mb-3">Support</h4>
+            <p className="font-semibold text-foreground mb-3">Support</p>
             <ul className="space-y-2 text-sm">
               <li>
                 <a href="/contact" className="text-muted-foreground hover:text-foreground transition-colors">
@@ -34,7 +34,7 @@ export function Footer() {
 
           {/* Legal */}
           <div>
-            <h4 className="font-semibold text-foreground mb-3">Legal</h4>
+            <p className="font-semibold text-foreground mb-3">Legal</p>
             <ul className="space-y-2 text-sm">
               <li>
                 <a href="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">

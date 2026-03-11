@@ -1700,7 +1700,7 @@ export function PromptGenerator({
                         size="sm"
                         onClick={handleGenerateIdeas}
                         disabled={isGeneratingIdeas}
-                        className="absolute left-1.5 top-1.5 h-7 px-2 text-xs rounded-md text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-500/10 transition-colors duration-200"
+                        className="absolute left-1.5 top-1.5 h-7 px-2 text-xs rounded-md text-amber-700 hover:text-amber-800 hover:bg-amber-50 dark:text-amber-300 dark:hover:bg-amber-500/10 transition-colors duration-200"
                       >
                         {isGeneratingIdeas ? (
                           <Loader2 className="mr-1 size-3 animate-spin" />

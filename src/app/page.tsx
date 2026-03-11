@@ -30,9 +30,8 @@ export default function WritingPromptsPage() {
         <link rel="canonical" href="https://genregenie.top/" />
       </head>
       <div className="flex flex-col">
-        <div className="bg-muted/30 bg-[url('/images/background.webp')] bg-cover bg-center bg-no-repeat bg-fixed">
-        {/* Navbar */}
         <Navbar />
+        <main className="bg-muted/30 bg-[url('/images/background.webp')] bg-cover bg-center bg-no-repeat bg-fixed">
 
         {/* Hero Section with H1 */}
         <section className="container mx-auto px-4 pt-6 md:pt-10 pb-4 md:pb-6">
@@ -247,9 +246,9 @@ export default function WritingPromptsPage() {
                     {index + 1}
                   </div>
                   <div>
-                    <h4 className="font-semibold text-foreground mb-2">
+                    <h3 className="font-semibold text-foreground mb-2">
                       {step.title}
-                    </h4>
+                    </h3>
                     <p className="text-muted-foreground">{step.description}</p>
                   </div>
                 </div>
@@ -257,10 +256,10 @@ export default function WritingPromptsPage() {
             </div>
 
             <div className="bg-primary/5 rounded-xl p-6 border border-primary/10">
-              <h4 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+              <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
                 <Lightbulb className="size-5 text-primary" />
                 Pro Tips
-              </h4>
+              </h3>
               <ul className="space-y-3 text-muted-foreground">
                 <li className="flex gap-2">
                   <span className="text-primary">•</span>
@@ -329,7 +328,7 @@ export default function WritingPromptsPage() {
                     <div className="p-2 rounded-lg bg-primary/10">
                       <Icon className="size-5 text-primary" />
                     </div>
-                    <h4 className="font-semibold text-foreground">{title}</h4>
+                    <h3 className="font-semibold text-foreground">{title}</h3>
                   </div>
                   <p className="text-muted-foreground">{description}</p>
                 </div>
@@ -372,7 +371,7 @@ export default function WritingPromptsPage() {
             </p>
           </div>
         </section>
-        </div>
+        </main>
 
         {/* Footer */}
         <Footer />
