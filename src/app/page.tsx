@@ -1,4 +1,4 @@
-import { PromptGenerator } from '@/components/prompt-generator/prompt-generator';
+import dynamic from 'next/dynamic';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
 import {
@@ -18,6 +18,11 @@ import {
   Wand2,
 } from 'lucide-react';
 import { FaqSection } from '@/components/faq-section';
+
+const PromptGenerator = dynamic(
+  () => import('@/components/prompt-generator/prompt-generator').then(mod => mod.PromptGenerator),
+  { ssr: false }
+);
 
 export default function WritingPromptsPage() {
   return (
