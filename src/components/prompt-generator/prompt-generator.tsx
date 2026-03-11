@@ -1674,27 +1674,9 @@ export function PromptGenerator({
                 <div className="border-t pt-4 space-y-4">
                   {/* Input */}
                   <div className="space-y-2.5">
-                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                      <Label htmlFor="prompt-input" className="text-sm font-medium">
-                        {t('inputSection.inputLabel')}
-                      </Label>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleGenerateIdeas}
-                        disabled={isGeneratingIdeas}
-                        className="h-6 px-2 text-xs rounded-full text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-500/10 transition-colors duration-200"
-                      >
-                        {isGeneratingIdeas ? (
-                          <Loader2 className="mr-1 size-3 animate-spin" />
-                        ) : (
-                          <Lightbulb className="mr-1 size-3" />
-                        )}
-                        {(t as any)('enhancedOptions.generateIdeas', {
-                          defaultValue: 'AI Inspire',
-                        })}
-                      </Button>
-                    </div>
+                    <Label htmlFor="prompt-input" className="text-sm font-medium">
+                      {t('inputSection.inputLabel')}
+                    </Label>
                     <div className="relative">
                       <Textarea
                         id="prompt-input"
@@ -1711,8 +1693,24 @@ export function PromptGenerator({
                           }
                         }}
                         rows={2}
-                        className="min-h-[44px] text-sm pr-4 resize-none"
+                        className="min-h-[44px] text-sm pl-[110px] pr-4 resize-none"
                       />
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleGenerateIdeas}
+                        disabled={isGeneratingIdeas}
+                        className="absolute left-1.5 top-1.5 h-7 px-2 text-xs rounded-md text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-500/10 transition-colors duration-200"
+                      >
+                        {isGeneratingIdeas ? (
+                          <Loader2 className="mr-1 size-3 animate-spin" />
+                        ) : (
+                          <Lightbulb className="mr-1 size-3" />
+                        )}
+                        {(t as any)('enhancedOptions.generateIdeas', {
+                          defaultValue: 'AI Inspire',
+                        })}
+                      </Button>
                     </div>
                     {/* AI Generated Ideas */}
                     {generatedIdeas.length > 0 && (
