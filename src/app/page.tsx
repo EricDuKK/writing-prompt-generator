@@ -30,8 +30,8 @@ export default function WritingPromptsPage() {
         <link rel="canonical" href="https://genregenie.top/" />
       </head>
       <div className="flex flex-col">
-        <Navbar />
         <main className="bg-muted/30 bg-[url('/images/background.webp')] bg-cover bg-center bg-no-repeat bg-fixed">
+        <Navbar />
 
         {/* Hero Section with H1 */}
         <section className="container mx-auto px-4 pt-6 md:pt-10 pb-4 md:pb-6">
