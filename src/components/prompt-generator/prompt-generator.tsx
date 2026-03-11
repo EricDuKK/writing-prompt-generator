@@ -1645,7 +1645,7 @@ export function PromptGenerator({
                             }
                           }}
                         >
-                          <SelectTrigger className="h-8 text-sm w-auto min-w-0 max-w-[140px] sm:max-w-none">
+                          <SelectTrigger aria-label={optionLabel} className="h-8 text-sm w-auto min-w-0 max-w-[140px] sm:max-w-none">
                             <SelectValue
                               placeholder={t('enhancedOptions.selectPlaceholder', {
                                 defaultValue: 'Select...',
