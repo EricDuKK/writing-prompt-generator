@@ -70,21 +70,24 @@ function AuthButtonInner() {
 
   if (!user) {
     return (
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={handleSignIn}
-        className="h-8 px-3 text-xs gap-1.5"
-      >
-        <UserCircle2 className="size-3.5" />
-        Sign In
-      </Button>
+      <div className="flex items-center gap-2">
+        <CreditBadge isLoggedIn={false} />
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleSignIn}
+          className="h-8 px-3 text-xs gap-1.5"
+        >
+          <UserCircle2 className="size-3.5" />
+          Sign In
+        </Button>
+      </div>
     );
   }
 
   return (
     <div className="flex items-center gap-2">
-      <CreditBadge />
+      <CreditBadge isLoggedIn={true} />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="sm" className="h-8 px-2 gap-1.5">

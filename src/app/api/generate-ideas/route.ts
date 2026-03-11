@@ -29,9 +29,9 @@ async function fetchWithTimeout(
 export async function POST(request: NextRequest) {
   try {
     // Credit check
-    const creditResult = await useCredits('generate-ideas');
+    const creditResult = await useCredits('generate-ideas', request);
     if (!creditResult.ok) {
-      return NextResponse.json({ error: creditResult.error }, { status: 402 });
+      return NextResponse.json({ error: creditResult.error }, { status: creditResult.anonymous ? 429 : 402 });
     }
 
     const { category, preset, enhancementOptions, locale } = await request.json();

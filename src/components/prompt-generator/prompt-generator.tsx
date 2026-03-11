@@ -337,7 +337,7 @@ export function PromptGenerator({
       });
 
       if (!response.ok) {
-        if (response.status === 402) {
+        if (response.status === 402 || response.status === 429) {
           const data = await response.json();
           showCreditError(data.error || 'Insufficient credits. Please sign in or upgrade.');
           return;
@@ -417,7 +417,7 @@ export function PromptGenerator({
       });
 
       if (!response.ok) {
-        if (response.status === 402) {
+        if (response.status === 402 || response.status === 429) {
           const data = await response.json();
           showCreditError(data.error || 'Insufficient credits. Please sign in or upgrade.');
           return;
@@ -957,7 +957,7 @@ export function PromptGenerator({
       });
 
       if (!response.ok) {
-        if (response.status === 402) {
+        if (response.status === 402 || response.status === 429) {
           const data = await response.json();
           showCreditError(data.error || 'Insufficient credits.');
           return;
@@ -1067,7 +1067,7 @@ export function PromptGenerator({
       });
 
       if (!response.ok) {
-        if (response.status === 402) {
+        if (response.status === 402 || response.status === 429) {
           const data = await response.json();
           showCreditError(data.error || 'Insufficient credits.');
           return;
@@ -1154,7 +1154,7 @@ export function PromptGenerator({
       });
 
       if (!response.ok) {
-        if (response.status === 402) {
+        if (response.status === 402 || response.status === 429) {
           const data = await response.json();
           showCreditError(data.error || 'Insufficient credits.');
           return;
@@ -1231,7 +1231,7 @@ export function PromptGenerator({
       });
 
       if (!response.ok) {
-        if (response.status === 402) {
+        if (response.status === 402 || response.status === 429) {
           const data = await response.json();
           showCreditError(data.error || 'Insufficient credits.');
           return;
@@ -1361,7 +1361,7 @@ export function PromptGenerator({
       });
 
       if (!response.ok) {
-        if (response.status === 402) {
+        if (response.status === 402 || response.status === 429) {
           const data = await response.json();
           showCreditError(data.error || 'Insufficient credits.');
           return;

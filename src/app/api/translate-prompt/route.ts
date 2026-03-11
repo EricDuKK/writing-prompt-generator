@@ -29,9 +29,9 @@ async function fetchWithTimeout(
 export async function POST(req: NextRequest) {
   try {
     // Credit check
-    const creditResult = await useCredits('translate-prompt');
+    const creditResult = await useCredits('translate-prompt', req);
     if (!creditResult.ok) {
-      return NextResponse.json({ error: creditResult.error }, { status: 402 });
+      return NextResponse.json({ error: creditResult.error }, { status: creditResult.anonymous ? 429 : 402 });
     }
 
     const body = await req.json();
