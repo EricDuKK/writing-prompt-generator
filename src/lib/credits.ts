@@ -1,12 +1,7 @@
 import { type NextRequest } from 'next/server';
 import { createClient, isSupabaseServerConfigured } from '@/lib/supabase/server';
 import { CREDIT_COSTS, type CreditAction } from '@/config/credits';
-import {
-  checkAndUseAnonymousQuota,
-  getAnonymousUsageCredits,
-  isAnonymousDeducted,
-  markAnonymousDeducted,
-} from '@/lib/anonymous-rate-limit';
+import { checkAndUseAnonymousQuota } from '@/lib/anonymous-rate-limit';
 
 export interface CreditCheckResult {
   ok: boolean;
@@ -59,20 +54,6 @@ export async function useCredits(
   }
 
   // --- Logged-in user path ---
-  // Reconcile: deduct today's anonymous usage from credits (once per user+IP per day)
-  const alreadyDeducted = await isAnonymousDeducted(user.id, ip);
-  if (!alreadyDeducted) {
-    const anonymousCreditsUsed = await getAnonymousUsageCredits(ip, fingerprint);
-    if (anonymousCreditsUsed > 0) {
-      await supabase.rpc('use_credits', {
-        p_user_id: user.id,
-        p_action: 'generate-ideas', // action name for logging
-        p_cost: anonymousCreditsUsed,
-      });
-    }
-    await markAnonymousDeducted(user.id, ip);
-  }
-
   const cost = CREDIT_COSTS[action];
 
   const { data, error } = await supabase.rpc('use_credits', {
