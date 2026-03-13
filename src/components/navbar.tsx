@@ -29,8 +29,8 @@ export function Navbar() {
           </a>
         </div>
         <div className="flex items-center gap-2 mr-4 md:mr-16 lg:mr-28">
-          <LocaleToggle />
           <AuthButton />
+          <LocaleToggle />
         </div>
       </div>
     </nav>
