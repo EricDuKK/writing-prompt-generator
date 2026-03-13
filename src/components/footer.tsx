@@ -1,6 +1,11 @@
+'use client';
+
 import Image from 'next/image';
+import { useUITranslations } from '@/i18n/use-ui-translations';
 
 export function Footer() {
+  const t = useUITranslations();
+
   return (
     <footer className="border-t border-border/50 bg-muted/30">
       <div className="container mx-auto px-4 py-12">
@@ -11,22 +16,22 @@ export function Footer() {
               <Image src="/images/logo.png" alt="GenreGenie" width={80} height={80} className="rounded-lg" />
             </a>
             <p className="text-sm text-muted-foreground">
-              GenreGenie — Your AI writing prompt generator for creative writing prompts across any genre.
+              {t.footer.brand}
             </p>
           </div>
 
           {/* Support */}
           <div>
-            <p className="font-semibold text-foreground mb-3">Support</p>
+            <p className="font-semibold text-foreground mb-3">{t.footer.support}</p>
             <ul className="space-y-2 text-sm">
               <li>
                 <a href="/contact" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Contact Us
+                  {t.footer.contactUs}
                 </a>
               </li>
               <li>
                 <a href="/about" className="text-muted-foreground hover:text-foreground transition-colors">
-                  About Us
+                  {t.footer.aboutUs}
                 </a>
               </li>
             </ul>
@@ -34,21 +39,21 @@ export function Footer() {
 
           {/* Legal */}
           <div>
-            <p className="font-semibold text-foreground mb-3">Legal</p>
+            <p className="font-semibold text-foreground mb-3">{t.footer.legal}</p>
             <ul className="space-y-2 text-sm">
               <li>
                 <a href="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Privacy Policy
+                  {t.footer.privacy}
                 </a>
               </li>
               <li>
                 <a href="/terms" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Terms and Conditions
+                  {t.footer.terms}
                 </a>
               </li>
               <li>
                 <a href="/refund" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Refund Policy
+                  {t.footer.refund}
                 </a>
               </li>
             </ul>

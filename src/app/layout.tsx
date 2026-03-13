@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Lora } from 'next/font/google';
 import Script from 'next/script';
 import { ThemeProvider } from 'next-themes';
+import { LocaleProvider } from '@/i18n/locale-context';
 import '@/styles/globals.css';
 
 const lora = Lora({
@@ -182,7 +183,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <LocaleProvider>
+            {children}
+          </LocaleProvider>
         </ThemeProvider>
       </body>
     </html>
