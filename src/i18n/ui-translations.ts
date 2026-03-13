@@ -191,6 +191,50 @@ export const uiTranslations = {
         answer: 'Yes! All your generated prompts and content are automatically saved to your account. You can view, copy, and manage them from the Dashboard under "My Works".',
       },
     ],
+    // Contact page
+    contactPage: {
+      title: 'Contact Us',
+      description:
+        "Have a question, feedback, or need help with our writing prompt generator? We'd love to hear from you.",
+      emailTitle: 'Email Us',
+      emailDescription:
+        "Send us an email and we'll get back to you within 24 hours.",
+    },
+    // About page
+    aboutPage: {
+      heroTitle: 'About GenreGenie',
+      heroDescription:
+        'GenreGenie is an AI-powered writing prompt generator built to help writers of all levels unlock their creativity and produce their best work.',
+      missionTitle: 'Our Mission',
+      missionDescription:
+        "We believe every writer deserves instant access to high-quality inspiration. GenreGenie was created to eliminate writer's block by providing an intelligent writing prompt generator that understands narrative structure, genre conventions, and the creative process. Our mission is to make creative writing more accessible, enjoyable, and productive for everyone — from hobbyists to published authors.",
+      offerTitle: 'What We Offer',
+      offerCreativeTitle: 'Creative Writing Prompts',
+      offerCreativeDescription:
+        'Generate tailored writing prompts for fiction across genres — fantasy, thriller, romance, horror, sci-fi, and more. Each prompt includes character sketches, settings, and plot hooks.',
+      offerAITitle: 'AI-Powered Intelligence',
+      offerAIDescription:
+        'Our AI understands narrative structure and genre conventions. It generates prompts that are not just random — they are carefully crafted to inspire meaningful stories.',
+      offerBusinessTitle: 'Business Writing Support',
+      offerBusinessDescription:
+        'Beyond fiction, GenreGenie generates prompts for business emails, academic papers, sales copy, product documentation, and marketing content.',
+      offerCustomTitle: 'Deep Customization',
+      offerCustomDescription:
+        'Fine-tune every prompt with genre-specific options for style, tone, length, audience, and purpose. Translate prompts into multiple languages with one click.',
+      serveTitle: 'Who We Serve',
+      serveFiction: 'Fiction Writers',
+      serveFictionDesc:
+        'looking for fresh story ideas and creative prompts to kickstart their next novel or short story.',
+      serveStudents: 'Students & Academics',
+      serveStudentsDesc:
+        'who need structured prompts for essays, research papers, and thesis writing.',
+      serveMarketers: 'Content Creators & Marketers',
+      serveMarketersDesc:
+        'seeking compelling copy ideas for blogs, social media, and ad campaigns.',
+      serveTeachers: 'Writing Teachers',
+      serveTeachersDesc:
+        'who want to provide diverse, engaging prompts for classroom exercises and workshops.',
+    },
     // Language switcher
     langSwitch: {
       en: 'EN',
@@ -388,6 +432,49 @@ export const uiTranslations = {
         answer: '可以！您生成的所有灵感和内容都会自动保存到您的账户。您可以在仪表板的"我的作品"中查看、复制和管理它们。',
       },
     ],
+    // Contact page
+    contactPage: {
+      title: '联系我们',
+      description:
+        '有任何问题、反馈或需要关于写作提示词生成器的帮助？我们很乐意听取您的意见。',
+      emailTitle: '发送邮件',
+      emailDescription: '发送邮件给我们，我们将在24小时内回复您。',
+    },
+    // About page
+    aboutPage: {
+      heroTitle: '关于 GenreGenie',
+      heroDescription:
+        'GenreGenie 是一款AI驱动的写作提示词生成器，旨在帮助各级写作者释放创造力，创作出最好的作品。',
+      missionTitle: '我们的使命',
+      missionDescription:
+        '我们相信每位作家都应该即时获得高质量的灵感。GenreGenie 的诞生是为了消除写作瓶颈，提供一个理解叙事结构、类型惯例和创作过程的智能写作提示词生成器。我们的使命是让创意写作对每个人都更加便捷、愉快和高效——无论是业余爱好者还是出版作家。',
+      offerTitle: '我们提供什么',
+      offerCreativeTitle: '创意写作灵感',
+      offerCreativeDescription:
+        '为各种类型的小说生成定制写作灵感——奇幻、惊悚、爱情、恐怖、科幻等。每个灵感都包含角色素描、场景设定和情节钩子。',
+      offerAITitle: 'AI驱动智能',
+      offerAIDescription:
+        '我们的AI理解叙事结构和类型惯例。它生成的灵感不是随机的——而是精心打造来激发有意义的故事。',
+      offerBusinessTitle: '商务写作支持',
+      offerBusinessDescription:
+        '不仅限于小说，GenreGenie还为商务邮件、学术论文、销售文案、产品文档和营销内容生成灵感。',
+      offerCustomTitle: '深度自定义',
+      offerCustomDescription:
+        '使用特定类型选项微调每个灵感的风格、语气、长度、受众和目的。一键将灵感翻译成多种语言。',
+      serveTitle: '我们服务于谁',
+      serveFiction: '小说作家',
+      serveFictionDesc:
+        '寻找新鲜的故事创意和创意灵感，为下一部小说或短篇故事开个好头。',
+      serveStudents: '学生和学者',
+      serveStudentsDesc:
+        '需要结构化的灵感来撰写论文、研究报告和毕业论文。',
+      serveMarketers: '内容创作者和营销人员',
+      serveMarketersDesc:
+        '寻找引人注目的文案创意，用于博客、社交媒体和广告活动。',
+      serveTeachers: '写作教师',
+      serveTeachersDesc:
+        '希望为课堂练习和工作坊提供多样化、引人入胜的写作灵感。',
+    },
     // Language switcher
     langSwitch: {
       en: 'EN',
